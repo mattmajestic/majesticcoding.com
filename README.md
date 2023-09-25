@@ -1,10 +1,10 @@
-# MajesticCoding.com
+# majesticcoding.com
 
-Welcome to MajesticCoding.com! This website is a showcase of my work, featuring links to my YouTube channel and more! 😎
+Welcome to majesticcoding.com! This simple GO site showcasing social links to my YouTube channel and more! 😎
 
 ## About
 
-This website is built using the Go programming language and features a sleek and minimalistic design. It provides quick access to my YouTube channel, LinkedIn profile, and GitHub repositories. You can check it out here: [MajesticCoding.com](https://www.majesticcoding.com) 🚀
+This website is built using the Go programming language and features a sleek and minimalistic design. It provides quick access to my YouTube channel, LinkedIn profile, and GitHub repositories. You can check it out here: [mattmajestic.com](https://www.majesticcoding.com) 🚀
 
 ## Features
 
