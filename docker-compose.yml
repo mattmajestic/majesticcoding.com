@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  majesticcoding:
+    image: mattmajestic/majesticcoding:latest
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./index.html:/app/index.html
+    command: ["./main"]
