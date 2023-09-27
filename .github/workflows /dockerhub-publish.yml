@@ -1,0 +1,23 @@
+name: Publish Docker Image to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u mattmajestic --password-stdin
+
+      - name: Build and Push to Docker Hub
+        run: |
+          docker build -t mattmajestic/majesticcoding:latest .
+          docker push mattmajestic/majesticcoding:latest
