@@ -2,18 +2,18 @@ name: Update @majesticcoding Youtube Channel Metrics
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *' # Schedule it to run daily at midnight
+  workflow_dispatch: # Allow manual triggering of the workflow
 
 jobs:
-  run_notebook:
+  update_metrics:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check Out Repository
         uses: actions/checkout@v2
         with:
-          ref: gh-pages
+          ref: gh-pages # Check out the gh-pages branch
 
       - name: Set Up Python
         uses: actions/setup-python@v2
@@ -36,17 +36,17 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      - name: Commit files
+      - name: Commit Changes
         run: |
           git add docs/index.html
           git commit -m "Update index.html"
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      - name: Push changes
+      - name: Push Changes
         uses: ad-m/github-push-action@master
         with:
           force_with_lease: true
           branch: gh-pages
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} # Use the PAT for authentication
