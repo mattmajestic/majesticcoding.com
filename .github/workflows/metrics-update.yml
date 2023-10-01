@@ -39,6 +39,8 @@ jobs:
 
       - name: Push to Main
         run: |
+          git add docs/index.html
+          git commit -m "Metrics Update"
           git push origin main
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
