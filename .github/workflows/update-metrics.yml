@@ -27,19 +27,22 @@ jobs:
           jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
         continue-on-error: true
 
-      - name: Commit and Push HTML Output
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: 'docs/index.html'  # Specify the path to your HTML file
-          author_name: 'GitHub Actions'
-          author_email: 'actions@github.com'
-          commit: '--signoff'
-          message: 'Update index.html'
-          committer_name: 'GitHub Actions'
-          committer_email: 'actions@github.com'
-          default_author: 'github_actor'
-          branch: 'gh-pages'  # Specify the target branch as gh-pages
-          fetch: false
-          push: true
+      - name: Configure Git
+        run: |
+          git config user.name 'GitHub Actions'
+          git config user.email 'actions@github.com'
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Commit HTML Output
+        run: |
+          git add docs/index.html
+          git commit -m 'Update index.html'
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Push to gh-pages Branch
+        run: |
+          git push origin HEAD:gh-pages
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
