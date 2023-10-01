@@ -31,22 +31,9 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
-      - name: Commit Changes
-        run: |
+          git config mattmajestic github-actions
+          git config user.email github-actions@github.com
           git add docs/index.html
-          git commit -m "Update index.html"
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
-      - name: Push Changes
-        uses: ad-m/github-push-action@master
-        with:
-          force_with_lease: true
-          branch: gh-pages
-        env:
+          git commit -m "Update Metrics"
+          git push origin HEAD:gh-pages
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} # Use the PAT for authentication
