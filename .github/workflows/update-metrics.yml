@@ -31,20 +31,22 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.name 'GitHub Actions'
-          git config user.email 'actions@github.com'
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      - name: Commit HTML Output
+      - name: Commit files
         run: |
           git add docs/index.html
-          git commit -m 'Update index.html'
+          git commit -m "Update index.html"
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      - name: Push to gh-pages Branch
-        run: |
-          git push origin HEAD:gh-pages
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          force_with_lease: true
+          branch: gh-pages
         env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
