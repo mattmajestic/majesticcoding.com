@@ -30,14 +30,16 @@ jobs:
       - name: Commit and Push HTML Output
         uses: EndBug/add-and-commit@v9
         with:
-          add: 'docs/index.html'
+          add: 'docs/index.html'  # Specify the path to your HTML file
           author_name: 'GitHub Actions'
           author_email: 'actions@github.com'
           commit: '--signoff'
           message: 'Update index.html'
           committer_name: 'GitHub Actions'
           committer_email: 'actions@github.com'
-          branch: 'gh-pages' 
           default_author: 'github_actor'
+          branch: 'gh-pages'  # Specify the target branch as gh-pages
           fetch: false
           push: true
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
