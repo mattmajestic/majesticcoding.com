@@ -1,0 +1,40 @@
+name: Update @majesticcoding Youtube Channel Metrics
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Schedule it to run daily at midnight
+  workflow_dispatch: # Allow manual triggering of the workflow
+
+jobs:
+  update_metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+        with:
+          ref: main # Check out the gh-pages branch
+
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x 
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt  # Install your notebook dependencies
+
+      - name: Run Jupyter Notebook
+        run: |
+          jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
+        continue-on-error: true
+
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Update Metrics"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.head_ref }}
