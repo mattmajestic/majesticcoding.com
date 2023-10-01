@@ -26,3 +26,11 @@ jobs:
         run: |
           jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
         continue-on-error: true
+
+      - name: Commit and Push HTML Output
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add docs/index.html
+          git commit -m 'Update index.html'
+          git push
