@@ -29,11 +29,12 @@ jobs:
           jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
         continue-on-error: true
 
-      - name: Configure Git
+      - name: Commit files
         run: |
-          git config mattmajestic github-actions
-          git config user.email github-actions@github.com
-          git add docs/index.html
-          git commit -m "Update Metrics"
-          git push origin HEAD:gh-pages
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} # Use the PAT for authentication
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Update Metrics"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.head_ref }}
