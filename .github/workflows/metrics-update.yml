@@ -24,6 +24,11 @@ jobs:
         run: |
           pip install -r requirements.txt  # Install your notebook dependencies
 
+      - name: Run Jupyter Notebook
+        run: |
+          jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html --HTMLExporter.theme=dark
+        continue-on-error: true
+
       - name: Configure Git
         run: |
           git config --local user.email "github-actions@github.com"
