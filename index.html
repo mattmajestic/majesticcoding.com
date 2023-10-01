@@ -66,9 +66,13 @@
             <a href="https://github.com/mattmajestic" target="_blank" class="custom-button">
                 <i class="fab fa-github"></i> GitHub
             </a>
-            <a href="https://mattmajestic.dev/download-resume-pdf" target="_blank" rel="noopener noreferrer" class="custom-button">
-                <i class="fas fa-file-pdf"></i> Resume
-              </a>
+            <a href="#" class="custom-button" id="view-pdf-link">
+              <i class="fas fa-file-pdf"></i> Resume
+            </a>
+
+        <div id="pdf-container" style="display: none;">
+          <iframe id="pdf-iframe"></iframe>
+        </div>
         </div>
         <div>
             <button id="theme-toggle" class="custom-button">
@@ -76,7 +80,6 @@
             </button>
         </div>
     </div>
-
     <script>
         const body = document.body;
 
@@ -94,6 +97,19 @@
         // Add click event listener to the theme toggle button
         const themeToggle = document.getElementById("theme-toggle");
         themeToggle.addEventListener("click", toggleTheme);
+    </script>
+    <script>
+    document.getElementById("view-pdf-link").addEventListener("click", function(e) {
+      e.preventDefault();
+      var pdfContainer = document.getElementById("pdf-container");
+      var pdfIframe = document.getElementById("pdf-iframe");
+    
+      if (pdfIframe.src === "") {
+        pdfIframe.src = "https://mattmajestic.dev/download-resume-pdf";
+      }
+    
+      pdfContainer.style.display = "block";
+    });
     </script>
 </body>
 <footer class="text-center text-gray-500 text-sm mt-8">
