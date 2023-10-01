@@ -24,5 +24,5 @@ jobs:
 
       - name: Run Jupyter Notebook
         run: |
-          jupyter nbconvert --execute --to html @majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
+          jupyter nbconvert --execute --to html majesticcoding-Youtube-Channel.ipynb --output=docs/index.html
         continue-on-error: true
