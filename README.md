@@ -4,7 +4,7 @@ Welcome to majesticcoding.com! This simple GO site showcasing social links to my
 
 ## About
 
-This website is built using the Go programming language and features a sleek and minimalistic design. It provides quick access to my YouTube channel, LinkedIn profile, and GitHub repositories. You can check it out here: [mattmajestic.com](https://www.majesticcoding.com) 🚀
+This website is built using the Go programming language and features a sleek and minimalistic design. It provides quick access to my YouTube channel, LinkedIn profile, and GitHub repositories. You can check it out here: [majesticcoding.com](https://www.majesticcoding.com) 🚀
 
 ## Features
 
