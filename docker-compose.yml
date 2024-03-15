@@ -5,7 +5,7 @@ services:
     build:
       context: .
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - ./index.html:/app/index.html
     command: ["./main"]
