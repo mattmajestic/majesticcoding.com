@@ -1,17 +1,18 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "log"
-    "net/http"
-    "os"
-
     "github.com/gin-gonic/gin"
-    "github.com/joho/godotenv"
+    // "encoding/json"
+    // "fmt"
+    // "io/ioutil"
+    // "log"
+    // "net/http"
+    // "os"
+
+    // "github.com/joho/godotenv"
 )
 
+/*
 type Video struct {
     Id string `json:"videoId"`
 }
@@ -96,9 +97,15 @@ func getYoutubeMetrics(c *gin.Context) {
 
     c.JSON(http.StatusOK, videoData)
 }
+*/
 
 func main() {
     router := gin.Default()
-    router.GET("/youtube-metrics", getYoutubeMetrics)
+
+    router.StaticFile("/", "./index.html")
+
+    // Commented out YouTube-related code
+    // router.GET("/youtube-metrics", getYoutubeMetrics)
+
     router.Run(":8080")
 }
