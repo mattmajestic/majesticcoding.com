@@ -1,37 +1,32 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
-    "gorm.io/driver/sqlite"
-    "gorm.io/gorm"
-    "net/http"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-type User struct {
-    gorm.Model
-    Name string
+func fetchYouTubeMetricsFromAPI(c *gin.Context) {
+	resp, err := http.Get("https://mattmajestic.dev/youtube-metrics")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch YouTube metrics"})
+		return
+	}
+	defer resp.Body.Close()
+
+	c.DataFromReader(http.StatusOK, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
 }
 
 func main() {
-    db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-    if err != nil {
-        panic("failed to connect database")
-    }
+	router := gin.Default()
 
-    // Migrate the schema
-    db.AutoMigrate(&User{})
+	router.LoadHTMLGlob("templates/*")
 
-    router := gin.Default()
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", nil)
+	})
 
-    router.LoadHTMLGlob("templates/*")
+	router.GET("/youtube-metrics", fetchYouTubeMetricsFromAPI)
 
-    router.GET("/", func(c *gin.Context) {
-        var users []User
-        db.Find(&users)
-        c.HTML(http.StatusOK, "index.tmpl", gin.H{
-            "users": users,
-        })
-    })
-
-    router.Run(":8080")
+	router.Run(":8080")
 }

@@ -1,11 +1,8 @@
-version: '3.9'
+
 services:
   majesticcoding:
-    image: mattmajestic/majesticcoding:latest
+    # image: mattmajestic/majesticcoding:latest
     build:
       context: .
     ports:
       - "8080:8080"
-    volumes:
-      - ./index.html:/app/index.html
-    command: ["./main"]
