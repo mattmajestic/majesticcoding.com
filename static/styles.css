@@ -1,0 +1,43 @@
+.custom-button {
+    background-color: #1C3D63;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+}
+
+.theme-toggle-icon {
+    font-size: 24px;
+}
+
+/* Dark Theme */
+body.dark {
+    background-color: #fff;
+    color: #1C3D63;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+}
+
+.custom-button i {
+    margin-right: 5px; /* Adjust the margin as needed for spacing */
+}

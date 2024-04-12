@@ -4,50 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Majestic Coding</title>
+    <meta name="description" content="Majestic Coding Socials.">
+    <meta name="keywords" content="Full-Stack, Coding, Education, Software">
+    <meta name="author" content="Majestic Coding">
     <link rel="icon" href="https://avatars.githubusercontent.com/u/33904170?v=4">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .custom-button {
-            background-color: #1C3D63;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .custom-button:hover {
-            background-color: #0056b3;
-        }
-        .theme-toggle-icon {
-            font-size: 24px;
-        }
-
-        /* Dark Theme */
-        body.dark {
-            background-color: #fff;
-            color: #1C3D63;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 8px 0;
-        }
-        .custom-button i {
-            margin-right: 5px; /* Adjust the margin as needed for spacing */
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-900 text-white">
     <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
@@ -64,7 +27,7 @@
             </a>
             <a href="https://leetcode.com/mattmajestic/" target="_blank" rel="noopener noreferrer" class="custom-button">
                 <i class="fas fa-code"></i> LeetCode
-              </a>
+            </a>
         </div>
         <div>
             <button id="theme-toggle" class="custom-button">
@@ -72,24 +35,7 @@
             </button>
         </div>
     </div>
-    <script>
-        const body = document.body;
-
-        // Function to toggle between light and dark themes
-        function toggleTheme() {
-            if (body.classList.contains("dark")) {
-                // Switch to light theme
-                body.classList.remove("dark");
-            } else {
-                // Switch to dark theme
-                body.classList.add("dark");
-            }
-        }
-
-        // Add click event listener to the theme toggle button
-        const themeToggle = document.getElementById("theme-toggle");
-        themeToggle.addEventListener("click", toggleTheme);
-    </script>
+    <script src="script.js"></script>
 </body>
 <footer class="text-center text-gray-500 text-sm mt-8">
     Made with GoLang ❤️
