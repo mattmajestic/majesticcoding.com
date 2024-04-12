@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: majesticcoding-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: majesticcoding
+  template:
+    metadata:
+      labels:
+        app: majesticcoding
+    spec:
+      containers:
+      - name: majesticcoding
+        image: mattmajestic/majesticcoding:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: majesticcoding-service
+spec:
+  selector:
+    app: majesticcoding
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
