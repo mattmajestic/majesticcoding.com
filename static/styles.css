@@ -41,3 +41,22 @@ footer {
 .custom-button i {
     margin-right: 5px; /* Adjust the margin as needed for spacing */
 }
+
+/* Add a glowing effect to the image */
+.glowing-effect {
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        filter: drop-shadow(0 0 5px #fff);
+    }
+    to {
+        filter: drop-shadow(0 0 20px #070230);
+    }
+}
+
+@keyframes stars {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 100%; }
+}
