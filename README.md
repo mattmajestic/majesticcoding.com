@@ -12,4 +12,4 @@ Welcome to majesticcoding.com! This simple GO site showcasing social links to my
 
 💻 **GitHub**: Explore my code and open-source projects on [GitHub](https://github.com/mattmajestic).
 
-📝 **LeetCode**: Check out my solutions to various LeetCode problems on my [LeetCode profile](https://leetcode.com/mattmajestic/).
+📝 **Consultations**: Book a consultation for any Full Stack work via [My Calendar](https://calendly.com/majesticcoding/30min?back=1&month=2024-05).
