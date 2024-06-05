@@ -13,6 +13,12 @@ func main() {
         return
     }
 
+    // Check if Terraform is installed
+    if err := runCommand("terraform", "version"); err != nil {
+        fmt.Printf("Terraform is not installed or not in PATH: %s\n", err)
+        return
+    }
+
     // Start Minikube
     if err := runCommand("minikube", "start"); err != nil {
         fmt.Printf("Failed to start Minikube: %s\n", err)
@@ -43,7 +49,7 @@ func main() {
         return
     }
 
-    fmt.Println("Kubernetes deployment and service have been successfully created!")
+    fmt.Println("Kubernetes manifest has been successfully applied!")
 }
 
 func runCommand(command string, args ...string) error {
