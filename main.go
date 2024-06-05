@@ -40,10 +40,10 @@ func fetchYouTubeMetricsFromAPI(c *gin.Context) {
 func main() {
 
 	err_env := godotenv.Load()
-    if err_env != nil {
-        log.Fatalf("Error loading .env file: %v", err_env)
-    }
-	
+	if err_env != nil {
+		log.Fatalf("Error loading .env file: %v", err_env)
+	}
+
 	// Initialize Gin router
 	router := gin.Default()
 
@@ -59,6 +59,9 @@ func main() {
 	router.GET("/script.js", func(c *gin.Context) {
 		c.File("./static/script.js")
 	})
+	router.GET("/clerk.js", func(c *gin.Context) {
+		c.File("./static/clerk.js")
+	})
 	router.GET("/google-analytics.js", func(c *gin.Context) {
 		c.File("./static/google-analytics.js")
 	})
@@ -69,14 +72,16 @@ func main() {
 	// Define routes
 	router.GET("/", func(c *gin.Context) {
 		// Render the index template
-		c.HTML(http.StatusOK, "index.tmpl", nil)
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"CLERK_PUBLISHABLE_KEY": os.Getenv("CLERK_PUBLISHABLE_KEY"),
+		})
 	})
 
 	router.GET("/login", func(c *gin.Context) {
 		// Render the index template
 		c.HTML(http.StatusOK, "login.tmpl", gin.H{
-            "CLERK_PUBLISHABLE_KEY": os.Getenv("CLERK_PUBLISHABLE_KEY"),
-        })
+			"CLERK_PUBLISHABLE_KEY": os.Getenv("CLERK_PUBLISHABLE_KEY"),
+		})
 	})
 
 	// Route to fetch YouTube metrics from API

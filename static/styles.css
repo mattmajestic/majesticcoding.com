@@ -60,3 +60,8 @@ footer {
     0% { background-position: 0 0; }
     100% { background-position: 100% 100%; }
 }
+
+/* Adjust the margin-top for the first image to reduce the space */
+.first-image {
+    margin-top: 10px; /* Adjust this value as needed */
+}
