@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Majestic Coding</title>
+    <meta name="description" content="Majestic Coding Socials.">
+    <meta name="keywords" content="Full-Stack, Coding, Education, Software">
+    <meta name="author" content="Majestic Coding">
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/33904170?v=4">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="google-analytics.js" async></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
+        <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding Logo" class="w-48 h-48 mb-4 glowing-effect">
+        <div id="app"></div>
+        <div>
+            <button id="theme-toggle" class="custom-button glowing-effect">
+                <i class="fas fa-sun theme-toggle-icon"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Initialize Clerk with your Clerk Publishable key and Frontend API URL -->
+    <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="{{.CLERK_PUBLISHABLE_KEY}}"
+      src="https://grand-falcon-32.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+      type="text/javascript"
+    ></script>
+
+    <script>
+      window.addEventListener("load", async function () {
+        await Clerk.load();
+
+        if (Clerk.user) {
+          document.getElementById("app").innerHTML = `
+            <div id="user-button"></div>
+          `;
+
+          const userButtonDiv = document.getElementById("user-button");
+          Clerk.mountUserButton(userButtonDiv);
+        } else {
+          document.getElementById("app").innerHTML = `
+            <div id="sign-in"></div>
+          `;
+
+          const signInDiv = document.getElementById("sign-in");
+          Clerk.mountSignIn(signInDiv);
+        }
+      });
+
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          const themeIcon = document.querySelector('.theme-toggle-icon');
+          if (document.body.classList.contains('light-theme')) {
+              themeIcon.classList.replace('fa-sun', 'fa-moon');
+          } else {
+              themeIcon.classList.replace('fa-moon', 'fa-sun');
+          }
+      });
+    </script>
+</body>
+<footer class="text-center text-gray-500 text-sm mt-8">
+    Run with Go on GCP ❤️
+</footer>
+</html>
