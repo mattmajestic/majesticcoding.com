@@ -65,6 +65,9 @@ func main() {
 	router.GET("/google-analytics.js", func(c *gin.Context) {
 		c.File("./static/google-analytics.js")
 	})
+	router.GET("/download-resume-pdf", func(c *gin.Context) {
+		c.File("./static/Matt Majestic Resume.pdf")
+	})
 
 	// Load HTML templates
 	router.LoadHTMLGlob("templates/*")
