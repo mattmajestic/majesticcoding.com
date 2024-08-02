@@ -2,9 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -35,6 +38,14 @@ func fetchYouTubeMetricsFromAPI(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 	c.DataFromReader(http.StatusOK, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
+}
+
+func startFFmpeg() {
+    cmd := exec.Command("ffmpeg", "-f", "flv", "-i", "rtmp://localhost:1935/live", "-c:v", "libx264", "-f", "flv", "rtmp://localhost:1935/live/stream")
+    if err := cmd.Start(); err != nil {
+        log.Fatalf("Failed to start FFmpeg: %v", err)
+    }
+    log.Println("FFmpeg started to handle RTMP stream")
 }
 
 func main() {
@@ -89,6 +100,18 @@ func main() {
 
 	// Route to fetch YouTube metrics from API
 	router.GET("/youtube-metrics", fetchYouTubeMetricsFromAPI)
+
+	// Route to serve the stream template
+	router.GET("/stream", func(c *gin.Context) {
+		tmpl := template.Must(template.ParseFiles(filepath.Join("templates", "stream.tmpl"), filepath.Join("templates", "header.tmpl")))
+		err := tmpl.ExecuteTemplate(c.Writer, "stream.tmpl", nil)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Template rendering error: %v", err)
+		}
+	})
+
+	// Start FFmpeg to handle RTMP stream
+	go startFFmpeg()
 
 	// Run the server on port 8080
 	router.Run(":8080")

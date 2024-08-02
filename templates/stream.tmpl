@@ -1,0 +1,22 @@
+<!-- templates/stream.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "header.tmpl"}}
+
+<body class="bg-gray-900 text-white">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="w-full max-w-5xl">
+            <div class="w-full bg-black">
+                <video id="videoPlayer" controls autoplay class="w-full h-full">
+                    <source src="http://your_server_ip/live/stream.m3u8" type="application/x-mpegURL">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+    <script src="clerk.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
