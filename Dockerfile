@@ -1,12 +1,19 @@
+# Dockerfile
 FROM golang:1.18-alpine
-RUN apk add --no-cache git gcc musl-dev
+
+RUN apk add --no-cache git gcc musl-dev ffmpeg
+
 WORKDIR /app
+
 COPY go.mod .
 COPY go.sum .
 RUN go mod tidy
 RUN go mod download
-RUN go get gorm.io/driver/sqlite
+
 COPY . .
+
 RUN go build -o main main.go
-EXPOSE 8080
+
+EXPOSE 8080 1935
+
 CMD ["./main"]
