@@ -2,7 +2,9 @@
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 
-const ws = new WebSocket("ws://localhost:8080/ws/chat");
+const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+const wsHost = window.location.host;
+const ws = new WebSocket(`${wsProtocol}://${wsHost}/ws/chat`);
 
 function getColorForUsername(username) {
   let hash = 0;

@@ -56,7 +56,7 @@ func ChatWebSocket(c *gin.Context) {
 		}
 
 		msg.Username = username
-		msg.Timestamp = time.Now().Format("15:04:05") // simple HH:MM:SS
+		msg.Timestamp = time.Now()
 
 		Mu.Lock()
 		Messages = append(Messages, msg)

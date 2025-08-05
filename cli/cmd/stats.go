@@ -26,7 +26,7 @@ var statsCmd = &cobra.Command{
 			return
 		}
 
-		resp, err := http.Get(fmt.Sprintf("http://localhost:8080/api/stats/%s", provider))
+		resp, err := http.Get(fmt.Sprintf("https://majesticcoding.com/api/stats/%s", provider))
 		if err != nil {
 			fmt.Println("Request failed:", err)
 			return

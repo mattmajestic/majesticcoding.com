@@ -9,7 +9,7 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8080
+host: https://majesticcoding.com
 info:
   contact: {}
   description: Go API for Full Stack Application

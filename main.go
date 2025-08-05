@@ -10,13 +10,14 @@ import (
 // @title Majestic Coding API
 // @version 1.0
 // @description Go API for Full Stack Application
-// @host localhost:8080
+// @host https://majesticcoding.com
 // @BasePath /api
 
 func main() {
 	config.LoadEnv()
 	handlers.StartBroadcaster()
 	db.Connect()
+	handlers.StartMessageCleanup()
 
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1", "majesticcoding.com"})

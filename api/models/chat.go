@@ -1,7 +1,9 @@
 package models
 
+import "time"
+
 type Message struct {
 	Content   string
 	Username  string
-	Timestamp string
+	Timestamp time.Time
 }
