@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/moby/moby/pkg/namesgenerator"
@@ -55,8 +56,11 @@ func ChatWebSocket(c *gin.Context) {
 			break
 		}
 
+		msg.Content = goaway.Censor(msg.Content)
+
 		msg.Username = username
 		msg.Timestamp = time.Now()
+		msg.DisplayTime = msg.Timestamp.Format("15:04:05")
 
 		Mu.Lock()
 		Messages = append(Messages, msg)

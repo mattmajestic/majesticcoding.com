@@ -26,7 +26,7 @@ ws.onmessage = (event) => {
   meta.className = "flex justify-between text-md text-gray-400";
   meta.innerHTML = `
     <span class="font-semibold" style="color: ${getColorForUsername(msg.Username)}">${msg.Username}</span>
-    <span>${msg.Timestamp}</span>
+    <span>${msg.DisplayTime}</span>
     `;
 
 

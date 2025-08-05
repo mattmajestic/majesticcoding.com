@@ -1,10 +1,11 @@
 module majesticcoding.com
 
-go 1.23.0
+go 1.23.6
 
-toolchain go1.23.11
+toolchain go1.24.4
 
 require (
+	github.com/TwiN/go-away v1.7.0
 	github.com/charmbracelet/bubbletea v1.3.6
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/gin-gonic/gin v1.10.1
@@ -14,6 +15,8 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/moby/moby v28.3.3+incompatible
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
+	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/spf13/cobra v1.9.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -64,8 +67,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
-	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
