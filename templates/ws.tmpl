@@ -1,0 +1,31 @@
+{{ define "ws" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
+  <h2 class="text-2xl font-bold mb-2 text-white">🔌 WebSocket Chat</h2>
+
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Real-time chat using WebSockets for low-latency message delivery.
+  </h2>
+
+  <ul class="list-disc list-inside text-md text-inherit">
+    <li>Bidirectional communication with the server</li>
+    <li>Storing Messages in Postgres</li>
+    <li>Lightweight and persistent connection</li>
+  </ul>
+
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm overflow-x-auto"><code>
+// Connect to WebSocket
+const ws = new WebSocket("ws://localhost:8080/ws/chat");
+
+// Send message
+ws.send(JSON.stringify({ content: "Let's go! 🎉🔥" }));
+
+// Receive message
+ws.onmessage = (event) => {
+  const msg = JSON.parse(event.data);
+  console.log(msg.username + ": " + msg.content);
+};
+    </code></pre>
+  </div>
+</div>
+{{ end }}

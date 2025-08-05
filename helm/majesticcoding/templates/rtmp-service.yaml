@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtmp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rtmp
+  template:
+    metadata:
+      labels:
+        app: rtmp
+    spec:
+      containers:
+        - name: rtmp-server
+          image: {{ .Values.rtmp.image }}
+          ports:
+            - containerPort: {{ .Values.rtmp.ports.rtmp }}
+            - containerPort: 8080
+          volumeMounts:
+            - name: stream-data
+              mountPath: /tmp/hls
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: stream-data
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: rtmp-nginx-config

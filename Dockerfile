@@ -1,7 +1,5 @@
 # Dockerfile
-FROM golang:1.18-alpine
-
-RUN apk add --no-cache git gcc musl-dev ffmpeg
+FROM golang:1.24-alpine
 
 WORKDIR /app
 
@@ -12,7 +10,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main main.go
+RUN go build -o main ./main.go
 
 EXPOSE 8080 1935
 

@@ -1,0 +1,20 @@
+{{ define "partials" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
+  <h2 class="text-2xl font-bold text-white mb-2">🧩 Partial Templs</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Use HTMX to send AJAX requests and update parts of your page without writing JS.
+  </h2>
+  <ul class="list-disc list-inside text-md">
+    <li>Progressive enhancement: works even without JS</li>
+    <li>Use <code>hx-get</code>, <code>hx-post</code>, etc. for interaction</li>
+    <li>Trigger server-side template rendering for partial updates</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>&lt;button hx-get="/api/stats/youtube" hx-target="#result"&gt;
+  Get YouTune Stats from /api/stats/youtube route
+&lt;/button&gt;
+
+&lt;div id="result"&gt;&lt;/div&gt;</code></pre>
+  </div>
+</div>
+{{ end }}

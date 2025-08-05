@@ -1,0 +1,63 @@
+{{ define "socials" }}
+<div class="grid grid-cols-2 gap-6">
+  <div class="flex items-center space-x-1">
+    <a href="https://www.youtube.com/@majesticcoding/videos"
+       target="_blank" 
+       class="custom-button glowing-effect w-[8rem] flex justify-center items-center">
+       <span class="tooltip-text">View A Tutorial</span>
+      <i class="fab fa-youtube"></i><span>YouTube</span>
+    </a>
+    <button class="stats-button custom-button glowing-effect w-10 h-10 flex justify-center items-center"
+            data-provider="youtube">
+            <span class="tooltip-text">YouTube Stats from API</span>
+      <i class="fas fa-chart-line"></i>
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-1">
+    <a href="https://github.com/mattmajestic" 
+       title="Visit GitHub"
+       target="_blank" 
+       class="custom-button glowing-effect w-[14rem] flex justify-center items-center">
+       <span class="tooltip-text">Peruse Some Code</span>
+      <i class="fab fa-github"></i><span>GitHub</span>
+    </a>
+    <button class="stats-button custom-button glowing-effect w-10 h-10 flex justify-center items-center"
+            data-provider="github">
+            <span class="tooltip-text">GitHub Stats from API</span>
+      <i class="fas fa-chart-line"></i>
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-1">
+    <a href="https://www.leetcode.com/mattmajestic" 
+       title="Checkout my Leetcode Profile"
+       target="_blank" 
+       class="custom-button glowing-effect w-[8rem] flex justify-center items-center">
+       <span class="tooltip-text">Checkout problems I've solved</span>
+      <i class="fas fa-code"></i><span>Leetcode</span>
+    </a>
+    <button class="stats-button custom-button glowing-effect w-10 h-10 flex justify-center items-center"
+            data-provider="leetcode">
+            <span class="tooltip-text">Leetcode Stats</span>
+      <i class="fas fa-chart-line"></i>
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-1">
+    <a href="https://www.twitch.tv/majesticcodingtwitch" 
+       title="Visit Twitch"
+       target="_blank" 
+       class="custom-button glowing-effect w-[8rem] flex justify-center items-center">
+       <span class="tooltip-text">Coding Live Streams</span>
+      <i class="fab fa-twitch"></i><span>Twitch</span>
+    </a>
+    <button class="stats-button custom-button glowing-effect w-10 h-10 flex justify-center items-center"
+            data-provider="twitch">
+            <span class="tooltip-text">Twitch Stats from API</span>
+      <i class="fas fa-chart-line"></i>
+    </button>
+  </div>
+  {{ template "stats" . }}
+</div>
+{{ end }}

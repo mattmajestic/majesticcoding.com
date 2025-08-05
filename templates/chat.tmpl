@@ -1,0 +1,27 @@
+{{ define "chat" }}
+<div class="relative w-full">
+  <!-- Chat Toggle Button (Hamburger) -->
+  <button id="chat-toggle"
+          class="absolute top-2 left-2 z-10 p-1 bg-gray-800 rounded text-white focus:outline-none">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <!-- Chat Widget Container -->
+  <div id="chat-widget"
+       class="ml-10 flex flex-col h-[400px] w-[300px] border rounded bg-gray-900 text-gray-200 shadow-lg transition-all duration-300 ease-in-out overflow-hidden">
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-2 text-md font-mono space-y-2"></div>
+
+    <form id="chat-form" class="flex p-2 border-t border-gray-700">
+      <input id="chat-input" type="text"
+             class="flex-1 px-2 py-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
+             placeholder="Type a message..." autocomplete="off" />
+      <button type="submit"
+              class="ml-2 px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition">Send</button>
+    </form>
+  </div>
+</div>
+<script src="/static/components/chat.js"></script>
+{{ end }}

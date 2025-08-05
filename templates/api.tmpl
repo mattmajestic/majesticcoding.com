@@ -1,0 +1,32 @@
+{{ define "api" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
+  <h2 class="text-xl font-bold mb-4 text-white">📡 Swagger for REST API Documentation</h2>
+
+  <p class="text-blue-300 mb-4">
+    Swagger provides a live, interactive interface for exploring and testing your API endpoints. This setup uses <strong>swaggo/gin-swagger</strong> to auto-generate documentation from Go annotations.
+  </p>
+
+  <ul class="list-disc list-inside text-sm text-inherit space-y-1">
+    <li>Framework: <code>Gin</code> in Go</li>
+    <li>Swagger UI hosted at <code>/swagger/index.html</code></li>
+    <li>Docs generated via annotations using <code>swag init</code></li>
+    <li>Supports endpoints for GitHub, Twitch, and analytics</li>
+  </ul>
+
+  <div class="mt-4 bg-gray-900 p-4 rounded text-green-400 text-sm font-mono">
+    <pre><code>// Example annotated handler in Go:
+  @Summary Get GitHub Profile
+  @Description Fetches GitHub data for the given username
+  @Tags GitHub
+  @Param username path string true "GitHub username"
+  @Success 200 {object} GitHubProfile
+  @Router /api/github/{username} [get]</code></pre>
+  </div>
+
+  <div class="mt-4 text-xl text-gray-300">
+    🔗 Access your full Swagger UI at:<br>
+    <a href="/swagger/index.html" class="text-blue-400 hover:underline text-lg">https://majesticcoding.com/swagger/index.html</a>
+  </div>
+</div>
+<script src="/static/components/theme.js"></script>
+{{ end }}

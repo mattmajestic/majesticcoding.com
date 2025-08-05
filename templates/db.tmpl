@@ -1,0 +1,23 @@
+{{ define "db" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
+  <h2 class="text-2xl font-bold text-white mb-2">🛢️ Neon (PostgreSQL)</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Serverless, scalable PostgreSQL with branching and modern developer tooling.
+  </h2>
+  <ul class="list-disc list-inside text-md text-inherit">
+    <li>Built-in autoscaling and bottomless storage</li>
+    <li>Compatible with standard Postgres drivers and ORMs</li>
+    <li>Branching support for isolated development environments</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>// Connect using pgx or database/sql
+connStr := os.Getenv("NEON_DATABASE_URL")
+db, err := sql.Open("postgres", connStr)
+if err != nil {
+  log.Fatal(err)
+}
+defer db.Close()
+</code></pre>
+  </div>
+</div>
+{{ end }}

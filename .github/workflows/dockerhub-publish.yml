@@ -1,9 +1,8 @@
 name: Publish Docker Image to Docker Hub
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -17,7 +16,20 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u mattmajestic --password-stdin
 
-      - name: Build and Push to Docker Hub
+      - name: Build and Push Go Application to DockerHub
         run: |
           docker build -t mattmajestic/majesticcoding:latest .
           docker push mattmajestic/majesticcoding:latest
+
+      - name: Build and Push Docker Image for Nginx RTMP
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.rtmp
+          tags: mattmajestic/majesticcoding-rtmp:latest
+          push: true
+
+      # Update the deployment with 
+      # - name: Deploy Nginx RTMP Server onto render.com
+      #   run: |
+      #     curl -X POST https://api.render.com/v1/services/your-rtmp-service-id/deploy

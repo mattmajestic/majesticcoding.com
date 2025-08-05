@@ -1,0 +1,36 @@
+{{ define "go-gin" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
+  <h2 class="text-2xl font-bold text-white mb-2">🍸 Go + Gin</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+  Build a performant and modular backend using the Gin framework.
+  </h2>
+  <ul class="list-disc list-inside text-lg">
+    <li>Gin is a web framework known to be lightweight & fast</li>
+    <li>We use Go structs, services & handlers to use in our route.go</li>
+    <li>This keeps the main.go file simple along with modular useful for error handling</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>router := gin.Default()
+func main() {
+	config.LoadEnv()
+	handlers.StartBroadcaster()
+
+	router := gin.Default()
+	router.SetTrustedProxies([]string{"127.0.0.1", "majesticcoding.com"})
+
+	handlers.SetupRoutes(router)
+
+	router.Run(":8080")
+}</code></pre>
+  </div>
+
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>router := gin.Default()
+router.GET("/api/stats/:provider", func(c *gin.Context) {
+    // Providers like YouTube, Twitch, Github.
+    provider := c.Param("provider")
+    c.JSON(200, gin.H{"message": "success", "provider": provider})
+})</code></pre>
+  </div>
+</div>
+{{ end }}

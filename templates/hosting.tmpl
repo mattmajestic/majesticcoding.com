@@ -1,0 +1,21 @@
+{{ define "hosting" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
+  <h2 class="text-2xl font-bold text-white mb-2">☁️ Hosted via GCP</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Deploy your app on Google Cloud Platform with robust infrastructure tools.
+  </h2>
+  <ul class="list-disc list-inside text-md">
+    <li>Dockerized apps deployed via Cloud Run or GKE</li>
+    <li>Integrated with GCP IAM, secrets, and logging for 3rd party integrations of Clerk, Neon, Turso, Github, Twitch & YouTube.</li>
+    <li>Scalable infrastructure with Terraform support to go across Clouds.</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>// Example Dockerfile
+FROM golang:1.22
+WORKDIR /app
+COPY . .
+RUN go build -o main .
+CMD ["./main"]</code></pre>
+  </div>
+</div>
+{{ end }}

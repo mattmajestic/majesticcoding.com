@@ -1,0 +1,24 @@
+
+{{ template "base" . }}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+  <div class="flex flex-row w-full min-h-screen">
+    <div class="w-4/5 flex justify-center items-center">
+      {{ template "stream" . }}
+    </div>
+
+    <div class="w-1/5 min-w-[320px] h-screen flex flex-col border-l border-gray-700 bg-gray-900">
+      {{ template "chat" . }}
+    </div>
+  </div>
+
+  {{template "footer_home" . }}
+
+  <script src="/static/components/theme.js"></script>
+  <script src="/static/components/ws.js"></script>
+  <script src="/static/components/auth.js"></script>
+
+</body>
+</html>

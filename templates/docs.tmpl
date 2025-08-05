@@ -1,0 +1,30 @@
+{{ template "base" . }}
+
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-950 text-gray-200 font-sans">
+  <div class="flex flex-col items-center justify-start min-h-screen px-4 py-14 space-y-4 max-w-4xl mx-auto">
+    
+    <header class="text-center">
+      <h1 class="text-3xl font-bold text-white mb-2">📚 Infrastructure Documentation</h1>
+      <p class="text-gray-400 text-xl font-bold">This application you are using is in Go. Here's the Fullstack architecture</p>
+    </header>
+
+    <nav class="flex flex-wrap justify-center gap-2 border-b border-gray-700 pb-2">
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="go-gin">🍸 Go + Gin</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="api">📖 Swagger</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="partials">🧩 UI</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="rtmp">🎥 Stream </button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="ws">💬 Chat</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="db">🛢️ Database</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" data-tab="hosting">☁️ Hosting</button>
+    </nav>
+
+    <section id="tab-content" class="w-full">
+      {{ template "go-gin" . }}
+    </section>
+
+    {{template "footer_home" . }}
+
+  <script src="/static/components/theme.js"></script>
+  <script src="/static/components/docs.js"></script>
+</html>

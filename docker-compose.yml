@@ -1,8 +1,31 @@
 
 services:
   majesticcoding:
-    # image: mattmajestic/majesticcoding:latest
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    volumes:
+      - stream_data:/static/stream
+
+  rtmp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.rtmp
+    ports:
+      - "1935:1935"
+      - "8081:8080" 
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - stream_data:/tmp/hls
+
+  # For local architecture diagrams
+  # excalidraw:
+  #     image: excalidraw/excalidraw:latest
+  #     ports:
+  #       - "8082:80"
+
+
+volumes:
+  stream_data:

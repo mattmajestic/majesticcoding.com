@@ -1,22 +1,34 @@
-<!-- templates/stream.tmpl -->
-<!DOCTYPE html>
-<html lang="en">
+{{ template "base" . }}
 
-{{template "header.tmpl"}}
+{{ define "stream" }}
+<div class="px-4 py-4 w-full">
+  <h1 class="text-4xl font-bold text-center mb-2">🎥 Live Stream</h1>
 
-<body class="bg-gray-900 text-white">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="w-full max-w-5xl">
-            <div class="w-full bg-black">
-                <video id="videoPlayer" controls autoplay class="w-full h-full">
-                    <source src="http://your_server_ip/live/stream.m3u8" type="application/x-mpegURL">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        </div>
+  <div class="w-full max-w-[90%] mx-auto items-center">
+    <div class="flex justify-center items-center p-4">
+      <video
+        id="video"
+        controls
+        autoplay
+        playsinline
+        class="rounded-xl shadow-xl"
+        width="1280"
+        height="720"
+        style="max-width: 100%; height: auto;"
+      ></video>
     </div>
-    <script src="clerk.js"></script>
-    <script src="script.js"></script>
-</body>
 
-</html>
+    <div id="offline-message" class="hidden flex flex-col items-center justify-center text-red-500 text-lg text-center">
+      <p class="mb-8 text-xl">Currently Offline</p>
+      {{ template "socials" . }}
+    </div>
+  </div>
+
+  <script>
+  window.STREAM_NAME = "{{ .STREAMING_KEY }}";
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="/static/components/stream.js"></script>
+
+</div>
+{{ end }}

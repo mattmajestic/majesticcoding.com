@@ -1,0 +1,30 @@
+{{ define "cli" }}
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
+  <h2 class="text-2xl font-bold text-white mb-2">📦 CLI Tool (Cobra)</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Command-line interface built with Cobra for interacting with the backend via terminal.
+  </h2>
+  <ul class="list-disc list-inside text-md">
+    <li>Modular structure with subcommands</li>
+    <li>Easy to extend with new functionality</li>
+    <li>Great for internal tooling and developer utilities</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <pre class="text-green-400 text-sm"><code>// Run CLI help command
+$ mc help
+
+// Output
+A developer CLI for interacting with MajesticCoding services.
+
+Usage:
+  mc [command]
+
+Available Commands:
+  follow     Subscribe/Follow on Twitch, YouTube, Github
+  stats      Get stats for providers like YouTube, Twitch, Github
+  version    Print the CLI version
+  help       Help about any command
+</code></pre>
+  </div>
+</div>
+{{ end }}

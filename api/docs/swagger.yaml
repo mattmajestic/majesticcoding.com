@@ -1,0 +1,80 @@
+basePath: /api
+definitions:
+  models.Message:
+    properties:
+      content:
+        type: string
+      timestamp:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Go API for Full Stack Application
+  title: Majestic Coding API
+  version: "1.0"
+paths:
+  /chat:
+    get:
+      description: Returns all chat messages
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Message'
+            type: array
+      summary: Get chat messages
+      tags:
+      - Chat
+  /metrics:
+    get:
+      description: Returns the current metrics status
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Metrics Status
+      tags:
+      - Metrics
+  /stats/{provider}:
+    get:
+      description: Returns stats for the given provider (youtube, github, twitch,
+        leetcode)
+      parameters:
+      - description: Stats Provider
+        in: path
+        name: provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get stats from a provider
+      tags:
+      - Stats
+  /stream/status:
+    get:
+      description: Returns whether the stream is currently active
+      responses:
+        "200":
+          description: true or false
+          schema:
+            type: string
+      summary: Stream Status
+      tags:
+      - Stream
+swagger: "2.0"

@@ -1,0 +1,120 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Go API for Full Stack Application",
+        "title": "Majestic Coding API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/chat": {
+            "get": {
+                "description": "Returns all chat messages",
+                "tags": [
+                    "Chat"
+                ],
+                "summary": "Get chat messages",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Message"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "get": {
+                "description": "Returns the current metrics status",
+                "tags": [
+                    "Metrics"
+                ],
+                "summary": "Metrics Status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/{provider}": {
+            "get": {
+                "description": "Returns stats for the given provider (youtube, github, twitch, leetcode)",
+                "tags": [
+                    "Stats"
+                ],
+                "summary": "Get stats from a provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stats Provider",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stream/status": {
+            "get": {
+                "description": "Returns whether the stream is currently active",
+                "tags": [
+                    "Stream"
+                ],
+                "summary": "Stream Status",
+                "responses": {
+                    "200": {
+                        "description": "true or false",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

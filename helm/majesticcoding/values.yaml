@@ -1,0 +1,11 @@
+majesticcoding:
+  image: mattmajestic/majesticcoding:latest
+  port: 8080
+
+rtmp:
+  image: mattmajestic/rtmp-server:latest
+  ports:
+    rtmp: 1935
+    hls: 8081
+
+sharedVolume: emptyDir
