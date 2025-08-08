@@ -26,6 +26,6 @@ func Connect() {
 		log.Fatalf("Error: Database ping failed: %v", err)
 	}
 
-	log.Println("Connected to Neon Postgres!")
+	log.Println("Connected to DB...")
 	Database = db
 }

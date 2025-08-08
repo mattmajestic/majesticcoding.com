@@ -5,21 +5,23 @@
 <body>
     <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
         <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding Logo" class="w-48 h-48 mb-4 glowing-effect" />
-        
+         
         <div class="mb-4 space-y-2">
             {{ template "socials" . }}
         </div>
 
         <div class="flex items-center space-x-2">
-          <div class="relative group">
-            <a href="/docs" class="custom-button glowing-effect">
-            <span class="tooltip-text">Learn about this Infrastructure in Go</span> 
-              <i class="fas fa-book"></i> Documentation
-            </a>
-          </div>
+          {{ template "live-btn" . }}
+        </div>
+        <div class="flex items-center space-x-2">
+          {{ template "dash-btn" . }}
         </div>
 
-        {{ template "live-btn" . }}
+        <div class="grid grid-cols-2 gap-2">
+          {{ template "docs-btn" . }}
+          {{ template "about-btn" . }}
+        </div>
+
     </div>
 
     {{ template "stats" . }}

@@ -6,29 +6,9 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "https://majesticcoding.com",
+    "host": "majesticcoding.com",
     "basePath": "/api",
     "paths": {
-        "/chat": {
-            "get": {
-                "description": "Returns all chat messages",
-                "tags": [
-                    "Chat"
-                ],
-                "summary": "Get chat messages",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Message"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/metrics": {
             "get": {
                 "description": "Returns the current metrics status",
@@ -97,22 +77,6 @@
                             "type": "string"
                         }
                     }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "models.Message": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         }

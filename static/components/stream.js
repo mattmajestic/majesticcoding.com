@@ -1,9 +1,12 @@
+// Live Stream Stream Player
+
 const video = document.getElementById("video");
 const offline = document.getElementById("offline-message");
 
 const streamName = window.STREAMING_KEY || "test123";
 const streamSrc = `http://localhost:8081/${streamName}.m3u8`;
 
+// Hidden if Offline
 function showOffline() {
   offline.classList.remove("hidden");
   video.classList.add("hidden");

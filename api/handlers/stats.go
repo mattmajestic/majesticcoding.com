@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"majesticcoding.com/api/models"
 	"majesticcoding.com/api/services"
 )
 
@@ -71,12 +70,23 @@ func getTwitchStats(c *gin.Context) {
 }
 
 // Dummy Leetcode handler
+// func getLeetCodeStats(c *gin.Context) {
+// 	dummy := models.LeetCodeStats{
+// 		Username:     "mattmajestic",
+// 		MainLanguage: "Python & Go",
+// 		SolvedCount:  355,
+// 		Ranking:      285162,
+// 	}
+// 	c.JSON(http.StatusOK, dummy)
+// }
+
 func getLeetCodeStats(c *gin.Context) {
-	dummy := models.LeetCodeStats{
-		Username:     "mattmajestic",
-		MainLanguage: "Python & Go",
-		SolvedCount:  355,
-		Ranking:      285162,
+	username := "mattmajestic"
+
+	stats, err := services.FetchLeetCodeStats(username)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
 	}
-	c.JSON(http.StatusOK, dummy)
+	c.JSON(http.StatusOK, stats)
 }

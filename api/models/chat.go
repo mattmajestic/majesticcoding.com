@@ -7,4 +7,5 @@ type Message struct {
 	Username    string
 	Timestamp   time.Time
 	DisplayTime string
+	IsAI        bool
 }

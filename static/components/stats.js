@@ -1,40 +1,48 @@
+// Stats Modal from API Data 
+// of YouTube, Twitch Github & Leetcode
+
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".stats-button");
-  const loader = document.getElementById("stats-loader");
 
   buttons.forEach(button => {
     button.addEventListener("click", async () => {
       const provider = button.getAttribute("data-provider");
-      if (!provider || !loader) return;
+      if (!provider) return;
 
-      loader.classList.remove("hidden");
+      showModalShell(provider); // Show modal immediately with "Loading..."
 
       try {
         const res = await fetch(`/api/stats/${provider}`);
         const data = await res.json();
-        loader.classList.add("hidden");
-        openModal(provider, data);
+        populateModalContent(data); // Fill in once loaded
       } catch (err) {
-        loader.classList.add("hidden");
-        openModal("Error", { message: "Failed to load stats." });
+        populateModalContent({ error: "Failed to load stats." });
       }
     });
   });
 });
 
-function openModal(title, data) {
+function showModalShell(title) {
   document.getElementById("modal-title").textContent =
     `${title.charAt(0).toUpperCase() + title.slice(1)} Stats via API`;
 
+  document.getElementById("stats-content").innerHTML = `
+    <div class="flex items-center justify-center py-8 gap-3">
+      <i class="fas fa-spinner fa-spin text-3xl text-green-400"></i>
+      <span class="text-xl text-green-300 font-semibold">Querying API...</span>
+    </div>
+  `;
+
+  document.getElementById("stats-modal").classList.remove("hidden");
+}
+
+function populateModalContent(data) {
   const content = Object.entries(data)
     .map(([k, v]) => {
       let formattedValue = v;
-
-      // Try formatting if it's a number or a string that looks like a number
       if (!isNaN(v)) {
         formattedValue = Number(v).toLocaleString();
       }
-
       return `
         <div class="stat-box glowing-effect">
           <div class="stat-key">${k}</div>
@@ -45,9 +53,7 @@ function openModal(title, data) {
     .join("");
 
   document.getElementById("stats-content").innerHTML = content;
-  document.getElementById("stats-modal").classList.remove("hidden");
 }
-
 
 function closeModal() {
   document.getElementById("stats-modal").classList.add("hidden");

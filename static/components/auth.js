@@ -1,19 +1,25 @@
-export async function login(containerId) {
-  try {
-    await Clerk.load();
-    const container = document.getElementById(containerId);
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!window.Clerk || !window.Clerk.CLERK_PUBLISHABLE_KEY) {
+    console.error("Clerk or publishableKey missing");
+    return;
+  }
 
-    if (!container) {
-      console.error(`❌ Element with ID '${containerId}' not found.`);
+  await window.Clerk.load();
+
+  // Wait for Clerk to be ready
+  window.Clerk.addListener(({ user }) => {
+    if (!user) {
+      console.error("No Clerk user found");
       return;
     }
 
-    Clerk.mountSignIn(container);
-  } catch (err) {
-    console.error("❌ Clerk login failed:", err);
-  }
-}
+    const sessionData = {
+      id: user.id,
+      email: user.primaryEmailAddress?.emailAddress || "",
+      username: user.username || user.firstName || "anon",
+    };
 
-export function logout(redirectUrl = "/login") {
-  Clerk.signOut({ redirectUrl });
-}
+    // Use sessionData as needed
+    console.log("User:", sessionData);
+  });
+});

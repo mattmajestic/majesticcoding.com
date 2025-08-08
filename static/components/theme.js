@@ -1,4 +1,6 @@
 
+// Light/Dark Theme Toggle
+
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   const toggleBtn = document.getElementById('theme-toggle');
@@ -28,4 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
       applyTheme(!isDark);
     });
   }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const trail = document.createElement('div');
+  trail.className = 'cursor-trail glowing-effect';
+  document.body.appendChild(trail);
+
+  document.addEventListener('mousemove', (e) => {
+    // Center the circle at the pointer
+    trail.style.left = e.clientX + 'px';
+    trail.style.top = e.clientY + 'px';
+  });
 });

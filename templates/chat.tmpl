@@ -1,27 +1,66 @@
 {{ define "chat" }}
 <div class="relative w-full">
-  <!-- Chat Toggle Button (Hamburger) -->
+
+  <!-- Chat Toggle Button -->
   <button id="chat-toggle"
           class="absolute top-2 left-2 z-10 p-1 bg-gray-800 rounded text-white focus:outline-none">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
+    <i id="eye-open" class="fas fa-eye fa-1x"></i>
+    <i id="eye-closed" class="fas fa-eye-slash fa-1x hidden"></i>
+    <span class="sr-only">Show/Hide Chat</span>
   </button>
+
+  <!-- Chat Hidden Message -->
+  <div id="chat-hidden-msg" class="hidden text-white text-lg p-4 text-center">
+    💬 Chat is hidden
+  </div>
 
   <!-- Chat Widget Container -->
   <div id="chat-widget"
-       class="ml-10 flex flex-col h-[400px] w-[300px] border rounded bg-gray-900 text-gray-200 shadow-lg transition-all duration-300 ease-in-out overflow-hidden">
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-2 text-md font-mono space-y-2"></div>
+     class="flex flex-col h-[600px] w-[300px] bg-[#04141d] overflow-hidden">
 
-    <form id="chat-form" class="flex p-2 border-t border-gray-700">
-      <input id="chat-input" type="text"
-             class="flex-1 px-2 py-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
-             placeholder="Type a message..." autocomplete="off" />
-      <button type="submit"
-              class="ml-2 px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition">Send</button>
-    </form>
+  <!-- Top header -->
+  <div class="flex flex-col p-2">
+    <span class="font-bold text-blue-400 text-center text-2xl">💬 Live Chat</span>
+    <span class="text-md text-white text-center">Chats delete after 1 Hour 🕓</span>
   </div>
+
+  <!-- Scrollable chat area -->
+  <div id="chat-messages"
+     class="flex-1 min-h-0 max-h-[500px] overflow-y-auto p-2 text-md font-mono space-y-2">
+  </div>
+
 </div>
-<script src="/static/components/chat.js"></script>
+
+
+    <!-- Chat Form -->
+    <form id="chat-form"
+          class="flex items-center p-2 border-t border-gray-700 shrink-0">
+      <textarea id="chat-input"
+        class="flex-1 px-2 py-1.5 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500 resize-none"
+        placeholder="Type a message..." autocomplete="off" rows="1.5"></textarea>
+      <button type="button"
+              id="insert-ai"
+              class="ml-2 px-4 py-1 text-xl font-bold glowing-effect text-gray-900 bg-green-300 rounded transition flex items-center justify-center"
+              title="Ask !ai">
+        AI
+      </button>
+
+      <button type="submit"
+              class="ml-2 px-4 py-1 rounded bg-light-blue text-white transition flex items-center justify-center"
+              title="Send Chat">
+        <i class="fas fa-paper-plane text-xl"></i>
+      </button>
+    </form>
+
+  {{ template "footer_chat" . }}
+  <script src="/static/components/chat.js"></script>
+  <script src="/static/components/ws.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <script>
+    window.Clerk = window.Clerk || {};
+    window.Clerk.publishableKey = "{{ .CLERK_PUBLISHABLE_KEY }}";
+  </script>
+  
+  <script src="/static/components/auth.js"></script>
+</div>
 {{ end }}

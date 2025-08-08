@@ -1,20 +1,33 @@
 {{ define "partials" }}
 <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
-  <h2 class="text-2xl font-bold text-white mb-2">🧩 Partial Templs</h2>
-  <h2 class="text-xl font-bold mb-2 text-blue-300">
-    Use HTMX to send AJAX requests and update parts of your page without writing JS.
+  <h2 class="text-2xl font-bold text-white mb-2">🧩 Using Go Templates with <code>{{"{{ define }}"}}</code> & <code>{{"{{ template }}"}}</code></h2>
+  <h2 class="text-xl  mb-2 text-blue-300">
+    In Go’s html/template system, you can compose pages from smaller parts using <code>define</code> and <code>template</code> blocks.  Here's an example of rendering a page using reusable sections like <strong>header</strong>, <strong>body</strong>, and <strong>footer</strong>.
   </h2>
-  <ul class="list-disc list-inside text-md">
-    <li>Progressive enhancement: works even without JS</li>
-    <li>Use <code>hx-get</code>, <code>hx-post</code>, etc. for interaction</li>
-    <li>Trigger server-side template rendering for partial updates</li>
-  </ul>
-  <div class="mt-4 bg-gray-900 p-3 rounded">
-    <pre class="text-green-400 text-sm"><code>&lt;button hx-get="/api/stats/youtube" hx-target="#result"&gt;
-  Get YouTune Stats from /api/stats/youtube route
-&lt;/button&gt;
 
-&lt;div id="result"&gt;&lt;/div&gt;</code></pre>
+  <h3 class="text-lg text-white font-semibold mb-2">📄 Template Composition Example</h3>
+  <div class="text-green-400 bg-gray-900 text-sm p-4 rounded overflow-x-auto">
+    <pre><code>{{`{{ define "home" }}
+  {{ template "base" . }}
+{{ end }}`}}
+
+{{`{{ define "base" }}
+  {{ template "home_body" . }}
+  {{ template "home_footer" . }}
+{{ end }}`}}
+
+{{`{{ define "home_body" }}
+  {{ template "partials" . }}
+{{ end }}`}}</code></pre>
   </div>
+
+  <h2 class="text-lg text-white mb-2">
+    In this structure:
+    <ul class="list-disc list-inside text-md">
+      <li><code>home</code> is the entry point rendered by the router</li>
+      <li><code>base</code> controls layout and includes sub-templates</li>
+      <li><code>home_body</code> includes <code>partials</code>, which is this template</li>
+    </ul>
+  </h2>
 </div>
 {{ end }}

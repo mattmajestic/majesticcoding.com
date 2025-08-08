@@ -2,61 +2,20 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<body class="bg-gray-900 text-white">
-  <div class="flex flex-col items-center justify-center min-h-screen space-y-4 p-4 w-full">
-
-    {{ template "theme" . }}
+<body>
+    <div class="container mx-auto p-4">
+    <h1 class="text-4xl font-bold mb-16">📊 Dashboard</h1>
   
-    <h1 class="text-2xl font-bold">Infrx Diagramer</h1>
+    <div class="flex flex-row items-start gap-8 mt-4">
+      {{ template "dash-side" . }}
 
-    <!-- Toolbar -->
-    <div class="bg-gray-700 p-4 rounded w-full max-w-md mt-4">
-      <h2 class="text-xl font-semibold mb-4">Get Started</h2>
-      <form id="node-form" class="space-y-4">
-        <input
-          type="text"
-          id="node-id"
-          placeholder="Project Name"
-          class="w-full p-2 rounded text-black"
-        />
-
-        <fieldset class="space-y-2">
-          <legend class="text-sm font-medium text-white mb-1">Cloud Provider</legend>
-          <div class="flex flex-wrap gap-4">
-            <label class="flex items-center space-x-2">
-              <input type="radio" name="cloud" value="agnostic" class="accent-blue-500" checked />
-              <span>Cloud Agnostic</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="radio" name="cloud" value="aws" class="accent-yellow-500" />
-              <span>AWS</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="radio" name="cloud" value="gcp" class="accent-green-500" />
-              <span>GCP</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="radio" name="cloud" value="azure" class="accent-purple-500" />
-              <span>Azure</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <button
-          type="submit"
-          class="bg-blue-500 w-full p-2 rounded hover:bg-blue-400 text-white font-medium"
-        >
-          Create Diagram
-        </button>
-      </form>
+      <!-- Metrics & Platform Metrics (60%) -->
+      {{ template "metrics" . }}
     </div>
-
-    <!-- Diagram Canvas -->
-    <div id="diagram-canvas" class="w-full max-w-4xl h-[600px] bg-gray-800 rounded border border-gray-700 relative overflow-hidden mt-4"></div>
-
   </div>
-
+  {{template "footer_home" . }}
+  
+  <script src="/static/components/dashboard.js"></script>
   <script src="/static/components/theme.js"></script>
-  <script src="/static/components/scenario.js"></script>
 </body>
 </html>

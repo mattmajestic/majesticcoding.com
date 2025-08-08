@@ -1,24 +1,21 @@
-
 {{ template "base" . }}
 <!DOCTYPE html>
 <html lang="en">
 <body>
-
   <div class="flex flex-row w-full min-h-screen">
-    <div class="w-4/5 flex justify-center items-center">
+    <!-- Main Stream Area -->
+    <div class="w-3/4 flex flex-col items-center justify-center">
       {{ template "stream" . }}
+      {{ template "footer_stream" . }}
     </div>
-
-    <div class="w-1/5 min-w-[320px] h-screen flex flex-col border-l border-gray-700 bg-gray-900">
+    <!-- Chat Sidebar -->
+      <div class="w-1/4 pt-4 min-w-[320px] h-screen flex flex-col border-l border-gray-700 sidebar-dark">
       {{ template "chat" . }}
     </div>
   </div>
 
-  {{template "footer_home" . }}
-
   <script src="/static/components/theme.js"></script>
-  <script src="/static/components/ws.js"></script>
+  <script src="/static/components/clerk.js"></script>
   <script src="/static/components/auth.js"></script>
-
 </body>
 </html>

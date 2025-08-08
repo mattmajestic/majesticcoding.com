@@ -28,8 +28,3 @@ jobs:
           file: Dockerfile.rtmp
           tags: mattmajestic/majesticcoding-rtmp:latest
           push: true
-
-      # Update the deployment with 
-      # - name: Deploy Nginx RTMP Server onto render.com
-      #   run: |
-      #     curl -X POST https://api.render.com/v1/services/your-rtmp-service-id/deploy

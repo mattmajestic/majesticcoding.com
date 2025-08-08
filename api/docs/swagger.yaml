@@ -1,34 +1,11 @@
 basePath: /api
-definitions:
-  models.Message:
-    properties:
-      content:
-        type: string
-      timestamp:
-        type: string
-      username:
-        type: string
-    type: object
-host: https://majesticcoding.com
+host: majesticcoding.com
 info:
   contact: {}
   description: Go API for Full Stack Application
   title: Majestic Coding API
   version: "1.0"
 paths:
-  /chat:
-    get:
-      description: Returns all chat messages
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Message'
-            type: array
-      summary: Get chat messages
-      tags:
-      - Chat
   /metrics:
     get:
       description: Returns the current metrics status

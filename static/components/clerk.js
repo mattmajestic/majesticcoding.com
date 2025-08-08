@@ -1,6 +1,6 @@
-// clerk.js
+// Clerk Authentication for Login & Out
 
-// Add Clerk initialization script dynamically
+// Dynamically load Clerk script
 const clerkScript = document.createElement('script');
 clerkScript.async = true;
 clerkScript.crossOrigin = 'anonymous';
@@ -9,35 +9,27 @@ clerkScript.src = 'https://grand-falcon-32.clerk.accounts.dev/npm/@clerk/clerk-j
 clerkScript.type = 'text/javascript';
 document.head.appendChild(clerkScript);
 
-clerkScript.onload = function() {
+// On Clerk script load
+clerkScript.onload = function () {
   window.addEventListener("load", async function () {
     await Clerk.load();
 
-    if (Clerk.session) {
-      const token = await Clerk.session.getToken();
-      console.log("Clerk token:", token);
-      fetch("/api/auth/status", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-    }
+    const appDiv = document.getElementById("app");
+    if (!appDiv) return;
 
     if (Clerk.user) {
       const userButtonDiv = document.createElement("div");
       userButtonDiv.id = "user-button";
-      if (document.getElementById("app")) {
-        document.getElementById("app").appendChild(userButtonDiv);
-      }
+      appDiv.appendChild(userButtonDiv);
+
       Clerk.mountUserButton(userButtonDiv, {
         afterSignOutUrl: "http://localhost:8080"
       });
     } else {
       const signInDiv = document.createElement("div");
       signInDiv.id = "sign-in";
+      appDiv.appendChild(signInDiv);
 
-      // Get ?redirect= from URL or default to "/"
       const params = new URLSearchParams(window.location.search);
       const redirectPath = params.get("redirect") || "/";
 
@@ -45,22 +37,6 @@ clerkScript.onload = function() {
         redirectUrl: redirectPath,
         afterSignInUrl: redirectPath
       });
-    }
-
-    if (document.getElementById("header-content")) {
-      if (Clerk.user) {
-        document.getElementById("login-button").style.display = "none";
-        document.getElementById("header-content").innerHTML += `
-          <div id="user-button-header"></div>
-        `;
-
-        const userButtonHeaderDiv = document.getElementById("user-button-header");
-        Clerk.mountUserButton(userButtonHeaderDiv, {
-          afterSignOutUrl: "http://localhost:8080"
-        });
-      } else {
-        document.getElementById("login-button").style.display = "block";
-      }
     }
   });
 };

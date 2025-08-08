@@ -7,32 +7,28 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
+	"majesticcoding.com/api/models"
 )
 
-// MetricsHandler godoc
-// @Summary Metrics Status
-// @Description Returns the current metrics status
-// @Tags Metrics
-// @Success 200 {object} map[string]interface{}
-// @Router /metrics [get]
 func MetricsHandler(c *gin.Context) {
 	cpuPercent, _ := cpu.Percent(0, false)
 	vmStat, _ := mem.VirtualMemory()
 	swapStat, _ := mem.SwapMemory()
 
 	memFreePercent := 100 - vmStat.UsedPercent
-
 	uptimeSeconds, _ := host.Uptime()
 	uptimeHours := float64(uptimeSeconds) / 3600
 
-	c.JSON(http.StatusOK, gin.H{
-		"cpu_percent":       cpuPercent,
-		"mem_total":         vmStat.Total,
-		"mem_used":          vmStat.Used,
-		"mem_used_percent":  vmStat.UsedPercent,
-		"mem_free":          vmStat.Free,
-		"mem_free_percent":  memFreePercent,
-		"swap_used_percent": swapStat.UsedPercent,
-		"uptime_hours":      uptimeHours,
-	})
+	metrics := models.Metrics{
+		CPUPercent:      cpuPercent,
+		MemTotal:        vmStat.Total,
+		MemUsed:         vmStat.Used,
+		MemUsedPercent:  vmStat.UsedPercent,
+		MemFree:         vmStat.Free,
+		MemFreePercent:  memFreePercent,
+		SwapUsedPercent: swapStat.UsedPercent,
+		UptimeHours:     uptimeHours,
+	}
+
+	c.JSON(http.StatusOK, metrics)
 }

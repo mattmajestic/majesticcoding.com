@@ -149,11 +149,11 @@ footer {
 
 
 body.dark {
-    background-color: #75a7da;
+    background-color: #04141d;
 }
 
 body.light {
-    background-color: #04141d;
+    background-color: #75a7da;
 }
 
 body.dark h1 {
@@ -187,6 +187,13 @@ footer {
     bottom: 0;
     left: 0;
     width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+}
+
+.footer-stream {
     background-color: #333;
     color: #fff;
     text-align: center;
@@ -272,7 +279,8 @@ footer {
   border-radius: 8px;
   margin-bottom: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 1;
+  transition: opacity 0.5s, transform 0.3s, box-shadow 0.3s;
   width: 100%;
 }
 
@@ -297,6 +305,14 @@ footer {
   word-break: break-word;
 }
 
+#chat-messages {
+  max-height: 550px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+
 #chat-widget.collapsed {
   width: 40px !important;
   padding: 0 !important;
@@ -304,4 +320,88 @@ footer {
 
 #chat-widget.collapsed *:not(button) {
   display: none;
+}
+
+.sidebar-dark {
+  background-color: #04141d;
+}
+
+.bg-light-blue {
+  background-color: #75a7da !important;
+}
+
+.bg-light-blue:hover {
+  background-color: #1C3D63 !important; /* Tailwind's blue-800 */
+}
+
+.metrics-table {
+  background-color: #04141d;
+  color: #75a7da;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  border: 1px solid #1C3D63;
+}
+
+.metrics-table th,
+.metrics-table td {
+  border-bottom: 1px solid #1C3D63;
+  padding: 12px 16px;
+  font-size: 1rem;
+}
+
+.metrics-table th {
+  background-color: #1C3D63;
+  color: #75a7da;
+  font-weight: 600;
+}
+
+.metrics-table tr:last-child td {
+  border-bottom: none;
+}
+
+.metrics-table tr:hover {
+  background-color: #1C3D63;
+  color: #fff;
+  transition: background 0.2s, color 0.2s;
+}
+
+#provider-json {
+  background: #04141d;
+  color: #75a7da;
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  border: 1px solid #1C3D63;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.cursor-trail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 9999;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0.85;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: background 0.2s;
+}
+
+/* Dark mode cursor */
+body.light .cursor-trail {
+  background: radial-gradient(circle at 30% 30%, #75a7da 60%, #1C3D63 100%);
+  box-shadow: 0 0 8px 4px #75a7da66, 0 0 16px 8px #1C3D6333;
+}
+
+/* Light mode cursor */
+body.dark .cursor-trail {
+  background: radial-gradient(circle at 30% 30%, #1C3D63 60%, #75a7da 100%);
+  box-shadow: 0 0 8px 4px #1C3D6366, 0 0 16px 8px #75a7da33;
 }

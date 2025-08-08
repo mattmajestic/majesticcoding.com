@@ -1,8 +1,8 @@
 package models
 
 type LeetCodeStats struct {
-	Username     string `json:"username"`
-	SolvedCount  int    `json:"solved_count"`
-	Ranking      int    `json:"ranking"`
-	MainLanguage string `json:"main_language"`
+	Username    string `json:"username"`
+	Languages   string `json:"mainLanguages"`
+	SolvedCount int    `json:"totalSolved"`
+	Ranking     int    `json:"ranking"`
 }

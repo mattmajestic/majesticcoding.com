@@ -19,9 +19,9 @@ func StartMessageCleanup() {
 	go func() {
 		for {
 			time.Sleep(3 * time.Minute) // Check every 3 minute
-			cutoff := time.Now().Add(-30 * time.Minute)
+			cutoff := time.Now().Add(-60 * time.Minute)
 			Mu.Lock()
-			// Keep only messages newer than 30 minutes
+			// Keep only messages newer than 60 minutes
 			var filtered []models.Message
 			for _, msg := range Messages {
 				if msg.Timestamp.After(cutoff) {

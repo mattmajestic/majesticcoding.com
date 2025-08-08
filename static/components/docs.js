@@ -1,3 +1,5 @@
+// Docs Tab switching
+
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', async () => {
       const tab = button.dataset.tab;

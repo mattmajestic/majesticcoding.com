@@ -1,3 +1,5 @@
+// Live Button Color if Streaming
+
 async function updateLiveButton() {
   try {
     const res = await fetch("/api/stream/status");
@@ -18,7 +20,5 @@ async function updateLiveButton() {
   }
 }
 
-// Run once on load
 updateLiveButton();
-// Poll every 15 seconds
 setInterval(updateLiveButton, 15000);

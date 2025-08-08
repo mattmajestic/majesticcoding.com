@@ -15,26 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/chat": {
-            "get": {
-                "description": "Returns all chat messages",
-                "tags": [
-                    "Chat"
-                ],
-                "summary": "Get chat messages",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Message"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/metrics": {
             "get": {
                 "description": "Returns the current metrics status",
@@ -106,29 +86,13 @@ const docTemplate = `{
                 }
             }
         }
-    },
-    "definitions": {
-        "models.Message": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "https://majesticcoding.com",
+	Host:             "majesticcoding.com",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Majestic Coding API",

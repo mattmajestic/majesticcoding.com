@@ -1,0 +1,10 @@
+{{ define "socials_json" }}
+<section class="flex flex-col items-center w-full">
+  <h1 class="text-2xl font-semibold mb-4 text-center">📺 Socials Metrics</h1>
+  <div id="socials-spinner-container" class="flex items-center mb-4">
+    <span class="inline-block w-5 h-5 mr-2 animate-spin border-2 border-t-2 border-[#75a7da] border-t-transparent rounded-full"></span>
+    <span class="font-mono text-blue-300">Querying APIs...</span>
+  </div>
+  <pre id="provider-json" class="rounded p-4 text-md overflow-x-auto w-[90%] max-w-2xl"></pre>
+</section>
+{{ end }}

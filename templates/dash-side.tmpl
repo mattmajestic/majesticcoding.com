@@ -1,0 +1,31 @@
+{{ define "dash-side" }}
+
+<section class="w-1/5 min-w-[180px] flex flex-col">
+<h1 class="text-2xl font-semibold mb-4">🚦 Live Stream Status</h1>
+<div id="stream-status" class="px-4 py-2 bg-gray-800 text-white font-bold rounded text-center mb-6">Loading...</div>
+
+<h1 class="text-2xl font-semibold mb-4">👥 Chat User Count</h1>
+<div id="chat-users" class="px-4 py-2 bg-gray-800 text-white font-bold rounded text-center mb-6">Loading...</div>
+
+<div class="mt-2 flex justify-center">
+    {{ template "live-btn" . }}
+</div>
+<div class="mt-8">
+    <h1 class="text-3xl font-semibold mb-2">🔗 Git Info</h1>
+    <h1 id="git-message" class="px-4 py-2 font-mono font-semibold rounded flex">
+    <span id="git-message-spinner" class="inline-block w-5 h-5 mr-2 animate-spin border-2 border-t-2 border-[#75a7da] border-t-transparent rounded-full"></span>
+    Querying Github
+    </h1>
+    <h1 id="git-hash" class="px-4 w-full py-2 font-mono font-semibold rounded mb-2 flex">
+    <span id="git-hash-spinner" class="inline-block w-5 h-5 mr-2 animate-spin border-2 border-t-2 border-[#75a7da] border-t-transparent rounded-full"></span>
+    Querying Github
+    </h1>
+</div>
+
+<div class="mt-4 flex justify-center">
+    {{ template "docs-btn" . }}
+</div>
+
+</section>
+
+{{ end }}

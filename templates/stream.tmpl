@@ -2,7 +2,6 @@
 
 {{ define "stream" }}
 <div class="px-4 py-4 w-full">
-  <h1 class="text-4xl font-bold text-center mb-2">🎥 Live Stream</h1>
 
   <div class="w-full max-w-[90%] mx-auto items-center">
     <div class="flex justify-center items-center p-4">
@@ -19,8 +18,22 @@
     </div>
 
     <div id="offline-message" class="hidden flex flex-col items-center justify-center text-red-500 text-lg text-center">
-      <p class="mb-8 text-xl">Currently Offline</p>
+      <p class="mb-8 font-bold text-3xl">🚫 Stream Offline</p>
+      <p class="text-md">Feel free to check out the socials or docs</p>
+      <p class="text-md">in the meantime</p>
+      <p class="mb-8 text-xl">👇 </p>
       {{ template "socials" . }}
+      <div class="flex items-center mt-4 space-x-2">
+          <div class="relative group">
+            <a href="/docs" class="custom-button glowing-effect">
+            <span class="tooltip-text">Learn about this Infrastructure in Go</span> 
+              <i class="fas fa-book"></i> Documentation
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center mt-4 space-x-2">
+          {{ template "dash-btn" . }}
+        </div>
     </div>
   </div>
 

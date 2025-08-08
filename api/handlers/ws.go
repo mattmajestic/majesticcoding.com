@@ -69,3 +69,11 @@ func ChatWebSocket(c *gin.Context) {
 		Broadcast <- msg
 	}
 }
+
+func ChatUserCount(c *gin.Context) {
+	Mu.Lock()
+	count := len(Clients)
+	Mu.Unlock()
+
+	c.JSON(http.StatusOK, gin.H{"user_count": count})
+}

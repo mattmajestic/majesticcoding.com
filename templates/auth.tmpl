@@ -1,18 +1,16 @@
 
-
 {{ template "base" . }}
 <!DOCTYPE html>
 <html lang="en">
 <body>
 <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
-    <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding Logo" class="w-48 h-48 mb-4 glowing-effect" />
-    <h1 class="text-3xl font-bold text-white mb-2">Login</h1>
+    <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding Logo" class="w-36 h-36 mb-4 glowing-effect" />
     <div id="app"></div>
 </div>
-<script src="/static/components/clerk.js" defer></script>
 <script>
   window.CLERK_PUBLISHABLE_KEY = "{{ .CLERK_PUBLISHABLE_KEY }}";
 </script>
+<script src="/static/components/clerk.js" defer></script>
 <script src="/static/components/theme.js"></script>
 </body>
 
