@@ -1,8 +1,11 @@
 package models
 
 import (
-	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
 type Stream struct {
@@ -13,21 +16,23 @@ type Stream struct {
 }
 
 func NewStream(basePath, baseURL string) *Stream {
-	name := os.Getenv("STREAMING_KEY")
-	if name == "" {
-		name = "test123"
+	url := os.Getenv("AWS_STREAMING_URL")
+
+	client := http.Client{Timeout: 3 * time.Second}
+
+	isActive := false
+	if resp, err := client.Get(url); err == nil {
+		defer resp.Body.Close()
+		if resp.StatusCode == http.StatusOK {
+			if body, _ := io.ReadAll(resp.Body); strings.HasPrefix(string(body), "#EXTM3U") {
+				isActive = true
+			}
+		}
 	}
-	path := basePath + name + ".m3u8"
-	url := baseURL + name + ".m3u8"
-	isActive := true
-	if _, err := os.Stat(path); err == nil {
-		isActive = true
-	} else {
-		fmt.Println("Stream inactive. Reason:", err)
-	}
+
 	return &Stream{
-		Name:     name,
-		Path:     path,
+		Name:     "",
+		Path:     "",
 		URL:      url,
 		IsActive: isActive,
 	}

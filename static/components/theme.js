@@ -57,14 +57,11 @@ document.addEventListener('mousemove', (e) => {
   lastY = y;
 });
 
-function createTrailDot(x, y, age = 0, maxAge = 10) {
+function createTrailDot(x, y) {
   const dot = document.createElement('div');
   dot.className = 'cursor-trail';
   dot.style.left = `${x}px`;
   dot.style.top = `${y}px`;
-  // Fade older dots more
-  dot.style.opacity = `${1 - age / maxAge}`;
-  dot.style.transform += ` scale(${1 - age / (maxAge * 2)})`;
   document.body.appendChild(dot);
-  setTimeout(() => dot.remove(), 1500);
+  setTimeout(() => dot.remove(), 500); // Remove after fade
 }

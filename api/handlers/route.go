@@ -17,6 +17,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/docs", RenderTemplate("docs.tmpl"))
 	router.GET("/about", RenderTemplate("about.tmpl"))
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
+	router.GET("/certifications", RenderTemplate("certifications.tmpl"))
 	router.GET("/live/", StreamHandler)
 
 	// API routes
@@ -49,7 +50,7 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Dev (uncomment for development)
 	// router.POST("/api/chat", PostMessage)
-	// router.GET("/api/certification/:filename", ServeCertificationPDF())
+	router.GET("/api/certification/:filename", ServeCertificationPDF())
 
 	// Swagger docs
 	DocsHandler(router)

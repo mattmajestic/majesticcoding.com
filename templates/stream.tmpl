@@ -2,7 +2,6 @@
 
 {{ define "stream" }}
 <div class="px-4 py-4 w-full">
-
   <div class="w-full max-w-[90%] mx-auto items-center">
     <div class="flex justify-center items-center p-4">
       <video
@@ -16,7 +15,6 @@
         style="max-width: 100%; height: auto;"
       ></video>
     </div>
-
     <div id="offline-message" class="hidden flex flex-col items-center justify-center text-red-500 text-lg text-center">
       <p class="mb-8 font-bold text-3xl">🚫 Stream Offline</p>
       <p class="text-md">Feel free to check out the socials or docs</p>
@@ -28,10 +26,6 @@
       {{ template "dash-btn" . }}
     </div>
   </div>
-
-  <script>
-  window.STREAM_NAME = "{{ .STREAMING_KEY }}";
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="/static/components/stream.js"></script>
 

@@ -1,24 +1,28 @@
-// Live Button Color if Streaming
-
 async function updateLiveButton() {
   try {
-    const res = await fetch("/api/stream/status");
-    const isLive = await res.text();
+    const res = await fetch("/api/stream/status", { cache: "no-store" });
+    const text = await res.text();
+    const isLive = text.trim().toLowerCase() === "true";
 
     const btn = document.getElementById("live-btn");
     if (!btn) return;
 
-    if (isLive.trim() === "true") {
-      btn.classList.remove("bg-gray-700", "hover:bg-gray-600");
-      btn.classList.add("bg-red-600", "hover:bg-red-500");
-    } else {
-      btn.classList.remove("bg-red-600", "hover:bg-red-500");
-      btn.classList.add("bg-gray-700", "hover:bg-gray-600");
-    }
-  } catch (err) {
-    console.error("Failed to fetch stream status:", err);
+    // normalize: remove any existing bg utilities first
+    btn.classList.forEach(c => {
+      if (c.startsWith("bg-") || c.startsWith("hover:bg-")) btn.classList.remove(c);
+    });
+
+    btn.classList.add(
+      isLive ? "bg-red-600" : "bg-gray-800",
+      isLive ? "hover:bg-red-500" : "hover:bg-gray-600",
+      "text-gray-200","transition-colors"
+    );
+  } catch (e) {
+    console.error("status fetch failed", e);
   }
 }
 
-updateLiveButton();
-setInterval(updateLiveButton, 15000);
+document.addEventListener("DOMContentLoaded", () => {
+  updateLiveButton();
+  setInterval(updateLiveButton, 15000);
+});
