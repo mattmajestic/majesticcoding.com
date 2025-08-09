@@ -381,17 +381,20 @@ footer {
 
 .cursor-trail {
   position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  z-index: 9999;
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
   transform: translate(-50%, -50%);
-  will-change: transform;
-  transition: background 0.2s;
+  animation: fadeTrail 0.8s linear forwards;
+  filter: blur(1px);
+}
+
+@keyframes fadeTrail {
+  0% { opacity: 1; }
+  80% { opacity: 0.4; }
+  100% { opacity: 0; }
 }
 
 /* Dark mode cursor */

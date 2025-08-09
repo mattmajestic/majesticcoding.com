@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <div id="header-content" class="flex justify-center w-full space-x-4">
-        {{template "theme" . }}
+        {{ template "theme" . }}
         <a href="https://github.com/mattmajestic/majesticcoding.com/" 
         id="edit-page-button" 
         class="custom-button glowing-effect flex items-center space-x-2 font-bold text-md"
@@ -13,6 +13,7 @@
             <i class="fab fa-google"></i> 
             <span>Built with Go</span>
         </a>
+        {{ template "email-btn" . }}
     </div>
 </footer>
 {{ end }}

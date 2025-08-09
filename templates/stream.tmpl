@@ -23,17 +23,9 @@
       <p class="text-md">in the meantime</p>
       <p class="mb-8 text-xl">👇 </p>
       {{ template "socials" . }}
-      <div class="flex items-center mt-4 space-x-2">
-          <div class="relative group">
-            <a href="/docs" class="custom-button glowing-effect">
-            <span class="tooltip-text">Learn about this Infrastructure in Go</span> 
-              <i class="fas fa-book"></i> Documentation
-            </a>
-          </div>
-        </div>
-        <div class="flex items-center mt-4 space-x-2">
-          {{ template "dash-btn" . }}
-        </div>
+      <p class="mb-8"></p>
+      {{ template "docs-btn" . }}
+      {{ template "dash-btn" . }}
     </div>
   </div>
 

@@ -32,14 +32,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  const trail = document.createElement('div');
-  trail.className = 'cursor-trail glowing-effect';
-  document.body.appendChild(trail);
+let lastX, lastY;
 
-  document.addEventListener('mousemove', (e) => {
-    // Center the circle at the pointer
-    trail.style.left = e.clientX + 'px';
-    trail.style.top = e.clientY + 'px';
-  });
+document.addEventListener('mousemove', (e) => {
+  const x = e.clientX;
+  const y = e.clientY;
+
+  if (lastX !== undefined && lastY !== undefined) {
+    const dx = x - lastX;
+    const dy = y - lastY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const steps = Math.max(1, Math.floor(distance / 4)); // 4px gap between dots
+
+    for (let i = 1; i <= steps; i++) {
+      const trailX = lastX + (dx * i) / steps;
+      const trailY = lastY + (dy * i) / steps;
+      createTrailDot(trailX, trailY);
+    }
+  } else {
+    createTrailDot(x, y);
+  }
+
+  lastX = x;
+  lastY = y;
 });
+
+function createTrailDot(x, y, age = 0, maxAge = 10) {
+  const dot = document.createElement('div');
+  dot.className = 'cursor-trail';
+  dot.style.left = `${x}px`;
+  dot.style.top = `${y}px`;
+  // Fade older dots more
+  dot.style.opacity = `${1 - age / maxAge}`;
+  dot.style.transform += ` scale(${1 - age / (maxAge * 2)})`;
+  document.body.appendChild(dot);
+  setTimeout(() => dot.remove(), 1500);
+}
