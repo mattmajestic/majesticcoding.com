@@ -1,0 +1,30 @@
+{{ define "ai" }}
+
+<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
+  <h2 class="text-2xl font-bold text-white mb-2">🤖 AI-Powered Features</h2>
+  <h2 class="text-xl font-bold mb-2 text-blue-300">
+    Leverage advanced AI capabilities to enhance your application with intelligent features.
+  </h2>
+  <ul class="list-disc list-inside text-md mb-4">
+    <li>Integrate with popular AI services like OpenAI and Google AI for natural language processing and more.</li>
+    <li>Utilize pre-built AI models or train your own custom models to meet specific business needs.</li>
+    <li>Implement AI-driven analytics to gain insights from user behavior and application performance.</li>
+    <li>Enhance user experiences with personalized content and recommendations powered by AI.</li>
+  </ul>
+  <div class="mt-4 bg-gray-900 p-3 rounded">
+    <h3 class="font-bold text-blue-300 mb-2">Terraform: Provision AI Resources</h3>
+    <pre class="text-green-400 text-sm"><code># Terraform: AI Resources
+resource "google_ai_platform_model" "my_model" {
+  name = "my-model"
+  region = "us-central1"
+}
+
+resource "google_ai_platform_endpoint" "my_endpoint" {
+  name = "my-endpoint"
+  region = "us-central1"
+}
+</code></pre>
+  </div>
+</div>
+
+{{ end }}

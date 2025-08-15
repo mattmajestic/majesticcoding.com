@@ -8,3 +8,9 @@ document.querySelectorAll('.tab-btn').forEach(button => {
       document.getElementById('tab-content').innerHTML = html;
     });
   });
+
+function showTab(tab) {
+  document.getElementById('tab-gcp').classList.add('hidden');
+  document.getElementById('tab-aws').classList.add('hidden');
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+}

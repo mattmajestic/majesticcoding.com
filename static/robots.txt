@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://majesticcoding.com/static/sitemap.xml
+
+Disallow: /api/
+Disallow: /ws/
+Allow: /static/

@@ -16,7 +16,7 @@
       ></video>
     </div>
     <div id="offline-message" class="hidden flex flex-col items-center justify-center text-red-500 text-lg text-center">
-      <p class="mb-8 font-bold text-3xl">🚫 Stream Offline</p>
+      <h1 class="mb-8 font-bold text-3xl">🚫 Stream Offline</h1>
       <p class="text-md">Feel free to check out the socials or docs</p>
       <p class="text-md">in the meantime</p>
       <p class="mb-8 text-xl">👇 </p>
@@ -25,6 +25,14 @@
       {{ template "docs-btn" . }}
       {{ template "dash-btn" . }}
     </div>
+    <h1 class="mt-10 flex text-xs font-italics items-center justify-center gap-4">
+      <span class="text-lg font-bold">Powered by</span>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+             alt="AWS Logo"
+             class="h-8 w-auto inline-block"
+             style="background: transparent;" />
+        <span class="text-lg font-bold">IVS</span>
+      </h1>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="/static/components/stream.js"></script>

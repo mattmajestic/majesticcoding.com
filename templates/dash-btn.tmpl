@@ -1,7 +1,11 @@
 {{ define "dash-btn" }}
-<a href="/dashboard" id="dash-btn" class="custom-button flex items-center space-x-2">
-  <span class="tooltip-text">View App Dashboard</span>
-  <i class="fas fa-tachometer-alt"></i>
-  <span>Dashboard</span>
-</a>
+<div class="relative group inline-block font-bold">
+  <a href="/dashboard" id="dash-btn" class="custom-button flex items-center space-x-2">
+    <i class="fas fa-tachometer-alt"></i>
+    Dashboard
+    <span class="tooltip-text absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 rounded bg-gray-700 text-white text-xs opacity-0 group-hover:opacity-100 transition z-10 whitespace-nowrap">
+      App Metrics
+    </span>
+  </a>
+</div>
 {{ end }}

@@ -6,20 +6,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await window.Clerk.load();
 
-  // Wait for Clerk to be ready
-  window.Clerk.addListener(({ user }) => {
+  window.Clerk.addListener(async ({ user }) => {
     if (!user) {
       console.error("No Clerk user found");
       return;
     }
 
-    const sessionData = {
-      id: user.id,
-      email: user.primaryEmailAddress?.emailAddress || "",
-      username: user.username || user.firstName || "anon",
-    };
+    // Get Clerk session token
+    const token = await window.Clerk.session.getToken();
 
-    // Use sessionData as needed
-    console.log("User:", sessionData);
+    // Send token to Go backend
+    fetch("/api/user/status", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Backend response:", data);
+      // Use backend user info as needed
+    })
+    .catch(err => console.error("Auth check failed:", err));
   });
 });

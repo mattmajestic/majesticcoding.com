@@ -1,7 +1,11 @@
 {{ define "live-btn" }}
-<div class="relative group inline-block">
-  <a id="live-btn" href="/live" class="w-[14rem] flex justify-center items-center gap-2 px-4 py-2 rounded bg-gray-700 text-gray-200 hover:bg-gray-600 font-bold text-lg transition-colors">
-    <i class="fas fa-broadcast-tower font-bold text-xl"></i><span>Live Stream & Chat</span>
+<div class="relative inline-block">
+  <a id="live-btn" href="/live" class="group w-[14rem] flex justify-center items-center gap-2 px-4 py-2 rounded bg-gray-700 text-gray-200 hover:bg-gray-600 font-bold text-lg transition-colors">
+    <i class="fas fa-broadcast-tower font-bold text-xl"></i>
+    Live Stream & Chat
+    <span id="live-tooltip" class="tooltip-text absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 rounded bg-gray-700 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
+      Stream Status
+    </span>
   </a>
 </div>
 <script src="/static/components/live.js"></script>

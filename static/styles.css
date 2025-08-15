@@ -43,7 +43,6 @@
     transform: translateX(-50%) scale(1);
 }
 
-
 .theme-toggle-icon {
     font-size: 24px;
 }
@@ -53,21 +52,20 @@
 
 
 body.dark {
-    background-color: #75a7da;
-}
-
-body.light {
     background-color: #04141d;
 }
 
-body.dark h1 {
-  color: #04141d;
+body.light {
+    background-color: #75a7da;
 }
 
-body.light h1 {
+body.dark h1 {
   color: #75a7da;
 }
 
+body.light h1 {
+  color: #04141d;
+}
 body.dark footer {
     background-color: #04141d;
     color: #ffffff;
@@ -79,11 +77,11 @@ body.light footer {
 }
 
 body.dark p {
-  color: #04141d;
+  color: #75a7da;
 }
 
 body.light p {
-  color: #75a7da;
+  color: #04141d;
 }
 
 footer {
@@ -139,58 +137,11 @@ footer {
     transform: translateX(-50%) scale(1);
 }
 
-
 .theme-toggle-icon {
     font-size: 24px;
 }
 .home-icon {
   font-size: 24px;
-}
-
-
-body.dark {
-    background-color: #04141d;
-}
-
-body.light {
-    background-color: #75a7da;
-}
-
-body.dark h1 {
-  color: #04141d;
-}
-
-body.light h1 {
-  color: #75a7da;
-}
-
-body.dark footer {
-    background-color: #04141d;
-    color: #ffffff;
-}
-
-body.light footer {
-    background-color: #75a7da;
-    color: #000000;
-}
-
-body.dark p {
-  color: #1c6e9e;
-}
-
-body.light p {
-  color: #75a7da;
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 8px 0;
 }
 
 .footer-stream {
@@ -407,4 +358,147 @@ body.light .cursor-trail {
 body.dark .cursor-trail {
   background: radial-gradient(circle at 30% 30%, #1C3D63 60%, #75a7da 100%);
   box-shadow: 0 0 8px 4px #1C3D6366, 0 0 16px 8px #75a7da33;
+}
+
+.dark-border-box {
+  background-color: #101a24;         /* slightly darker than #04141d */
+  border: 2px solid #1C3D63;         /* dark blue border */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(28, 61, 99, 0.15);
+  padding: 1.5rem;
+  transition: background 0.3s, border 0.3s;
+}
+
+body.dark .dark-border-box {
+  background-color: #162534;        
+  border-color: #75a7da;   
+  color: #75a7da;       
+}
+
+body.light .dark-border-box {
+  background-color: #75a7da66;
+  border-color: #396b9c;
+  color: #75a7da;
+}
+
+.collapsible {
+  transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  overflow: hidden;
+  max-height: 2000px; /* large enough for your content */
+  opacity: 1;
+}
+.collapsible.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 !important;
+}
+
+/* Simple white card */
+.simple-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(28, 61, 99, 0.10);
+  padding: 0.5rem 1rem;   /* reduced vertical padding */
+  border: 2px solid #e5e7eb;
+  color: #04141d;
+  transition: box-shadow 0.2s, border 0.2s;
+  min-height: 60px;        /* optional: set a minimum height */
+}
+/* Tooltip or overlay for details (dark, always same) */
+.card-tooltip {
+  background: #101a24;
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2px 12px #75a7da44;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.3s;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 18rem;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.group:hover .card-tooltip {
+  opacity: 1;
+}
+
+/* Optional: dark mode for card text (still dark text on white card) */
+body.dark .simple-card {
+  color: #75a7da;
+  border-color: #1C3D63;
+}
+
+/* Optional: light mode for card text */
+body.light .simple-card {
+  color: #04141d;
+  border-color: #e5e7eb;
+}
+
+body.dark .simple-card p {
+  color: #000000;
+}
+
+body.light .simple-card p {
+  color: #000000;
+}
+
+body.dark .simple-card h3 {
+  color: #75a7da;
+}
+
+body.light .simple-card h3 {
+  color: #75a7da;
+}
+
+.project-title {
+  font-size: 1.25rem;
+  font-weight: semibold;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+body.dark .project-title {
+  color: #fff;
+}
+
+body.light .project-title {
+  color: #04141d;
+}
+
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  box-shadow: #000000;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  border-radius: 36px;
+  margin-bottom: 1.5rem;
+}
+
+.marquee__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2.5rem;
+  white-space: nowrap;
+  will-change: transform;
+  height: 64px;
+}
+
+.marquee__content .item img {
+  height: 48px;
+  width: auto;
+  vertical-align: middle;
+  transition: transform 0.2s;
+}
+
+.marquee__content .item:hover img {
+  transform: scale(1.08);
 }

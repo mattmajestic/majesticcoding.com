@@ -1,6 +1,6 @@
 {{ define "metrics" }}
 <section class="flex flex-row gap-8 w-full">
-  <div class="flex-1 flex flex-col items-center rounded-xl  ">
+  <div class="flex-1 flex flex-col items-center rounded-xl dark-border-box">
     <h1 class="text-2xl font-bold mb-6">🧑‍💻 System Metrics</h1>
     <div id="metrics-spinner-container" class="flex items-center text-bold mb-4 text-md">
       <span class="inline-block w-5 h-5 mr-2 animate-spin border-2 border-t-2 border-t-transparent rounded-full"></span>
@@ -17,7 +17,7 @@
       </tbody>
     </table>
   </div>
-  <div class="flex-1 flex flex-col items-center">
+  <div class="flex-1 flex flex-col items-center dark-border-box">
     {{ template "socials_json" . }}
   </div>
 </section>

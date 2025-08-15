@@ -10,6 +10,11 @@ func SetupRoutes(router *gin.Engine) {
 	// Serve static files and templates
 	router.Static("/static", "./static")
 	router.LoadHTMLGlob("templates/*")
+	
+	// Handle favicon.ico requests
+	router.GET("/favicon.ico", func(c *gin.Context) {
+		c.Redirect(301, "https://avatars.githubusercontent.com/u/33904170?v=4")
+	})
 
 	// Render routes
 	router.GET("/", RenderTemplate("index.tmpl"))

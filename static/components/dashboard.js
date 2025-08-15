@@ -67,3 +67,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('git-message').textContent = 'Error loading commit message';
         }
     });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('metrics-collapse-btn');
+  const content = document.getElementById('metrics-content');
+  const icon = document.getElementById('metrics-collapse-icon');
+  if (btn && content && icon) {
+    btn.addEventListener('click', () => {
+      content.classList.toggle('hidden');
+      icon.classList.toggle('fa-chevron-up');
+      icon.classList.toggle('fa-chevron-down');
+    });
+  }
+});

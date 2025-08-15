@@ -9,4 +9,5 @@ var DocsList = []string{
 	"api",
 	"rtmp",
 	"hosting",
+	"ai",
 }

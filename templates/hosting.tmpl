@@ -1,21 +1,69 @@
 {{ define "hosting" }}
 <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
-  <h2 class="text-2xl font-bold text-white mb-2">☁️ Hosted via GCP</h2>
+  <h2 class="text-2xl font-bold text-white mb-2">☁️ Multi-Cloud Hosting</h2>
   <h2 class="text-xl font-bold mb-2 text-blue-300">
-    Deploy your app on Google Cloud Platform with robust infrastructure tools.
+    This platform uses both Google Cloud and AWS for scalable, flexible, and affordable infrastructure.
   </h2>
-  <ul class="list-disc list-inside text-md">
-    <li>Dockerized apps deployed via Cloud Run or GKE</li>
-    <li>Integrated with GCP IAM, secrets, and logging for 3rd party integrations of Clerk, Neon, Turso, Github, Twitch & YouTube.</li>
-    <li>Scalable infrastructure with Terraform support to go across Clouds.</li>
+  <ul class="list-disc list-inside text-md mb-4">
+    <li>
+      <span class="font-bold text-white">Google Cloud Platform:</span>
+      The Go application is deployed on Cloud Run using Terraform for automated infrastructure management.
+    </li>
+    <li>
+      <span class="font-bold text-white">AWS IVS:</span>
+      Live streaming is powered by AWS IVS, leveraging Twitch’s backend for reliable, on-demand video.
+    </li>
+    <li>
+      <span class="font-bold text-white">Unified DevOps:</span>
+      Terraform is used to provision and manage resources across both clouds for a seamless multi-cloud workflow.
+    </li>
   </ul>
-  <div class="mt-4 bg-gray-900 p-3 rounded">
-    <pre class="text-green-400 text-sm"><code>// Example Dockerfile
-FROM golang:1.22
-WORKDIR /app
-COPY . .
-RUN go build -o main .
-CMD ["./main"]</code></pre>
+  <!-- Tabset for Terraform code -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2">
+      <button class="tab-btn px-4 py-2 text-blue-300 font-bold focus:outline-none" onclick="showTab('gcp')">Go App (GCP)</button>
+      <button class="tab-btn px-4 py-2 text-blue-300 font-bold focus:outline-none" onclick="showTab('aws')">Video Stream (AWS IVS)</button>
+    </div>
+    <div id="tab-gcp" class="tab-content bg-gray-900 p-3 rounded">
+      <pre class="text-green-400 text-sm"><code># Terraform: Deploy Go App to Cloud Run
+resource "google_cloud_run_service" "go_app" {
+  name     = "majestic-go-app"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/my-project/go-app:latest"
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+</code></pre>
+    </div>
+    <div id="tab-aws" class="tab-content bg-gray-900 p-3 rounded hidden">
+      <pre class="text-green-400 text-sm"><code># Terraform: AWS IVS Channel for Live Streaming
+resource "aws_ivs_channel" "live_stream" {
+  name        = "majestic-stream"
+  type        = "STANDARD"
+  latency_mode = "LOW"
+  recording_configuration_arn = aws_ivs_recording_configuration.recording.arn
+}
+
+resource "aws_ivs_recording_configuration" "recording" {
+  name = "majestic-recording"
+  destination_configuration {
+    s3 {
+      bucket_name = "my-ivs-recordings"
+    }
+  }
+}
+</code></pre>
+    </div>
   </div>
 </div>
 {{ end }}

@@ -4,11 +4,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Basic SEO -->
     <title>{{ block "title" . }}Majestic Coding{{ end }}</title>
+    <meta name="description" content="{{ block "description" . }}Full Stack Developer with 129K+ YouTube subscribers. Go, Python, JavaScript tutorials and live coding streams.{{ end }}" />
+    <meta name="keywords" content="full stack developer, golang, python, javascript, youtube coding, live streaming, programming tutorials" />
+    <meta name="author" content="Matt - Majestic Coding" />
+    
+    <!-- Social Media -->
+    <meta property="og:title" content="{{ block "og_title" . }}Majestic Coding{{ end }}" />
+    <meta property="og:description" content="{{ block "og_description" . }}Technical Consultant. Check out some YouTube tutorials.{{ end }}" />
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/33904170?v=4" />
+    <meta property="og:url" content="https://majesticcoding.com" />
+    
+    <!-- Favicon -->
     <link rel="icon" href="https://avatars.githubusercontent.com/u/33904170?v=4">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/styles.css" />
+    
+    <!-- Analytics -->
     <script src="/static/components/ga.js" async></script>
 </head>
 </html>
