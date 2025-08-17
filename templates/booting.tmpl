@@ -1,0 +1,14 @@
+{{ define "booting" }}
+<script>
+  if (!sessionStorage.getItem("booted")) {
+    document.write(`
+      <div id="booting-overlay" class="booting-overlay">
+        <h2>Booting...</h2>
+        <div class="booting-progress-bar">
+          <div id="booting-progress" class="booting-progress"></div>
+        </div>
+      </div>
+    `);
+  }
+</script>
+{{ end }}

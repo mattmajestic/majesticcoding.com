@@ -10,7 +10,7 @@ func SetupRoutes(router *gin.Engine) {
 	// Serve static files and templates
 	router.Static("/static", "./static")
 	router.LoadHTMLGlob("templates/*")
-	
+
 	// Handle favicon.ico requests
 	router.GET("/favicon.ico", func(c *gin.Context) {
 		c.Redirect(301, "https://avatars.githubusercontent.com/u/33904170?v=4")
@@ -24,6 +24,9 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
 	router.GET("/certifications", RenderTemplate("certifications.tmpl"))
 	router.GET("/live/", StreamHandler)
+
+	/// Widgets
+	router.GET("/widget/chat", RenderTemplate("chat-widget.tmpl"))
 
 	// API routes
 	/// Scenarios

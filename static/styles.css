@@ -502,3 +502,90 @@ body.light .project-title {
 .marquee__content .item:hover img {
   transform: scale(1.08);
 }
+
+.booting-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.booting-overlay h2 {
+  color: inherit;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.booting-progress-bar {
+  width: 300px;
+  height: 16px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.booting-progress {
+  height: 100%;
+  width: 0;
+  background: #75a7da;
+  transition: width 0.3s;
+}
+
+body.dark .booting-overlay {
+  background: rgba(4, 20, 29, 0.6);
+}
+
+body.light .booting-overlay {
+  background: rgba(117, 167, 218, 0.6);
+}
+
+body.dark .booting-overlay h2 {
+  color: #75a7da;
+}
+
+body.light .booting-overlay h2 {
+  color: #04141d;
+}
+
+body.dark .booting-progress-bar {
+  background: rgba(117,167,218,0.15);
+}
+
+body.light .booting-progress-bar {
+  background: rgba(4,20,29,0.15);
+}
+
+body.dark .booting-progress {
+  background: #75a7da;
+}
+
+body.light .booting-progress {
+  background: #04141d;
+}
+
+
+/* Chat Widget (scoped) */
+.cw-widget {
+  margin: 0;
+  background: #04141d;               /* dark blue */
+  color: #fff;                        /* white text */
+  min-height: 100vh;
+  font: 22px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Scrollable message area */
+.cw-log {
+  padding: 10px 12px;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* Message row + parts */
+.cw-msg  { margin: 6px 0; word-break: break-word; }
+.cw-name { font-weight: 700; margin-right: .25em; }   /* color set dynamically by JS */
+.cw-text { color: #fff; }

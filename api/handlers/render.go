@@ -34,3 +34,8 @@ func DocsHandler(r *gin.Engine) {
 		c.String(http.StatusNotFound, "Not found")
 	})
 }
+
+func ChatWidget(c *gin.Context) {
+	c.Header("Cache-Control", "no-store")
+	c.HTML(http.StatusOK, "chat-widget.tmpl", nil)
+}
