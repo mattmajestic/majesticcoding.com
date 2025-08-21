@@ -35,6 +35,19 @@ func DocsHandler(r *gin.Engine) {
 	})
 }
 
+func AboutHandler(r *gin.Engine) {
+	r.GET("/about/:section", func(c *gin.Context) {
+		section := c.Param("section")
+		for _, s := range models.AboutList {
+			if s == section {
+				c.HTML(http.StatusOK, section, nil)
+				return
+			}
+		}
+		c.String(http.StatusNotFound, "Not found")
+	})
+}
+
 func ChatWidget(c *gin.Context) {
 	c.Header("Cache-Control", "no-store")
 	c.HTML(http.StatusOK, "chat-widget.tmpl", nil)

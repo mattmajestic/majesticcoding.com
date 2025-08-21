@@ -58,10 +58,12 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Dev (uncomment for development)
 	// router.POST("/api/chat", PostMessage)
+	router.GET("/api/certifications/", CertificateList())
 	router.GET("/api/certification/:filename", ServeCertificationPDF())
 
 	// Swagger docs
 	DocsHandler(router)
+	AboutHandler(router)
 	RegisterSwagger(router)
 
 	// Protected API group

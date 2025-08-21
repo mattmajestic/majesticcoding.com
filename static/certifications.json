@@ -1,0 +1,170 @@
+[
+    {
+      "Name": "AWS Cloud Technical Essentials",
+      "Issuer": "AWS",
+      "Platform": "Coursera",
+      "Filename": "aws-cloud.png"
+    },
+    {
+      "Name": "Introduction to IT & AWS Cloud",
+      "Issuer": "AWS",
+      "Platform": "Coursera",
+      "Filename": "aws-intro.png"
+    },
+    {
+      "Name": "Quantitative Modeling Fundamentals",
+      "Issuer": "University of Pennsylvania",
+      "Platform": "Coursera",
+      "Filename": "penn-quant-modeling.png"
+    },
+    {
+      "Name": "MLOps Tools: MLflow and HuggingFace",
+      "Issuer": "Duke University",
+      "Platform": "Coursera",
+      "Filename": "duke-mlops.png"
+    },
+    {
+      "Name": "Tensorflow for AI",
+      "Issuer": "DeepLearning.ai",
+      "Platform": "Coursera",
+      "Filename": "deeplearning-tensorflow.png"
+    },
+    {
+      "Name": "Production Machine Learning Systems",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-prod-ml.png"
+    },
+    {
+      "Name": "Supervised Machine Learning: Regression and Classification",
+      "Issuer": "Stanford University",
+      "Platform": "Coursera",
+      "Filename": "stanford-machine-learning.png"
+    },
+    {
+      "Name": "The Full Stack",
+      "Issuer": "Meta",
+      "Platform": "Coursera",
+      "Filename": "meta-full-stack.png"
+    },
+    {
+      "Name": "DeFi Primitives",
+      "Issuer": "Duke University",
+      "Platform": "Coursera",
+      "Filename": "duke-defi.png"
+    },
+    {
+      "Name": "JavaScript Fundamentals",
+      "Issuer": "Duke University",
+      "Platform": "Coursera",
+      "Filename": "duke-web-dev.png"
+    },
+    {
+      "Name": "Consulting Tools and Tips",
+      "Issuer": "Emory University",
+      "Platform": "Coursera",
+      "Filename": "emory-consulting.png"
+    },
+    {
+      "Name": "Blockchain Basics",
+      "Issuer": "University at Buffalo",
+      "Platform": "Coursera",
+      "Filename": "buffalo-blockchain.png"
+    },
+    {
+      "Name": "Core Infrastructure",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-cloud-infrx.png"
+    },
+    {
+      "Name": "Customer Analytics",
+      "Issuer": "University of Pennsylvania",
+      "Platform": "Coursera",
+      "Filename": "penn-analytics.png"
+    },
+    {
+      "Name": "Data Decision Making",
+      "Issuer": "PwC",
+      "Platform": "Coursera",
+      "Filename": "pwc-data-decisions.png"
+    },
+    {
+      "Name": "Foundations of Project Management",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-pm.png"
+    },
+    {
+      "Name": "Intro to IBM Cloud",
+      "Issuer": "IBM",
+      "Platform": "Coursera",
+      "Filename": "ibm-cloud.png"
+    },
+    {
+      "Name": "Introduction to Trading",
+      "Issuer": "New Issuer of Finance",
+      "Platform": "Coursera",
+      "Filename": "google-ml-finance.png"
+    },
+    {
+      "Name": "Machine Learning in Finance",
+      "Issuer": "New York University",
+      "Platform": "Coursera",
+      "Filename": "nyu-ml-finance.png"
+    },
+    {
+      "Name": "TensorFlow on GCP",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-tensorflow.png"
+    },
+    {
+      "Name": "Working with Data",
+      "Issuer": "Meta",
+      "Platform": "Coursera",
+      "Filename": "meta-react-native.png"
+    },
+    {
+      "Name": "Crash Course on Python",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-python.png"
+    },
+    {
+      "Name": "Create Serverless Applications",
+      "Issuer": "Microsoft",
+      "Platform": "Coursera",
+      "Filename": "msft-serverless.png"
+    },
+    {
+      "Name": "Orchestrating Data with Azure Data Factory",
+      "Issuer": "Microsoft",
+      "Platform": "Coursera",
+      "Filename": "ms-adf.png"
+    },
+    {
+      "Name": "Data Analysis with R Programming",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-r-data-analysis.png"
+    },
+    {
+      "Name": "GCP Core Infrastructure",
+      "Issuer": "Google",
+      "Platform": "Coursera",
+      "Filename": "google-cloud-infrx.png"
+    },
+    {
+      "Name": "Microsoft Azure Cloud Services",
+      "Issuer": "Microsoft",
+      "Platform": "Coursera",
+      "Filename": "msft-cloud.png"
+    },
+    {
+      "Name": "Databricks Fundamentals",
+      "Issuer": "Databricks",
+      "Platform": "Databricks Academy",
+      "Filename": "databricks-fundations.png"
+    }
+]

@@ -1,29 +1,16 @@
-{{ template "base" . }}
-<!DOCTYPE html>
-<html lang="en">
-<body>
-<div class="flex flex-col items-center justify-center min-h-screen space-y-4">
-  <table id="certTable" class="min-w-[300px] border text-sm text-left">
+{{define "certifications"}}
+<div>
+  <table id="certTable">
     <thead>
-      <tr class="bg-gray-100 dark:bg-gray-800">
-        <th class="px-4 py-2 border">Name</th>
-        <th class="px-4 py-2 border">File</th>
-        <th class="px-4 py-2 border">Issuer</th>
+      <tr>
+        <th>Name</th>
+        <th>Issuer</th>
+        <th>Platform</th>
+        <th>Filename</th>
       </tr>
     </thead>
     <tbody id="certTableBody"></tbody>
   </table>
 </div>
-
-
-<div id="certModal" class="fixed inset-0 hidden bg-black bg-opacity-60 flex items-center justify-center z-50">
-  <div class="bg-white dark:bg-gray-900 p-6 rounded-lg w-[90%] max-w-4xl relative">
-    <button onclick="closeCertModal()" class="absolute top-2 right-4 text-xl font-bold text-gray-500 hover:text-gray-800">×</button>
-    <iframe id="certIframe" class="w-full h-[75vh] border rounded" src=""></iframe>
-  </div>
-</div>
-
-<script src="/static/components/certification.js"></script>
-<script src="/static/components/theme.js"></script>
-</body>
-</html>
+<script src="/static/components/certifications.js"></script>
+{{ end }}

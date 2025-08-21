@@ -462,6 +462,13 @@ body.light .simple-card h3 {
   transition: color 0.3s;
 }
 
+.stream-typing {
+  font-size: 2.0rem; 
+  font-weight: semibold;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
 body.dark .project-title {
   color: #fff;
 }
@@ -589,3 +596,44 @@ body.light .booting-progress {
 .cw-msg  { margin: 6px 0; word-break: break-word; }
 .cw-name { font-weight: 700; margin-right: .25em; }   /* color set dynamically by JS */
 .cw-text { color: #fff; }
+
+
+.logo-bounce-in {
+  animation: bounce-in-ball 1.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+}
+
+@keyframes bounce-in-ball {
+  0% {
+    transform: scale(0.7) translateY(200px);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.1) translateY(-40px);
+    opacity: 1;
+  }
+  65% {
+    transform: scale(0.95) translateY(20px);
+  }
+  80% {
+    transform: scale(1.05) translateY(-10px);
+  }
+  92% {
+    transform: scale(0.98) translateY(5px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.edu-card {
+  background: #0a0a23;
+  color: #75a7da;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border: 1px solid #1C3D63;
+}
+.edu-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border-color: #75a7da;
+}

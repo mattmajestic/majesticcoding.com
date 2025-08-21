@@ -55,7 +55,7 @@
   {{ template "footer_chat" . }}
   <script src="/static/components/chat.js"></script>
   <script src="/static/components/ws.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <script src="/static/components/clerk.js"></script>
   <script>
     window.Clerk = window.Clerk || {};
     window.Clerk.publishableKey = "{{ .CLERK_PUBLISHABLE_KEY }}";

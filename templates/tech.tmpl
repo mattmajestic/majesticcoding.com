@@ -1,28 +1,79 @@
 {{define "tech"}}
-<div class="marquee glowing-effect mt-4" id="cloud-marquee" data-speed="40">
-  <div class="marquee__content">
-    <a class="item" href="https://azure.microsoft.com/" target="_blank" rel="noopener">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Microsoft_Azure.svg" alt="Microsoft Azure" title="Microsoft Azure">
-    </a>
+<div class="glowing-effect mt-4 space-y-6">
+  <!-- Cloud Providers -->
+   <div class="grid grid-cols-4 gap-1 place-items-center">
     <a class="item" href="https://aws.amazon.com/" target="_blank" rel="noopener">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="Amazon Web Services" title="Amazon Web Services">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS" title="AWS" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://azure.microsoft.com/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Microsoft_Azure.svg" alt="Azure" title="Azure" class="w-16 h-16" />
     </a>
     <a class="item" href="https://cloud.google.com/" target="_blank" rel="noopener">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg" alt="Google Cloud Platform" title="Google Cloud Platform">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg" alt="GCP" title="GCP" class="w-24 h-24" />
     </a>
+    <a class="item" href="https://www.snowflake.com/" target="_blank" rel="noopener">
+      <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/snowflake-color.png" alt="Snowflake" title="Snowflake" class="w-16 h-16" />
+    </a>
+  </div>
+  <!-- Languages -->
+  <div class="grid grid-cols-4 gap-3 place-items-center">
     <a class="item" href="https://go.dev/" target="_blank" rel="noopener">
-      <img src="https://raw.githubusercontent.com/golang-samples/gopher-vector/master/gopher.svg" alt="Go" title="Go">
+      <img src="https://raw.githubusercontent.com/golang-samples/gopher-vector/master/gopher.svg" alt="Go" title="Go" class="w-16 h-16" />
     </a>
     <a class="item" href="https://www.python.org/" target="_blank" rel="noopener">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" title="Python">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" title="Python" class="w-16 h-16" />
     </a>
-    <a class="item" href="https://www.postgresql.org/" target="_blank" rel="noopener">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" alt="Postgres" title="Postgres">
+    <a class="item" href="https://www.r-project.org/" target="_blank" rel="noopener">
+      <img src="https://www.r-project.org/logo/Rlogo.svg" alt="R" title="R" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://www.javascript.com/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt="JavaScript" title="JavaScript" class="w-16 h-16" />
+    </a>
+  </div>
+  <!-- Python Libraries / ML -->
+  <div class="grid grid-cols-4 gap-3 place-items-center">
+    <a class="item" href="https://pandas.pydata.org/" target="_blank" rel="noopener">
+      <img src="https://pandas.pydata.org/static/img/pandas_mark.svg" alt="Pandas" title="Pandas" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://www.tensorflow.org/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg" alt="TensorFlow" title="TensorFlow" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://pytorch.org/" target="_blank" rel="noopener">
+      <img src="https://pytorch.org/assets/images/pytorch-logo.png" alt="PyTorch" title="PyTorch" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://huggingface.co/" target="_blank" rel="noopener">
+      <img src="https://huggingface.co/front/assets/huggingface_logo.svg" alt="HuggingFace" title="HuggingFace" class="w-16 h-16" />
+    </a>
+  </div>
+  <!-- DevOps / Containers / OS -->
+  <div class="grid grid-cols-4 gap-3 place-items-center">
+    <a class="item" href="https://github.com/" target="_blank" rel="noopener">
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" title="GitHub" class="w-16 h-16 bg-white rounded-full p-2" />
     </a>
     <a class="item" href="https://www.docker.com/" target="_blank" rel="noopener">
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" title="Docker">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" title="Docker" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://kubernetes.io/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Kubernetes_%28container_engine%29.png" alt="Kubernetes" title="Kubernetes" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://www.linux.org/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png" alt="Linux" title="Linux" class="w-16 h-16" />
+    </a>
+  </div>
+  <!-- Databases / Data Storage -->
+  <div class="grid grid-cols-4 gap-3 place-items-center">
+    <a class="item" href="https://www.postgresql.org/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" alt="Postgres" title="Postgres" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://redis.io/" target="_blank" rel="noopener">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" alt="Redis" title="Redis" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://www.databricks.com/" target="_blank" rel="noopener">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Databricks_Logo.png/960px-Databricks_Logo.png?20230109143554" alt="Databricks" title="Databricks" class="w-16 h-16" />
+    </a>
+    <a class="item" href="https://www.posit.co/" target="_blank" rel="noopener">
+      <img src="https://store-images.s-microsoft.com/image/apps.45823.4ef1d274-d6a1-4624-aacb-0c147781ad4e.4205433d-ae1f-4264-a31d-5f950dfb2f3f.37bfa002-1e00-46ec-8aa4-09f87bf455c7" alt="Posit" title="Snowflake" class="w-16 h-16" />
     </a>
   </div>
 </div>
-<script src="/static/components/tech.js"></script>
 {{end}}
