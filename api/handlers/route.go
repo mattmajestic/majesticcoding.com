@@ -56,6 +56,10 @@ func SetupRoutes(router *gin.Engine) {
 	/// Deploy IAC
 	router.GET("/api/deploy/:provider", DeployIACHandler)
 
+	/// Cost Estimation
+	router.GET("/api/cost/cloudrun", CloudRunCostHandler)
+	router.GET("/api/cost/infracost", InfracostHandler)
+
 	// Dev (uncomment for development)
 	// router.POST("/api/chat", PostMessage)
 	router.GET("/api/certifications/", CertificateList())

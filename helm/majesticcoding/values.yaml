@@ -1,6 +1,25 @@
-majesticcoding:
-  image: mattmajestic/majesticcoding:latest
-  port: 8080
+replicaCount: 1
 
+image:
+  repository: dockerhub.io/mattmajestic/majesticcoding
+  tag: "v0.1.0"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
 
-sharedVolume: emptyDir
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources: {}
+podAnnotations: {}

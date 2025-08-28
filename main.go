@@ -5,6 +5,7 @@ import (
 	"majesticcoding.com/api/config"
 	"majesticcoding.com/api/handlers"
 	"majesticcoding.com/api/middleware"
+	"majesticcoding.com/api/services"
 	"majesticcoding.com/db"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	handlers.StartBroadcaster()
 	db.Connect()
 	handlers.StartMessageCleanup()
+	services.StartTwitchChatFeed("majesticcodingtwitch")
 
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
