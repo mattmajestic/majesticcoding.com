@@ -36,15 +36,9 @@ func CreateMessagesTable(db *sql.DB) error {
 }
 
 func CreateCheckinsTable(db *sql.DB) error {
-	// First, drop the existing table if it has the wrong column types
-	_, err := db.Exec(`DROP TABLE IF EXISTS checkins;`)
-	if err != nil {
-		fmt.Printf("WARNING: Failed to drop existing checkins table: %v\n", err)
-	}
-
-	// Create table with correct floating point types
-	_, err = db.Exec(`
-		CREATE TABLE checkins (
+	// Create table with correct floating point types (don't drop existing data)
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS checkins (
 			id SERIAL PRIMARY KEY,
 			lat DOUBLE PRECISION NOT NULL,
 			lon DOUBLE PRECISION NOT NULL,
@@ -58,7 +52,7 @@ func CreateCheckinsTable(db *sql.DB) error {
 		return err
 	}
 
-	fmt.Printf("SUCCESS: Checkins table created with correct DOUBLE PRECISION columns\n")
+	fmt.Printf("SUCCESS: Checkins table ready (preserving existing data)\n")
 	return nil
 }
 
@@ -78,7 +72,13 @@ func CreateSpotifyTokensTable(db *sql.DB) error {
 }
 
 func CreateTwitchMessagesTable(db *sql.DB) error {
-	_, err := db.Exec(`
+	// Drop the unique constraint if it exists
+	_, err := db.Exec(`DROP INDEX IF EXISTS idx_twitch_messages_unique;`)
+	if err != nil {
+		log.Printf("⚠️  Could not drop unique constraint: %v", err)
+	}
+
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS twitch_messages (
 			id SERIAL PRIMARY KEY,
 			username VARCHAR(25) NOT NULL,

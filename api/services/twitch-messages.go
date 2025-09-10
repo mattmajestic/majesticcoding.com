@@ -1,7 +1,11 @@
 package services
 
 import (
+	"fmt"
 	"log"
+	"net/http"
+	"net/url"
+	"strings"
 	"sync"
 
 	"majesticcoding.com/api/models"
@@ -46,6 +50,15 @@ func StartTwitchChatFeed(channel string) {
 			}
 		}
 
+		// Check for !checkin command
+		if strings.HasPrefix(strings.ToLower(msg.Message), "!checkin ") {
+			location := strings.TrimSpace(msg.Message[9:]) // Remove "!checkin "
+			if location != "" {
+				log.Printf("🌍 Processing !checkin command from %s: %s", msg.User.DisplayName, location)
+				go handleCheckinCommand(location, msg.User.DisplayName)
+			}
+		}
+
 		// Keep in memory for quick access
 		messages = append(messages, twitchMsg)
 		if len(messages) > maxMessages {
@@ -71,4 +84,23 @@ func GetRecentMessages() []models.TwitchMessage {
 	copied := make([]models.TwitchMessage, len(messages))
 	copy(copied, messages)
 	return copied
+}
+
+// handleCheckinCommand processes !checkin commands from Twitch chat
+func handleCheckinCommand(location, username string) {
+	// Call the geocode API endpoint
+	geocodeURL := fmt.Sprintf("http://localhost:8080/api/geocode?city=%s", url.QueryEscape(location))
+	
+	resp, err := http.Get(geocodeURL)
+	if err != nil {
+		log.Printf("❌ Failed to call geocode API for %s: %v", location, err)
+		return
+	}
+	defer resp.Body.Close()
+	
+	if resp.StatusCode == http.StatusOK {
+		log.Printf("✅ Successfully processed !checkin for %s from %s", location, username)
+	} else {
+		log.Printf("❌ Geocode API returned status %d for location: %s", resp.StatusCode, location)
+	}
 }

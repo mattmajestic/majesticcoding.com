@@ -1,5 +1,6 @@
 {{ template "base" . }}
 
+<body style="background: transparent; margin: 0; padding: 0;">
 <div class="spotify-container">
   <div class="spotify-terminal">
     <div class="terminal-header">
@@ -9,24 +10,25 @@
     
     <div class="spotify-info">
       <div class="spotify-line">
-        title: <span class="spotify-title" id="track-title">"Loading..."</span>
+        $ title: <span class="spotify-title" id="track-title">"Loading..."</span>
       </div>
       <div class="spotify-line">
-        artist: <span class="spotify-artist" id="track-artist">Unknown</span>
+        $ artist: <span class="spotify-artist" id="track-artist">Unknown</span>
       </div>
       <div class="progress-line">
-        [<span class="progress-bar-terminal" id="progress-bar">####################</span>]
+        $ [<span class="progress-bar-terminal" id="progress-bar">####################</span>]
       </div>
       <div class="spotify-line">
-        <span class="spotify-time" id="time-display">0:00/0:00</span>
+        $ <span class="spotify-time" id="time-display">0:00/0:00</span>
       </div>
     </div>
   </div>
   
   <div class="album-artwork">
-    <img id="album-image" src="/static/img/spotify-placeholder.png" alt="Album artwork" />
+    <img id="album-image" src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Album artwork" />
     <div class="album-glow"></div>
   </div>
 </div>
 
 <script src="/static/components/spotify.js"></script>
+</body>

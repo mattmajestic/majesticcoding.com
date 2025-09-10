@@ -43,19 +43,16 @@
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const checkins = await response.json();
-      console.log('Loaded recent checkins:', checkins);
       
       points = checkins.map(checkin => ({
         lat: checkin.lat,
-        lng: checkin.lon, // Note: DB uses 'lon' instead of 'lng'
+        lng: checkin.lon,
         size: 0.8,
         color: 'orange',
-        city: checkin.city || `${checkin.lat.toFixed(2)}, ${checkin.lon.toFixed(2)}`, // Use city name or coordinates
-        country: checkin.country || 'Recent Checkin',
+        city: checkin.city || 'Recent Checkin',
+        country: checkin.country || 'Unknown',
         time: checkin.checkin_time
       }));
-      
-      console.log('Mapped points:', points);
     } catch (error) {
       console.error('Failed to load recent checkins:', error);
       return;
@@ -69,14 +66,14 @@
     }
 
     globe = Globe()(container)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-      .backgroundColor('#000913')
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .backgroundColor('rgba(0,0,0,0)')
       .width(container.clientWidth || 800)
       .height(container.clientHeight || 600)
       .pointsData(points)
-      .pointAltitude(d => 0.02)
-      .pointColor(d => 'red')
-      .pointRadius(d => 1.0)
+      .pointAltitude(d => 0.015)
+      .pointColor(d => '#ff6b35')
+      .pointRadius(d => 1.2)
       .pointLabel(d => {
         const timeAgo = d.time ? new Date(d.time).toLocaleDateString() : 'Recently';
         return `<b>${d.city}</b>, ${d.country}<br><small>Checked in: ${timeAgo}</small>`;
@@ -85,28 +82,22 @@
       .labelLat(d => d.lat)
       .labelLng(d => d.lng)
       .labelText(d => d.city)
-      .labelSize(1.5)
-      .labelDotRadius(0.5)
-      .labelColor(() => 'white')
-      .labelResolution(2)
-      .labelAltitude(d => 0.025);
+      .labelSize(1.8)
+      .labelDotRadius(0.3)
+      .labelColor(() => '#ffffff')
+      .labelResolution(3)
+      .labelAltitude(d => 0.02);
 
-    // Enable controls
+    // Set initial position to show Atlantic (between US and Europe)
+    globe.pointOfView({ lat: 45, lng: -30, altitude: 2.5 });
+
+    // Enhanced controls with smoother rotation focused on US/Europe
     globe.controls().enableZoom = true;
+    globe.controls().enablePan = true;
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.5;
-    
-    console.log('Globe initialized with', points.length, 'points');
-    
-    // Debug: Log first point details
-    if (points.length > 0) {
-      console.log('First point:', points[0]);
-    }
-    
-    // Test: Add a few seconds delay then log the globe's point data
-    setTimeout(() => {
-      console.log('Globe points data after init:', globe.pointsData());
-    }, 2000);
+    globe.controls().autoRotateSpeed = 0.8; // Slower for better viewing
+    globe.controls().enableDamping = true;
+    globe.controls().dampingFactor = 0.1;
   }
 
   // Start when page loads
