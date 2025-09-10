@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"majesticcoding.com/api/middleware"
+	// "majesticcoding.com/api/middleware" // Temporarily disabled
 )
 
 func SetupRoutes(router *gin.Engine) {
@@ -22,11 +22,16 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/docs", RenderTemplate("docs.tmpl"))
 	router.GET("/about", RenderTemplate("about.tmpl"))
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
+	router.GET("/infrastructure", RenderTemplate("infrastructure.tmpl"))
 	router.GET("/certifications", RenderTemplate("certifications.tmpl"))
 	router.GET("/live/", StreamHandler)
 
-	/// Widgets
+	/// Streaming Widgets
 	router.GET("/widget/chat", RenderTemplate("chat-widget.tmpl"))
+	router.GET("/widget/twitch", RenderTemplate("twitch.tmpl"))
+	router.GET("/widget/lavalamp", RenderTemplate("lavalamp.tmpl"))
+	router.GET("/widget/globe", GlobeWidgetHandler())
+	router.GET("/widget/spotify", RenderSpotify("spotify.tmpl"))
 
 	// API routes
 	/// Scenarios
@@ -42,10 +47,24 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/api/stats/:provider", StatsRouter)
 	router.GET("/api/git/hash", GitHashHandler)
 
+	/// Geocoding and Globe
+	router.GET("/api/geocode", GeocodeHandler())
+	router.POST("/api/checkin", PostCheckinHandler())
+	router.GET("/api/checkins", GetCheckinsHandler())
+	router.GET("/api/checkins/recent", RecentCheckinsHandler())
+	router.GET("/api/globe", MapHandler())
+
+	// Spotify
+	router.GET("/api/spotify/login", SpotifyLogin)
+	router.GET("/api/spotify/callback", SpotifyCallback)
+	router.GET("/api/spotify/status", SpotifyStatus)
+	router.GET("/api/spotify/current", SpotifyCurrent)
+
 	/// Chat with Websockets
 	router.GET("/api/chat", GetMessages)
 	router.GET("/api/chat/users", ChatUserCount)
 	router.GET("/ws/chat", ChatWebSocket)
+	router.GET("/ws/twitch", TwitchMessagesHandler)
 
 	/// App Metrics (Stream)
 	router.GET("/api/stream/status", StreamStatusHandler)
@@ -70,7 +89,7 @@ func SetupRoutes(router *gin.Engine) {
 	AboutHandler(router)
 	RegisterSwagger(router)
 
-	// Protected API group
-	apiGroup := router.Group("/api")
-	apiGroup.Use(middleware.Auth())
+	// Protected API group (temporarily disabled)
+	// apiGroup := router.Group("/api")
+	// apiGroup.Use(middleware.Auth())
 }

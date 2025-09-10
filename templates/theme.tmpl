@@ -1,13 +1,11 @@
 {{ template "base" . }}
 
 {{define "theme" }}
-
-<div>
-
-<button id="theme-toggle" class="custom-button glowing-effect">
-  <span class="tooltip-text">Switch Theme</span>
-  <i id="icon-sun" class="fas fa-sun theme-toggle-icon"></i>
-  <i id="icon-moon" class="fas fa-moon theme-toggle-icon hidden"></i>
-</button>
+<div class="icon-widget">
+  <button id="theme-toggle" class="icon-widget-link" style="background: none; border: none; cursor: pointer;">
+    <span class="tooltip-text">Switch Theme</span>
+    <i id="icon-sun" class="fas fa-sun nav-icon"></i>
+    <i id="icon-moon" class="fas fa-moon nav-icon hidden"></i>
+  </button>
 </div>
 {{ end }} 

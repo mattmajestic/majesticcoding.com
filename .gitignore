@@ -6,3 +6,6 @@ terraform.tfstate.backup
 tmp/
 .kiro/
 .vscode/
+llm/
+CLAUDE.md
+spotify_token.json

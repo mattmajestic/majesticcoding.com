@@ -10,6 +10,7 @@ type TwitchStats struct {
 }
 
 type TwitchMessage struct {
+	ID            int            `json:"id"`
 	Username      string         `json:"username"`
 	DisplayName   string         `json:"display_name"`
 	Message       string         `json:"message"`
@@ -19,4 +20,5 @@ type TwitchMessage struct {
 	IsVip         bool           `json:"is_vip"`
 	IsBroadcaster bool           `json:"is_broadcaster"`
 	Time          time.Time      `json:"time"`
+	CreatedAt     time.Time      `json:"created_at"`
 }

@@ -29,3 +29,7 @@ func Connect() {
 	log.Println("Connected to DB...")
 	Database = db
 }
+
+func GetDB() *sql.DB {
+	return Database
+}

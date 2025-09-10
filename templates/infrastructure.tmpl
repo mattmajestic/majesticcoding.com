@@ -1,0 +1,145 @@
+{{ template "base" . }}
+<!DOCTYPE html>
+<html lang="en">
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+  <div class="container mx-auto px-4 py-8">
+    
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">🏗️ Infrastructure Overview</h1>
+      <p class="text-gray-600 dark:text-gray-300">Interactive visualization of Majestic Coding services and data flow</p>
+    </div>
+
+    <!-- Infrastructure Diagram -->
+    <div class="max-w-7xl mx-auto">
+      <div id="infrastructure-diagram" class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+        
+        <!-- Core Infrastructure -->
+        <div class="infrastructure-layer compact" data-layer="core">
+          <h3 class="layer-title">Core Infrastructure</h3>
+          <div class="layer-content compact-grid">
+            <div class="service-node cloud-node compact" data-service="cloudrun">
+              <i class="fab fa-google"></i>
+              <span>Cloud Run</span>
+            </div>
+            <div class="service-node data-node compact" data-service="neon">
+              <i class="fas fa-database"></i>
+              <span>Neon DB</span>
+            </div>
+            <div class="service-node auth-node compact" data-service="clerk">
+              <i class="fas fa-shield-alt"></i>
+              <span>Clerk Auth</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Application Services -->
+        <div class="infrastructure-layer compact" data-layer="application">
+          <h3 class="layer-title">Services</h3>
+          <div class="layer-content compact-grid">
+            <div class="service-node app-node compact" data-service="gin-api">
+              <i class="fab fa-golang"></i>
+              <span>Gin API</span>
+            </div>
+            <div class="service-node app-node compact" data-service="websocket">
+              <i class="fas fa-comments"></i>
+              <span>WebSocket</span>
+            </div>
+            <div class="service-node app-node compact" data-service="rtmp">
+              <i class="fas fa-broadcast-tower"></i>
+              <span>RTMP</span>
+            </div>
+            <div class="service-node data-node compact" data-service="static">
+              <i class="fas fa-folder"></i>
+              <span>Static Files</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- External APIs & Cloud Services -->
+        <div class="infrastructure-layer compact" data-layer="external">
+          <h3 class="layer-title">Integrations</h3>
+          <div class="layer-content compact-grid">
+            <div class="service-node external-node compact" data-service="github">
+              <i class="fab fa-github"></i>
+              <span>GitHub</span>
+            </div>
+            <div class="service-node external-node compact" data-service="twitch">
+              <i class="fab fa-twitch"></i>
+              <span>Twitch</span>
+            </div>
+            <div class="service-node external-node compact" data-service="youtube">
+              <i class="fab fa-youtube"></i>
+              <span>YouTube</span>
+            </div>
+            <div class="service-node external-node compact" data-service="spotify">
+              <i class="fab fa-spotify"></i>
+              <span>Spotify</span>
+            </div>
+            <div class="service-node external-node compact" data-service="leetcode">
+              <i class="fas fa-code"></i>
+              <span>LeetCode</span>
+            </div>
+            <div class="service-node aws-node compact" data-service="ivs">
+              <i class="fab fa-aws"></i>
+              <span>AWS IVS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- No connection lines for compact view -->
+
+        <!-- Service Info Panel -->
+        <div id="service-info" class="fixed top-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-3 border border-gray-200 dark:border-gray-600 max-w-xs opacity-0 invisible transition-all duration-200 z-50">
+          <h4 id="service-name" class="font-bold text-sm mb-1 text-gray-800 dark:text-white"></h4>
+          <div id="service-description" class="text-xs text-gray-600 dark:text-gray-300 mb-2"></div>
+          <div id="service-tech" class="space-y-1"></div>
+        </div>
+      </div>
+
+      <!-- Compact Legend -->
+      <div class="mt-4 flex flex-wrap justify-center gap-3">
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-blue-500 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Cloud</span>
+        </div>
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-green-500 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Services</span>
+        </div>
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-yellow-500 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Auth</span>
+        </div>
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-red-500 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Data</span>
+        </div>
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-green-400 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">APIs</span>
+        </div>
+        <div class="legend-item compact">
+          <div class="w-3 h-3 bg-orange-500 rounded mr-1"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">AWS</span>
+        </div>
+      </div>
+
+      <!-- Compact Controls -->
+      <div class="mt-4 text-center space-x-3">
+        <button id="animate-flow" class="bg-[#1C3D63] hover:bg-[#60a5fa] text-white px-3 py-2 rounded-lg transition-colors text-sm">
+          <i class="fas fa-play mr-1"></i>Animate
+        </button>
+        <button id="reset-view" class="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 text-white px-3 py-2 rounded-lg transition-colors text-sm">
+          <i class="fas fa-refresh mr-1"></i>Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/components/infrastructure.js"></script>
+  <script src="/static/components/theme.js"></script>
+</body>
+
+{{ template "footer_home" . }}
+</html>

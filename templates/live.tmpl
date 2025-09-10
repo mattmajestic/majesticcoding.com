@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-  <div class="flex flex-row w-full min-h-screen">
+  <div class="live-container">
     <!-- Main Stream Area -->
-    <div class="w-3/4 flex flex-col items-center justify-center">
+    <div class="stream-section">
       {{ template "stream" . }}
       {{ template "footer_stream" . }}
     </div>
     <!-- Chat Sidebar -->
-      <div class="w-1/4 pt-4 min-w-[320px] h-screen flex flex-col border-l border-gray-700 sidebar-dark">
+    <div class="chat-section">
       {{ template "chat" . }}
     </div>
   </div>

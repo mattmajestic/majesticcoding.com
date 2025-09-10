@@ -1,0 +1,113 @@
+{{ define "status-cards" }}
+<!-- Status Cards -->
+<div class="status-cards-grid">
+  <!-- Live Stream Status Card -->
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">
+        <i class="fas fa-broadcast-tower status-card-icon"></i>
+        <span>Stream Status</span>
+      </div>
+      <div class="status-indicator" id="stream-indicator">
+        <div class="status-dot"></div>
+      </div>
+    </div>
+    <div class="status-card-content">
+      <div class="status-value" id="stream-status">Loading...</div>
+      <div class="status-label">Live Stream</div>
+    </div>
+    <div class="status-card-footer">
+      {{ template "live-btn" . }}
+    </div>
+  </div>
+
+  <!-- Chat Users Card -->
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">
+        <i class="fas fa-users status-card-icon"></i>
+        <span class="text-lg font-semibold">Active Users</span>
+      </div>
+    </div>
+    <div class="status-card-content">
+      <div class="status-value" id="chat-users">Loading...</div>
+      <div class="status-label">In Chat</div>
+      <div class="user-activity mt-2">
+        <div class="activity-indicator">
+          <i class="fas fa-circle text-green-400 text-xs"></i>
+          <span class="text-sm text-gray-400">Live Activity</span>
+        </div>
+        <div class="user-stats text-xs text-gray-500 mt-1">
+          Real-time chat monitoring
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Git Status Card -->
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">
+        <i class="fab fa-github status-card-icon"></i>
+        <span class="text-lg font-semibold">Repository</span>
+      </div>
+    </div>
+    <div class="status-card-content">
+      <div class="git-info">
+        <div class="git-commit" id="git-message">
+          <i class="fas fa-spinner fa-spin"></i>
+          Fetching latest commit...
+        </div>
+        <div class="git-hash" id="git-hash">
+          <i class="fas fa-spinner fa-spin"></i>
+          Loading hash...
+        </div>
+      </div>
+    </div>
+    <div class="status-card-footer">
+      {{ template "docs-btn" . }}
+    </div>
+  </div>
+
+  <!-- System Health Card -->
+  <div class="status-card">
+    <div class="status-card-header">
+      <div class="status-card-title">
+        <i class="fas fa-server status-card-icon"></i>
+        <span class="text-lg font-semibold">System Health</span>
+      </div>
+    </div>
+    <div class="status-card-content">
+      <div class="health-metrics">
+        <div class="health-metric">
+          <span class="health-label">CPU</span>
+          <div class="health-bar">
+            <div class="health-fill" id="cpu-usage" style="width: 45%"></div>
+          </div>
+          <span class="health-value" id="cpu-value">45%</span>
+        </div>
+        <div class="health-metric">
+          <span class="health-label">Memory</span>
+          <div class="health-bar">
+            <div class="health-fill" id="memory-usage" style="width: 62%"></div>
+          </div>
+          <span class="health-value" id="memory-value">62%</span>
+        </div>
+        <div class="health-metric">
+          <span class="health-label">Uptime</span>
+          <div class="uptime-value">
+            <i class="fas fa-clock text-blue-400 text-xs mr-1"></i>
+            <span class="text-sm" id="uptime-value">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div class="system-status mt-2">
+        <div class="status-indicator">
+          <i class="fas fa-circle text-green-400 text-xs"></i>
+          <span class="text-xs text-gray-400">All systems operational</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

@@ -19,8 +19,20 @@ func main() {
 	config.LoadEnv()
 	handlers.StartBroadcaster()
 	db.Connect()
+	
+	// Create database tables
+	database := db.GetDB()
+	if database != nil {
+		db.CreateTables(database)
+		db.CreateMessagesTable(database)
+		db.CreateCheckinsTable(database)
+		db.CreateSpotifyTokensTable(database)
+		db.CreateTwitchMessagesTable(database)
+	}
+	
 	handlers.StartMessageCleanup()
 	services.StartTwitchChatFeed("majesticcodingtwitch")
+	handlers.InitSpotifyClient()
 
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())

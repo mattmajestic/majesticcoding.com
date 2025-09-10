@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "lat": 40.7128,
+    "lng": -74.0060,
+    "city": "New York",
+    "country": "USA",
+    "checkin_time": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "lat": 51.5074,
+    "lng": -0.1278,
+    "city": "London",
+    "country": "UK",
+    "checkin_time": "2024-01-14T15:45:00Z"
+  },
+  {
+    "id": 3,
+    "lat": 35.6762,
+    "lng": 139.6503,
+    "city": "Tokyo",
+    "country": "Japan",
+    "checkin_time": "2024-01-13T08:20:00Z"
+  },
+  {
+    "id": 4,
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "city": "Paris",
+    "country": "France",
+    "checkin_time": "2024-01-12T14:15:00Z"
+  },
+  {
+    "id": 5,
+    "lat": -33.8688,
+    "lng": 151.2093,
+    "city": "Sydney",
+    "country": "Australia",
+    "checkin_time": "2024-01-11T09:30:00Z"
+  },
+  {
+    "id": 6,
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "city": "San Francisco",
+    "country": "USA",
+    "checkin_time": "2024-01-10T16:45:00Z"
+  },
+  {
+    "id": 7,
+    "lat": 55.7558,
+    "lng": 37.6176,
+    "city": "Moscow",
+    "country": "Russia",
+    "checkin_time": "2024-01-09T12:00:00Z"
+  },
+  {
+    "id": 8,
+    "lat": -22.9068,
+    "lng": -43.1729,
+    "city": "Rio de Janeiro",
+    "country": "Brazil",
+    "checkin_time": "2024-01-08T11:30:00Z"
+  }
+]

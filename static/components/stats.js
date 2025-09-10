@@ -34,6 +34,11 @@ function showModalShell(title) {
   `;
 
   document.getElementById("stats-modal").classList.remove("hidden");
+  
+  // Add click outside to close functionality
+  setTimeout(() => {
+    document.addEventListener("click", handleOutsideClick);
+  }, 100); // Small delay to prevent immediate closing
 }
 
 function populateModalContent(data) {
@@ -57,4 +62,16 @@ function populateModalContent(data) {
 
 function closeModal() {
   document.getElementById("stats-modal").classList.add("hidden");
+  // Remove the outside click listener when modal is closed
+  document.removeEventListener("click", handleOutsideClick);
+}
+
+function handleOutsideClick(event) {
+  const modal = document.getElementById("stats-modal");
+  const modalContent = modal.querySelector("div");
+  
+  // Check if modal is visible and click is outside modal content
+  if (!modal.classList.contains("hidden") && modalContent && !modalContent.contains(event.target)) {
+    closeModal();
+  }
 }

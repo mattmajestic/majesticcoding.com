@@ -2,33 +2,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-    <div class="flex flex-col items-center justify-center mt-20 space-y-4 mb-10">
+    <div class="min-h-screen flex flex-col items-center justify-center space-y-4">
         {{ template "booting" . }}
         
-        <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
-             alt="Majestic Coding Logo"
-             class="w-48 h-48 glowing-effect rounded-full border-4 border-gray-800 shadow-lg" />
+        <div class="flex items-center justify-center gap-8">
+            <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
+                 alt="Majestic Coding Logo"
+                 class="w-48 h-48 glowing-effect rounded-full border-4 border-gray-800 shadow-lg" />
+            
+            {{ template "terminal" . }}
+        </div>
         
         <div class="my-10"></div>
-
-        <div class="mb-2 space-y-2">
+        <div class="flex justify-center">
+          <div class="grid grid-cols-3 gap-2">
+            {{ template "about-btn" . }}
+            {{ template "docs-btn" . }}
+            {{ template "live-btn" . }}
+          </div>
+        </div>
+        <div class="mb-1 space-y-2">
             {{ template "socials" . }}
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          {{ template "about-btn" . }}
-          {{ template "docs-btn" . }}
-        </div>
-
-        <div class="flex items-center justify-center mt-8 gap-4">
-          {{ template "live-btn" . }}
-          {{ template "dash-btn" . }}
         </div>
     </div>
 
     {{ template "stats" . }}
     <script src="/static/components/theme.js"></script>
     <script src="/static/components/booting.js"></script>
+    <script src="/static/components/index-typing.js"></script>
     {{ template "footer" . }}
 </body>
 </html>

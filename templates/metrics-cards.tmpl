@@ -1,0 +1,22 @@
+{{ define "metrics-cards" }}
+<!-- Metrics Section -->
+<div class="metrics-section">
+  <div class="metrics-header">
+    <h2>System Metrics</h2>
+    <div class="metrics-refresh">
+      <button class="refresh-btn" onclick="refreshMetrics()">
+        <i class="fas fa-refresh"></i>
+        Refresh
+      </button>
+    </div>
+  </div>
+  
+  <div class="metrics-grid" id="metrics-container">
+    <!-- Metrics cards will be populated by JavaScript -->
+    <div class="metrics-loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading system metrics...</span>
+    </div>
+  </div>
+</div>
+{{ end }}

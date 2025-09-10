@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"majesticcoding.com/api/models"
+	"majesticcoding.com/db"
 
 	"github.com/gempir/go-twitch-irc/v4"
 )
@@ -23,7 +24,7 @@ func StartTwitchChatFeed(channel string) {
 		messagesLock.Lock()
 		defer messagesLock.Unlock()
 
-		messages = append(messages, models.TwitchMessage{
+		twitchMsg := models.TwitchMessage{
 			Username:      msg.User.Name,
 			DisplayName:   msg.User.DisplayName,
 			Message:       msg.Message,
@@ -33,8 +34,20 @@ func StartTwitchChatFeed(channel string) {
 			IsVip:         msg.User.IsVip,
 			IsBroadcaster: msg.User.IsBroadcaster,
 			Time:          msg.Time,
-		})
+		}
 
+		// Store in database
+		database := db.GetDB()
+		if database != nil {
+			if err := db.InsertTwitchMessage(database, twitchMsg); err != nil {
+				log.Printf("❌ Failed to save Twitch message to database: %v", err)
+			} else {
+				log.Printf("💬 Saved Twitch message from %s", msg.User.DisplayName)
+			}
+		}
+
+		// Keep in memory for quick access
+		messages = append(messages, twitchMsg)
 		if len(messages) > maxMessages {
 			messages = messages[len(messages)-maxMessages:]
 		}

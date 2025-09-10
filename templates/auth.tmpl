@@ -2,17 +2,47 @@
 {{ template "base" . }}
 <!DOCTYPE html>
 <html lang="en">
-<body>
-<div class="flex flex-col items-center justify-center min-h-screen space-y-4">
-    <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding Logo" class="w-36 h-36 mb-4 glowing-effect" />
-    <div id="app"></div>
-</div>
-<script>
-  window.CLERK_PUBLISHABLE_KEY = "{{ .CLERK_PUBLISHABLE_KEY }}";
-</script>
-<script src="/static/components/clerk.js"></script>
-<script src="/static/components/auth.js"></script>
-<script src="/static/components/theme.js"></script>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+  <div class="container mx-auto px-4 py-8">
+
+    <!-- Auth Container -->
+    <div class="max-w-md mx-auto">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-200 dark:border-gray-700">
+        <div id="app" class="min-h-[400px] flex items-center justify-center">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600 dark:text-gray-300">Loading authentication...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-4xl mx-auto mt-12 grid md:grid-cols-3 gap-6">
+      <div class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <i class="fas fa-chart-line text-3xl text-blue-600 mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Dashboard</h3>
+        <p class="text-gray-600 dark:text-gray-300 text-sm">Monitor system metrics and real-time analytics</p>
+      </div>
+      <div class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <i class="fas fa-broadcast-tower text-3xl text-blue-600 mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Live Streaming</h3>
+        <p class="text-gray-600 dark:text-gray-300 text-sm">Access live coding streams and interactive chat</p>
+      </div>
+      <div class="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <i class="fas fa-code text-3xl text-blue-600 mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Code Projects</h3>
+        <p class="text-gray-600 dark:text-gray-300 text-sm">Explore repositories and technical documentation</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.CLERK_PUBLISHABLE_KEY = "{{ .CLERK_PUBLISHABLE_KEY }}";
+  </script>
+  <script src="/static/components/clerk.js"></script>
+  <script src="/static/components/auth-enhanced.js"></script>
+  <script src="/static/components/theme.js"></script>
 </body>
 
 {{ template "footer_home" . }}

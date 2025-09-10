@@ -22,11 +22,12 @@
         <h1 class="stream-typing"><span id="type-line-3"></span></h1>
       </div>
       {{ template "socials" . }}
-      <p class="mb-8"></p>
-      {{ template "docs-btn" . }}
-      {{ template "dash-btn" . }}
+      <div class="flex justify-center gap-2 mt-2">
+        {{ template "docs-btn" . }}
+        {{ template "dash-btn" . }}
+      </div>
     </div>
-    <h1 class="mt-10 flex text-xs font-italics items-center justify-center gap-4">
+    <h1 class="mt-6 flex text-xs font-italics items-center justify-center gap-4">
       <span class="text-lg font-bold">Powered by</span>
         <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
              alt="AWS Logo"

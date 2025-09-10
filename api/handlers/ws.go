@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/moby/moby/pkg/namesgenerator"
 	"majesticcoding.com/api/models"
+	"majesticcoding.com/db"
 )
 
 var upgrader = websocket.Upgrader{
@@ -61,6 +62,16 @@ func ChatWebSocket(c *gin.Context) {
 		msg.Username = username
 		msg.Timestamp = time.Now()
 		msg.DisplayTime = msg.Timestamp.Format("15:04:05")
+
+		// Store message in database
+		database := db.GetDB()
+		if database != nil {
+			if err := db.InsertChatMessage(database, username, msg.Content); err != nil {
+				log.Printf("❌ Failed to save chat message to database: %v", err)
+			} else {
+				log.Printf("💬 Saved chat message from %s: %s", username, msg.Content)
+			}
+		}
 
 		Mu.Lock()
 		Messages = append(Messages, msg)

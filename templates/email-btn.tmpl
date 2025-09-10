@@ -1,12 +1,9 @@
 
 {{ define "email-btn" }}
-<div class="relative group inline-block justify-center">
-  <a href="mailto:matt@majesticcoding.com"
-     class="custom-button glowing-effect flex bg-gray-700 justify-center items-center rounded text-gray-200 hover:bg-gray-600 font-bold text-xl">
-    <i class="fas fa-envelope text-md"></i>
-    <span class="tooltip-text font-bold text-lg absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 rounded bg-gray-700 text-white text-xs opacity-0 group-hover:opacity-100 transition z-10 whitespace-nowrap">
-      Email Me
-    </span>
+<div class="icon-widget">
+  <a href="mailto:matt@majesticcoding.com" class="icon-widget-link">
+    <span class="tooltip-text">Email Me</span>
+    <i class="fas fa-envelope nav-icon"></i>
   </a>
 </div>
 {{ end }}

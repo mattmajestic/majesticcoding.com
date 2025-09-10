@@ -1,0 +1,62 @@
+{{ define "activity-feed" }}
+<!-- Activity Feed -->
+<div class="activity-section">
+  <div class="activity-header">
+    <h2>Activity Feed</h2>
+    <div class="activity-filter">
+      <select class="filter-select">
+        <option value="all">All Activities</option>
+        <option value="system">System</option>
+        <option value="stream">Stream</option>
+        <option value="git">Git Updates</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="activity-feed">
+    <div class="activity-item">
+      <div class="activity-icon">
+        <i class="fas fa-broadcast-tower"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-title">Stream Status Changed</div>
+        <div class="activity-description">Live stream status updated to active</div>
+        <div class="activity-time">2 minutes ago</div>
+      </div>
+    </div>
+    
+    <div class="activity-item">
+      <div class="activity-icon">
+        <i class="fab fa-github"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-title">New Commit Pushed</div>
+        <div class="activity-description">Dashboard redesign with shadcn aesthetics</div>
+        <div class="activity-time">15 minutes ago</div>
+      </div>
+    </div>
+    
+    <div class="activity-item">
+      <div class="activity-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-title">Chat Activity Spike</div>
+        <div class="activity-description">12 new users joined the chat</div>
+        <div class="activity-time">1 hour ago</div>
+      </div>
+    </div>
+    
+    <div class="activity-item">
+      <div class="activity-icon">
+        <i class="fas fa-server"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-title">System Health Check</div>
+        <div class="activity-description">All systems operating normally</div>
+        <div class="activity-time">2 hours ago</div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
