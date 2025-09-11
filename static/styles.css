@@ -2031,7 +2031,9 @@ body.light .cursor-simple {
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 600px;
-  margin: 0 auto;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
 .spotify-terminal {
@@ -2097,6 +2099,16 @@ body.light .cursor-simple {
   font-weight: bold;
 }
 
+.progress-filled {
+  color: #1db954;
+  font-weight: bold;
+}
+
+.progress-empty {
+  color: #333;
+  font-weight: bold;
+}
+
 .album-artwork {
   position: relative;
   width: 200px;
@@ -2126,14 +2138,14 @@ body.light .cursor-simple {
 .lava-lamp-page {
   min-height: 100vh;
   background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   padding: 2rem;
 }
 
 .lava-lamp-wrapper {
-  position: relative;
+  position: absolute;
+  top: 20px;
+  left: 20px;
   height: 500px;
   width: 180px;
 }
@@ -2336,11 +2348,12 @@ body.light .cursor-simple {
 .globe-container {
   background: transparent;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 #globe {
   background: transparent !important;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
