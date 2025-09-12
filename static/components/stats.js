@@ -2,6 +2,10 @@
 // of YouTube, Twitch Github & Leetcode
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Prevent double initialization
+  if (window.statsInitialized) return;
+  window.statsInitialized = true;
+
   const buttons = document.querySelectorAll(".stats-button");
 
   buttons.forEach(button => {

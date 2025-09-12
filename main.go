@@ -28,6 +28,7 @@ func main() {
 		db.CreateCheckinsTable(database)
 		db.CreateSpotifyTokensTable(database)
 		db.CreateTwitchMessagesTable(database)
+		db.CreateStatsHistoryTables(database)
 	}
 	
 	handlers.StartMessageCleanup()

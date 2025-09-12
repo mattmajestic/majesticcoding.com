@@ -166,3 +166,36 @@ func GetRecentTwitchMessages(db *sql.DB, limit int) ([]models.TwitchMessage, err
 	}
 	return messages, nil
 }
+
+// Stats storage functions
+func InsertYouTubeStats(db *sql.DB, channelID string, subscribers, videos int, views int64) error {
+	_, err := db.Exec(`
+		INSERT INTO youtube_stats (channel_id, subscriber_count, video_count, view_count) 
+		VALUES ($1, $2, $3, $4)
+	`, channelID, subscribers, videos, views)
+	return err
+}
+
+func InsertGitHubStats(db *sql.DB, username string, repos, followers, following, totalStars int) error {
+	_, err := db.Exec(`
+		INSERT INTO github_stats (username, public_repos, followers, following, total_stars) 
+		VALUES ($1, $2, $3, $4, $5)
+	`, username, repos, followers, following, totalStars)
+	return err
+}
+
+func InsertTwitchStats(db *sql.DB, username string, followers, views int, isLive bool) error {
+	_, err := db.Exec(`
+		INSERT INTO twitch_stats (username, follower_count, view_count, is_live) 
+		VALUES ($1, $2, $3, $4)
+	`, username, followers, views, isLive)
+	return err
+}
+
+func InsertLeetCodeStats(db *sql.DB, username string, solved, ranking int, language string) error {
+	_, err := db.Exec(`
+		INSERT INTO leetcode_stats (username, solved_count, ranking, main_language) 
+		VALUES ($1, $2, $3, $4)
+	`, username, solved, ranking, language)
+	return err
+}

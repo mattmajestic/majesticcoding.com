@@ -98,3 +98,45 @@ func CreateTwitchMessagesTable(db *sql.DB) error {
 	`)
 	return err
 }
+
+func CreateStatsHistoryTables(db *sql.DB) error {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS youtube_stats (
+			id SERIAL PRIMARY KEY,
+			channel_id VARCHAR(255),
+			subscriber_count INT,
+			video_count INT,
+			view_count BIGINT,
+			recorded_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS github_stats (
+			id SERIAL PRIMARY KEY,
+			username VARCHAR(255),
+			public_repos INT,
+			followers INT,
+			following INT,
+			total_stars INT,
+			recorded_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS twitch_stats (
+			id SERIAL PRIMARY KEY,
+			username VARCHAR(255),
+			follower_count INT,
+			view_count INT,
+			is_live BOOLEAN,
+			recorded_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS leetcode_stats (
+			id SERIAL PRIMARY KEY,
+			username VARCHAR(255),
+			solved_count INT,
+			ranking INT,
+			main_language VARCHAR(100),
+			recorded_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		);
+	`)
+	return err
+}

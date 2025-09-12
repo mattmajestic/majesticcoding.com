@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"majesticcoding.com/api/services"
+	"majesticcoding.com/db"
 )
 
 // dummy provider handlers map
@@ -42,6 +45,33 @@ func getYouTubeStats(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Store stats in database
+	database := db.GetDB()
+	if database != nil {
+		channelTitle := ""
+		subscribers := 0
+		videos := 0
+		views := int64(0)
+		
+		if val, ok := stats["channelTitle"].(string); ok {
+			channelTitle = val
+		}
+		if val, ok := stats["subscribers"].(string); ok {
+			fmt.Sscanf(val, "%d", &subscribers)
+		}
+		if val, ok := stats["videos"].(string); ok {
+			fmt.Sscanf(val, "%d", &videos)
+		}
+		if val, ok := stats["views"].(string); ok {
+			fmt.Sscanf(val, "%d", &views)
+		}
+		
+		if err := db.InsertYouTubeStats(database, channelTitle, subscribers, videos, views); err != nil {
+			log.Printf("❌ Failed to save YouTube stats: %v", err)
+		}
+	}
+
 	c.JSON(http.StatusOK, stats)
 }
 
@@ -54,6 +84,15 @@ func getGithubStats(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Store stats in database
+	database := db.GetDB()
+	if database != nil {
+		if err := db.InsertGitHubStats(database, username, stats.PublicRepos, stats.Followers, 0, stats.StarsReceived); err != nil {
+			log.Printf("❌ Failed to save GitHub stats: %v", err)
+		}
+	}
+
 	c.JSON(http.StatusOK, stats)
 }
 
@@ -66,6 +105,15 @@ func getTwitchStats(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Store stats in database
+	database := db.GetDB()
+	if database != nil {
+		if err := db.InsertTwitchStats(database, username, stats.Followers, 0, false); err != nil {
+			log.Printf("❌ Failed to save Twitch stats: %v", err)
+		}
+	}
+
 	c.JSON(http.StatusOK, stats)
 }
 
@@ -88,5 +136,14 @@ func getLeetCodeStats(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Store stats in database
+	database := db.GetDB()
+	if database != nil {
+		if err := db.InsertLeetCodeStats(database, username, stats.SolvedCount, stats.Ranking, stats.Languages); err != nil {
+			log.Printf("❌ Failed to save LeetCode stats: %v", err)
+		}
+	}
+
 	c.JSON(http.StatusOK, stats)
 }
