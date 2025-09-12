@@ -2357,3 +2357,191 @@ body.light .cursor-simple {
   top: 20px;
   left: 20px;
 }
+
+/* EPL Widget Styles */
+.epl-widget {
+    background: linear-gradient(135deg, #37003c 0%, #00ff85 100%);
+    border-radius: 20px;
+    padding: 20px 20px 15px 20px;
+    width: 400px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(55, 0, 60, 0.3);
+    border: 2px solid #00ff85;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+}
+
+.match-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 45px;
+    width: 100%;
+    transition: opacity 0.5s ease-in-out;
+    margin-top: -15px;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.team-crest {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+
+.team-crest:hover {
+    transform: scale(1.1);
+}
+
+.team-name {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 110px;
+    line-height: 1.2;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs {
+    color: #00ff85;
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    margin-top: -10px;
+}
+
+.match-info {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    text-align: center;
+    margin-top: 10px;
+}
+
+.epl-widget .loading {
+    color: white;
+    font-size: 16px;
+    text-align: center;
+}
+
+.epl-widget .no-matches {
+    color: white;
+    font-size: 14px;
+    text-align: center;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fade-in {
+    opacity: 1;
+}
+
+/* La Liga Widget Styles */
+.laliga-widget {
+    background: linear-gradient(135deg, #c41e3a 0%, #ffcc02 100%);
+    border-radius: 20px;
+    padding: 20px 20px 15px 20px;
+    width: 400px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(196, 30, 58, 0.3);
+    border: 2px solid #ffcc02;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+}
+
+.laliga-widget .match-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 45px;
+    width: 100%;
+    transition: opacity 0.5s ease-in-out;
+    margin-top: -15px;
+}
+
+.laliga-widget .team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.laliga-widget .team-crest {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+
+.laliga-widget .team-crest:hover {
+    transform: scale(1.1);
+}
+
+.laliga-widget .team-name {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 110px;
+    line-height: 1.2;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.laliga-widget .vs {
+    color: #ffcc02;
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    margin-top: -10px;
+}
+
+.laliga-widget .match-info {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    text-align: center;
+    margin-top: 10px;
+}
+
+.laliga-widget .loading {
+    color: white;
+    font-size: 16px;
+    text-align: center;
+}
+
+.laliga-widget .no-matches {
+    color: white;
+    font-size: 14px;
+    text-align: center;
+}

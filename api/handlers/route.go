@@ -32,6 +32,8 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/widget/lavalamp", RenderTemplate("lavalamp.tmpl"))
 	router.GET("/widget/globe", GlobeWidgetHandler())
 	router.GET("/widget/spotify", RenderSpotify("spotify.tmpl"))
+	router.GET("/widget/epl", EPLWidget)
+	router.GET("/widget/laliga", LaLigaWidget)
 
 	// API routes
 	/// Scenarios
@@ -46,6 +48,10 @@ func SetupRoutes(router *gin.Engine) {
 	/// 3rd Party APIs (YouTube, Github, Twitch, Leetcode)
 	router.GET("/api/stats/:provider", StatsRouter)
 	router.GET("/api/git/hash", GitHashHandler)
+
+	/// Football Leagues
+	router.GET("/api/epl/schedule", GetPremierLeagueSchedule)
+	router.GET("/api/laliga/schedule", GetLaLigaSchedule)
 
 	/// Geocoding and Globe
 	router.GET("/api/geocode", GeocodeHandler())
