@@ -24,6 +24,9 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
 	router.GET("/infrastructure", RenderTemplate("infrastructure.tmpl"))
 	router.GET("/certifications", RenderTemplate("certifications.tmpl"))
+	router.GET("/stripe", RenderStripe("stripe.tmpl"))
+
+	router.GET("/gallery", RenderGallery("gallery.tmpl"))
 	router.GET("/live/", StreamHandler)
 
 	/// Streaming Widgets
@@ -32,6 +35,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/widget/lavalamp", RenderTemplate("lavalamp.tmpl"))
 	router.GET("/widget/globe", GlobeWidgetHandler())
 	router.GET("/widget/spotify", RenderSpotify("spotify.tmpl"))
+	router.GET("/widget/stripe-btn", RenderStripe("stripe-btn.tmpl"))
 	router.GET("/widget/epl", EPLWidget)
 	router.GET("/widget/laliga", LaLigaWidget)
 

@@ -1,0 +1,15 @@
+{{ template "base" . }}
+
+<!DOCTYPE html>
+<html>
+<body>
+    
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+    
+    <stripe-buy-button
+      buy-button-id="{{.STRIPE_BUY_BUTTON_ID}}"
+      publishable-key="{{.STRIPE_PUBLISHABLE_KEY}}"
+    >
+    </stripe-buy-button>
+</body>
+</html>

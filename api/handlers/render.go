@@ -32,6 +32,15 @@ func RenderSpotify(tmpl string) gin.HandlerFunc {
 	}
 }
 
+func RenderStripe(tmpl string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, tmpl, gin.H{
+			"STRIPE_PUBLISHABLE_KEY": os.Getenv("STRIPE_PUB_KEY"),
+			"STRIPE_BUY_BUTTON_ID":   os.Getenv("STRIPE_BUY_BTN"),
+		})
+	}
+}
+
 func DocsHandler(r *gin.Engine) {
 	r.GET("/docs/:section", func(c *gin.Context) {
 		section := c.Param("section")
@@ -56,6 +65,20 @@ func AboutHandler(r *gin.Engine) {
 		}
 		c.String(http.StatusNotFound, "Not found")
 	})
+}
+
+func RenderGallery(tmpl string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Determine the base URL with correct protocol
+		baseURL := "https://" + c.Request.Host
+		if c.Request.Header.Get("X-Forwarded-Proto") == "http" || c.Request.TLS == nil {
+			baseURL = "http://" + c.Request.Host
+		}
+		
+		c.HTML(http.StatusOK, tmpl, gin.H{
+			"BaseURL": baseURL,
+		})
+	}
 }
 
 func ChatWidget(c *gin.Context) {
