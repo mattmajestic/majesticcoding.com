@@ -25,7 +25,6 @@
     });
   }
 
-  // Initialize globe with JSON data
   async function initGlobe() {
     try {
       await waitForGlobe();
@@ -35,7 +34,6 @@
       return;
     }
 
-    // Load recent checkins from API
     let points = [];
     try {
       const response = await fetch('/api/checkins/recent');
@@ -44,21 +42,25 @@
       }
       const checkins = await response.json();
       
-      points = checkins.map(checkin => ({
-        lat: checkin.lat,
-        lng: checkin.lon,
-        size: 0.8,
-        color: 'orange',
-        city: checkin.city || 'Recent Checkin',
-        country: checkin.country || 'Unknown',
-        time: checkin.checkin_time
-      }));
+      if (checkins && Array.isArray(checkins)) {
+        points = checkins.map(checkin => ({
+          lat: checkin.lat,
+          lng: checkin.lon,
+          size: 0.8,
+          color: 'orange',
+          city: checkin.city || 'Recent Checkin',
+          country: checkin.country || 'Unknown',
+          time: checkin.checkin_time
+        }));
+      } else {
+        console.warn('No checkins data available or invalid format');
+        points = []; // Use empty array as fallback
+      }
     } catch (error) {
       console.error('Failed to load recent checkins:', error);
-      return;
+      points = [];
     }
 
-    // Initialize globe
     const container = document.getElementById('globe');
     if (!container) {
       console.error('Globe container not found');
@@ -88,10 +90,10 @@
       .labelResolution(3)
       .labelAltitude(d => 0.02);
 
-    // Set initial position to show Atlantic (between US and Europe)
-    globe.pointOfView({ lat: 45, lng: -30, altitude: 2.5 });
+   
+    globe.pointOfView({ lat: 45, lng: -30, altitude: 1.2 });
 
-    // Enhanced controls with smoother rotation focused on US/Europe
+
     globe.controls().enableZoom = true;
     globe.controls().enablePan = true;
     globe.controls().autoRotate = true;
@@ -100,7 +102,6 @@
     globe.controls().dampingFactor = 0.1;
   }
 
-  // Start when page loads
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGlobe);
   } else {

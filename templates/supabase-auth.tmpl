@@ -1,0 +1,139 @@
+{{ template "base" . }}
+
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div class="container mx-auto px-4 py-8">
+
+    <!-- Auth Container -->
+    <div class="max-w-md mx-auto">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-200 dark:border-gray-700">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding" class="w-20 h-20 rounded-full mx-auto mb-4">
+          <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Welcome Back</h1>
+          <p class="text-gray-600 dark:text-gray-300">Sign in to access your dashboard</p>
+        </div>
+
+        <!-- Message display -->
+        <div id="auth-message" class="hidden mb-4 p-3 rounded-md text-sm"></div>
+
+        <!-- Login Section -->
+        <div id="login-section">
+          <!-- Tab Buttons -->
+          <div class="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button class="tab-button flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all active" onclick="showTab('login')">Sign In</button>
+            <button class="tab-button flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all" onclick="showTab('signup')">Sign Up</button>
+            <button class="tab-button flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all" onclick="showTab('reset')">Reset</button>
+          </div>
+
+          <!-- Sign In Tab -->
+          <div id="login-tab" class="tab-content">
+            <form id="login-form" class="space-y-4">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                <input type="email" id="email" required placeholder="your@email.com"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                <input type="password" id="password" required placeholder="••••••••"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                Sign In
+              </button>
+            </form>
+
+            <div class="text-center mt-4">
+              <a href="#" onclick="showTab('reset')" class="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400">Forgot your password?</a>
+            </div>
+          </div>
+
+          <!-- Sign Up Tab -->
+          <div id="signup-tab" class="tab-content hidden">
+            <form id="signup-form" class="space-y-4">
+              <div>
+                <label for="signup-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                <input type="email" id="signup-email" required placeholder="your@email.com"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label for="signup-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                <input type="password" id="signup-password" required placeholder="••••••••" minlength="6"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                Create Account
+              </button>
+            </form>
+          </div>
+
+          <!-- Password Reset Tab -->
+          <div id="reset-tab" class="tab-content hidden">
+            <form id="reset-form" class="space-y-4">
+              <div>
+                <label for="reset-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                <input type="email" id="reset-email" required placeholder="your@email.com"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                Send Reset Link
+              </button>
+            </form>
+          </div>
+
+          <!-- Social Login -->
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">or continue with</span>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <button id="twitch-login" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 flex items-center justify-center">
+              <i class="fab fa-twitch mr-2"></i>
+              Continue with Twitch
+            </button>
+            <button id="github-login" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-4 rounded-md transition duration-300 flex items-center justify-center">
+              <i class="fab fa-github mr-2"></i>
+              Continue with GitHub
+            </button>
+          </div>
+        </div>
+
+        <!-- Logged In Section -->
+        <div id="logged-in-section" class="hidden">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-user text-white text-xl"></i>
+            </div>
+            <img id="user-avatar" alt="User Avatar" class="w-16 h-16 rounded-full mx-auto mb-4 hidden">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Welcome!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Signed in as: <strong id="user-email"></strong></p>
+
+            <div class="space-y-3">
+              <a href="/dashboard" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                Go to Dashboard
+              </a>
+              <button id="sign-out" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-6">
+          <a href="/" class="text-blue-600 hover:text-blue-500 dark:text-blue-400 text-sm">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+
+  <script>src="/static/components/supabase.js"</script>
+  <script type="module" src="/static/js/supabase-auth.js"></script>
+  <script src="/static/components/theme.js"></script>
+</body>
+
+{{ template "footer_home" . }}

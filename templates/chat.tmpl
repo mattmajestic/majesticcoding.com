@@ -32,6 +32,23 @@
 </div>
 
 
+    <!-- Auth Status Message -->
+    <div id="auth-status-message" class="hidden p-3 border-t auth-status-border auth-status-bg text-center">
+      <div class="flex flex-col items-center space-y-2">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+          <i class="fas fa-lock text-white text-sm"></i>
+        </div>
+        <div class="px-2">
+          <p class="auth-status-title font-semibold text-xs mb-1">Authentication Required</p>
+          <p class="auth-status-subtitle text-xs">Sign in to join the conversation</p>
+        </div>
+        <a href="/auth" class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium text-xs rounded-md shadow-md transition-all duration-200 transform hover:scale-105 w-full max-w-[200px] justify-center">
+          <i class="fas fa-sign-in-alt mr-1"></i>
+          Sign In
+        </a>
+      </div>
+    </div>
+
     <!-- Chat Form -->
     <form id="chat-form"
           class="flex items-center p-2 border-t border-gray-700 shrink-0">

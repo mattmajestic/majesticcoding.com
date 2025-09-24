@@ -70,7 +70,7 @@ func SaveSpotifyToken(db *sql.DB, accessToken, refreshToken, tokenType string, e
 	if err != nil {
 		return err
 	}
-	
+
 	// Insert new token
 	_, err = db.Exec(`
 		INSERT INTO spotify_tokens (access_token, refresh_token, token_type, expires_at) 
@@ -91,9 +91,44 @@ func GetSpotifyToken(db *sql.DB) (accessToken, refreshToken, tokenType string, e
 
 func UpdateSpotifyToken(db *sql.DB, accessToken, refreshToken string, expiresAt time.Time) error {
 	_, err := db.Exec(`
-		UPDATE spotify_tokens 
+		UPDATE spotify_tokens
 		SET access_token = $1, refresh_token = $2, expires_at = $3, updated_at = CURRENT_TIMESTAMP
 		WHERE id = (SELECT id FROM spotify_tokens ORDER BY created_at DESC LIMIT 1)
+	`, accessToken, refreshToken, expiresAt)
+	return err
+}
+
+// Twitch token functions
+func SaveTwitchToken(db *sql.DB, accessToken, refreshToken, tokenType, scopes string, expiresAt time.Time) error {
+	// First, clear any existing tokens (we only store one at a time)
+	_, err := db.Exec(`DELETE FROM twitch_tokens`)
+	if err != nil {
+		return err
+	}
+
+	// Insert new token
+	_, err = db.Exec(`
+		INSERT INTO twitch_tokens (access_token, refresh_token, token_type, scopes, expires_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`, accessToken, refreshToken, tokenType, scopes, expiresAt)
+	return err
+}
+
+func GetTwitchToken(db *sql.DB) (accessToken, refreshToken, tokenType, scopes string, expiresAt time.Time, err error) {
+	err = db.QueryRow(`
+		SELECT access_token, COALESCE(refresh_token, ''), token_type, COALESCE(scopes, ''), expires_at
+		FROM twitch_tokens
+		ORDER BY created_at DESC
+		LIMIT 1
+	`).Scan(&accessToken, &refreshToken, &tokenType, &scopes, &expiresAt)
+	return
+}
+
+func UpdateTwitchToken(db *sql.DB, accessToken, refreshToken string, expiresAt time.Time) error {
+	_, err := db.Exec(`
+		UPDATE twitch_tokens
+		SET access_token = $1, refresh_token = $2, expires_at = $3, updated_at = CURRENT_TIMESTAMP
+		WHERE id = (SELECT id FROM twitch_tokens ORDER BY created_at DESC LIMIT 1)
 	`, accessToken, refreshToken, expiresAt)
 	return err
 }
@@ -105,7 +140,7 @@ func GetRecentCheckins(db *sql.DB, hoursBack int) ([]models.Checkin, error) {
 		WHERE checkin_time >= NOW() - INTERVAL '%d hours'
 		ORDER BY checkin_time DESC
 	`, hoursBack)
-	
+
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
@@ -133,12 +168,12 @@ func InsertTwitchMessage(db *sql.DB, message models.TwitchMessage) error {
 			badgesJSON = string(badgesBytes)
 		}
 	}
-	
+
 	_, err := db.Exec(`
 		INSERT INTO twitch_messages (username, display_name, message, color, badges, is_mod, is_vip, is_broadcaster, time) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-	`, message.Username, message.DisplayName, message.Message, message.Color, 
-	   badgesJSON, message.IsMod, message.IsVip, message.IsBroadcaster, message.Time)
+	`, message.Username, message.DisplayName, message.Message, message.Color,
+		badgesJSON, message.IsMod, message.IsVip, message.IsBroadcaster, message.Time)
 	return err
 }
 
@@ -158,8 +193,8 @@ func GetRecentTwitchMessages(db *sql.DB, limit int) ([]models.TwitchMessage, err
 	var messages []models.TwitchMessage
 	for rows.Next() {
 		var msg models.TwitchMessage
-		if err := rows.Scan(&msg.ID, &msg.Username, &msg.DisplayName, &msg.Message, &msg.Color, 
-						   &msg.Badges, &msg.IsMod, &msg.IsVip, &msg.IsBroadcaster, &msg.Time, &msg.CreatedAt); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.Username, &msg.DisplayName, &msg.Message, &msg.Color,
+			&msg.Badges, &msg.IsMod, &msg.IsVip, &msg.IsBroadcaster, &msg.Time, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)
@@ -194,8 +229,172 @@ func InsertTwitchStats(db *sql.DB, username string, followers, views int, isLive
 
 func InsertLeetCodeStats(db *sql.DB, username string, solved, ranking int, language string) error {
 	_, err := db.Exec(`
-		INSERT INTO leetcode_stats (username, solved_count, ranking, main_language) 
+		INSERT INTO leetcode_stats (username, solved_count, ranking, main_language)
 		VALUES ($1, $2, $3, $4)
 	`, username, solved, ranking, language)
 	return err
+}
+
+// Twitch Activities insert functions
+func InsertTwitchFollower(db *sql.DB, follower models.TwitchFollower) error {
+	_, err := db.Exec(`
+		INSERT INTO twitch_followers (user_id, user_login, user_name, followed_at)
+		VALUES ($1, $2, $3, $4)
+	`, follower.UserID, follower.UserLogin, follower.UserName, follower.FollowedAt)
+	return err
+}
+
+func InsertTwitchRaid(db *sql.DB, raid models.TwitchRaid) error {
+	_, err := db.Exec(`
+		INSERT INTO twitch_raids (from_broadcaster_user_id, from_broadcaster_user_login, from_broadcaster_user_name,
+								  to_broadcaster_user_id, to_broadcaster_user_login, to_broadcaster_user_name, viewers)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`, raid.FromBroadcasterUserID, raid.FromBroadcasterUserLogin, raid.FromBroadcasterUserName,
+		raid.ToBroadcasterUserID, raid.ToBroadcasterUserLogin, raid.ToBroadcasterUserName, raid.Viewers)
+	return err
+}
+
+func InsertTwitchSub(db *sql.DB, sub models.TwitchSub) error {
+	_, err := db.Exec(`
+		INSERT INTO twitch_subs (user_id, user_login, user_name, broadcaster_user_id, broadcaster_user_login,
+								broadcaster_user_name, tier, is_gift, gifter_user_id, gifter_user_login, gifter_user_name)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	`, sub.UserID, sub.UserLogin, sub.UserName, sub.BroadcasterUserID, sub.BroadcasterUserLogin,
+		sub.BroadcasterUserName, sub.Tier, sub.IsGift, sub.GifterUserID, sub.GifterUserLogin, sub.GifterUserName)
+	return err
+}
+
+func InsertTwitchBits(db *sql.DB, bits models.TwitchBits) error {
+	_, err := db.Exec(`
+		INSERT INTO twitch_bits (user_id, user_login, user_name, broadcaster_user_id, broadcaster_user_login,
+								broadcaster_user_name, is_anonymous, message, bits)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`, bits.UserID, bits.UserLogin, bits.UserName, bits.BroadcasterUserID, bits.BroadcasterUserLogin,
+		bits.BroadcasterUserName, bits.IsAnonymous, bits.Message, bits.Bits)
+	return err
+}
+
+// Get functions for Twitch activities
+func GetRecentTwitchFollowers(db *sql.DB, limit int) ([]models.TwitchFollower, error) {
+	rows, err := db.Query(`
+		SELECT id, user_id, user_login, user_name, followed_at, created_at
+		FROM twitch_followers
+		ORDER BY followed_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var followers []models.TwitchFollower
+	for rows.Next() {
+		var f models.TwitchFollower
+		if err := rows.Scan(&f.ID, &f.UserID, &f.UserLogin, &f.UserName, &f.FollowedAt, &f.CreatedAt); err != nil {
+			return nil, err
+		}
+		followers = append(followers, f)
+	}
+	return followers, nil
+}
+
+func GetRecentTwitchRaids(db *sql.DB, limit int) ([]models.TwitchRaid, error) {
+	rows, err := db.Query(`
+		SELECT id, from_broadcaster_user_id, from_broadcaster_user_login, from_broadcaster_user_name,
+			   to_broadcaster_user_id, to_broadcaster_user_login, to_broadcaster_user_name, viewers, created_at
+		FROM twitch_raids
+		ORDER BY created_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var raids []models.TwitchRaid
+	for rows.Next() {
+		var r models.TwitchRaid
+		if err := rows.Scan(&r.ID, &r.FromBroadcasterUserID, &r.FromBroadcasterUserLogin, &r.FromBroadcasterUserName,
+			&r.ToBroadcasterUserID, &r.ToBroadcasterUserLogin, &r.ToBroadcasterUserName, &r.Viewers, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		raids = append(raids, r)
+	}
+	return raids, nil
+}
+
+func GetRecentTwitchSubs(db *sql.DB, limit int) ([]models.TwitchSub, error) {
+	rows, err := db.Query(`
+		SELECT id, user_id, user_login, user_name, broadcaster_user_id, broadcaster_user_login,
+			   broadcaster_user_name, tier, is_gift, gifter_user_id, gifter_user_login, gifter_user_name, created_at
+		FROM twitch_subs
+		ORDER BY created_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var subs []models.TwitchSub
+	for rows.Next() {
+		var s models.TwitchSub
+		if err := rows.Scan(&s.ID, &s.UserID, &s.UserLogin, &s.UserName, &s.BroadcasterUserID, &s.BroadcasterUserLogin,
+			&s.BroadcasterUserName, &s.Tier, &s.IsGift, &s.GifterUserID, &s.GifterUserLogin, &s.GifterUserName, &s.CreatedAt); err != nil {
+			return nil, err
+		}
+		subs = append(subs, s)
+	}
+	return subs, nil
+}
+
+func GetRecentTwitchBits(db *sql.DB, limit int) ([]models.TwitchBits, error) {
+	rows, err := db.Query(`
+		SELECT id, user_id, user_login, user_name, broadcaster_user_id, broadcaster_user_login,
+			   broadcaster_user_name, is_anonymous, message, bits, created_at
+		FROM twitch_bits
+		ORDER BY created_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var bitsList []models.TwitchBits
+	for rows.Next() {
+		var b models.TwitchBits
+		if err := rows.Scan(&b.ID, &b.UserID, &b.UserLogin, &b.UserName, &b.BroadcasterUserID, &b.BroadcasterUserLogin,
+			&b.BroadcasterUserName, &b.IsAnonymous, &b.Message, &b.Bits, &b.CreatedAt); err != nil {
+			return nil, err
+		}
+		bitsList = append(bitsList, b)
+	}
+	return bitsList, nil
+}
+
+// GetRecentTwitchUsersFromMessages gets unique Twitch users who have sent messages in the past hour
+func GetRecentTwitchUsersFromMessages(db *sql.DB, hoursBack int) ([]string, error) {
+	query := `
+		SELECT DISTINCT username 
+		FROM bronze.twitch_messages 
+		WHERE time >= NOW() - INTERVAL '%d hours'
+		ORDER BY username
+	`
+
+	rows, err := db.Query(fmt.Sprintf(query, hoursBack))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []string
+	for rows.Next() {
+		var username string
+		if err := rows.Scan(&username); err != nil {
+			return nil, err
+		}
+		users = append(users, username)
+	}
+	return users, nil
 }

@@ -53,7 +53,7 @@ func getYouTubeStats(c *gin.Context) {
 		subscribers := 0
 		videos := 0
 		views := int64(0)
-		
+
 		if val, ok := stats["channelTitle"].(string); ok {
 			channelTitle = val
 		}
@@ -66,7 +66,7 @@ func getYouTubeStats(c *gin.Context) {
 		if val, ok := stats["views"].(string); ok {
 			fmt.Sscanf(val, "%d", &views)
 		}
-		
+
 		if err := db.InsertYouTubeStats(database, channelTitle, subscribers, videos, views); err != nil {
 			log.Printf("❌ Failed to save YouTube stats: %v", err)
 		}

@@ -96,7 +96,7 @@ func GlobeWidgetHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		database := db.GetDB()
 		var checkins []models.Checkin
-		
+
 		if database != nil {
 			if recentCheckins, err := db.GetRecentCheckins(database, 8); err == nil {
 				checkins = recentCheckins
@@ -104,7 +104,7 @@ func GlobeWidgetHandler() gin.HandlerFunc {
 		}
 
 		data := gin.H{
-			"Title": "Globe Widget",
+			"Title":    "Globe Widget",
 			"Checkins": checkins,
 		}
 		c.HTML(http.StatusOK, "globe.tmpl", data)

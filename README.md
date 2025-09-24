@@ -1,19 +1,243 @@
-# majesticcoding.com in Golang
 
-Welcome to majesticcoding.com.  This was built in Golang with a `Gin API with Swagger`, `AWS IVS RTMP` for `Live Streams`, `Websockets` for `Live Chatting`, `Neon Postgres` for relational database, `Vanilla JS` + `Tailwind CSS` in `Partial templates` on the UI.
 
-### Run with Docker 🐳
-```
+# 🚀 Majestic Coding
+
+**Full Stack Go Web Application with Live Streaming & AI**
+
+[![Go](https://img.shields.io/badge/Go-1.23.6+-00ADD8?style=flat-square&logo=go&logoColor=white)](https://golang.org/)
+[![Gin](https://img.shields.io/badge/Gin-Web%20Framework-00ADD8?style=flat-square&logo=gin&logoColor=white)](https://gin-gonic.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-316192?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com/)
+[![AWS](https://img.shields.io/badge/AWS-IVS%20Streaming-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ivs/)
+[![AI](https://img.shields.io/badge/AI-Multi%20Provider-FF6B6B?style=flat-square&logo=openai&logoColor=white)](#ai-integration)
+
+---
+
+## 📋 Contents
+
+**[🚀 Quick Start](#-quick-start)** • **[✨ Features](#-features)** • **[🏗️ Architecture](#️-architecture)** • **[📁 Structure](#-directory-structure)** • **[🛠️ Tech Stack](#️-tech-stack)** • **[🌐 API](#-api-endpoints)** • **[🔧 Setup](#-environment-setup)** • **[🐳 Deploy](#-deployment)**
+
+## 🚀 Quick Start
+
+<table>
+<tr>
+<td width="50%">
+
+**🐳 Docker (Recommended)**
+```bash
 docker compose up
 ```
-### Run with Go 🐹
-```
+
+</td>
+<td width="50%">
+
+**🐹 Go Native**
+```bash
 go run .
 ```
 
-## Technical Documentation
+</td>
+</tr>
+</table>
 
-The following are diagrams outlining the structure of the main functionality of this Go application.
+**🔧 Development Setup**
+```bash
+git clone https://github.com/mattmajestic/majesticcoding.com.git
+cd majesticcoding.com && go mod tidy && go run .
+```
+
+➡️ **Open:** `http://localhost:8080`
+
+## ✨ Features
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+**🎥 Live Streaming**
+AWS IVS • RTMP • HLS
+WebSocket Chat • Analytics
+
+</td>
+<td align="center" width="33%">
+
+**🤖 AI Integration**
+Claude • GPT • Gemini • Groq
+RAG • Vector Embeddings
+
+</td>
+<td align="center" width="33%">
+
+**📊 Social Analytics**
+GitHub • YouTube • Twitch
+LeetCode • Real-time Stats
+
+</td>
+</tr>
+<tr>
+<td align="center">
+
+**🔐 Authentication**
+Supabase • JWT • Session Cache
+OAuth • Security
+
+</td>
+<td align="center">
+
+**🌍 Geographic**
+Check-ins • 3D Globe
+Geocoding • Locations
+
+</td>
+<td align="center">
+
+**📡 API Services**
+REST • GraphQL • WebSocket
+Swagger • Bronze Schema
+
+</td>
+</tr>
+</table>
+
+### 🎵 **Spotify Integration** • 🔧 **Content Moderation** • 🚀 **Real-time Everything**
+
+## 🏗️ Architecture
+
+**MVC Pattern** • **Microservice Ready** • **Event-Driven** • **Cloud-Native**
+
+```
+Frontend ↔ Gin API ↔ Services ↔ PostgreSQL + Vector DB
+    ↕         ↕         ↕
+WebSocket   REST    External APIs
+```
+
+## 📁 Directory Structure
+
+<details>
+<summary><b>📦 Click to expand full structure</b></summary>
+
+```bash
+majesticcoding.com/
+├── 📦 api/                 # Backend API Layer
+│   ├── handlers/           # HTTP controllers
+│   ├── services/           # Business logic + integrations
+│   ├── models/             # Data structures
+│   └── middleware/         # Auth, CORS, etc.
+├── 📦 db/                  # Database Layer
+│   ├── *.go               # Queries, connections, schemas
+│   └── migrations/         # Schema changes
+├── 📦 static/              # Frontend Assets
+│   ├── components/         # JS modules
+│   ├── styles/            # Tailwind CSS
+│   └── img/               # Static assets
+├── 📦 templates/           # HTML Templates
+├── 📄 main.go             # Entry point
+├── 📄 docker-compose.yml  # Container orchestration
+└── 📄 k8s-go.yaml         # Kubernetes deployment
+```
+
+</details>
+
+**🏢 API Layer:** REST handlers + business services
+**🗄️ Database:** PostgreSQL + Vector embeddings + Session cache
+**🎨 Frontend:** Vanilla JS + Tailwind + Go templates
+**⚙️ Infrastructure:** Docker + Kubernetes ready
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<td align="center" width="25%"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg" width="40"><br><b>Go 1.23+</b></td>
+<td align="center" width="25%"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original.svg" width="40"><br><b>PostgreSQL</b></td>
+<td align="center" width="25%"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original.svg" width="40"><br><b>Docker</b></td>
+<td align="center" width="25%"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" width="40"><br><b>JavaScript</b></td>
+</tr>
+</table>
+
+**Backend:** Go + Gin + PostgreSQL/Neon + Swagger
+**Frontend:** Vanilla JS + Tailwind + WebSockets
+**AI:** Claude + GPT + Gemini + Groq + RAG
+**Cloud:** AWS IVS + Supabase + Docker + K8s
+
+## 🌐 API Endpoints
+
+| **Category** | **Endpoint** | **Description** |
+|:---:|:---:|:---:|
+| 🔐 **Auth** | `POST /api/user/sync` | Sync user data |
+| 🎥 **Stream** | `GET /api/stream/status` | Live stream status |
+| 🤖 **AI** | `POST /api/llm/` | Chat with AI |
+| 📊 **Stats** | `GET /api/stats/{platform}` | Social media analytics |
+| 💬 **Chat** | `GET /ws/chat` | WebSocket connection |
+
+**🔗 Full Documentation:** `http://localhost:8080/docs`
+
+## 🔧 Environment Setup
+
+<details>
+<summary><b>🔑 Environment Variables (Click to expand)</b></summary>
+
+```bash
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/database
+
+# Authentication
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+
+# AI Providers
+ANTHROPIC_API_KEY=your-key
+OPENAI_API_KEY=your-key
+GEMINI_API_KEY=your-key
+
+# Social APIs
+GITHUB_TOKEN=your-token
+YOUTUBE_API_KEY=your-key
+TWITCH_CLIENT_ID=your-id
+
+# AWS IVS
+AWS_IVS_CHANNEL_ARN=your-arn
+```
+
+</details>
+
+## 🐳 Deployment
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+**🔧 Development**
+```bash
+go run .
+# or
+docker compose up
+```
+
+</td>
+<td align="center" width="33%">
+
+**🚀 Production**
+```bash
+docker build -t app .
+docker run -p 8080:8080 app
+```
+
+</td>
+<td align="center" width="33%">
+
+**☁️ Cloud**
+```bash
+kubectl apply -f k8s-go.yaml
+# Ready for K8s/Cloud
+```
+
+</td>
+</tr>
+</table>
+
+**⚡ Database:** Enable `pgvector` extension in Neon • Migrations run automatically
+
+## 📊 Architecture Diagrams
 
 ### Gin API with Swagger Architecture Diagram
 
@@ -90,3 +314,21 @@ sequenceDiagram
         JS->>JS: Show "Offline" UI, hide/disable player
     end
 ```
+
+## 🤝 Contributing
+
+**Fork → Clone → Code → PR**
+
+```bash
+go fmt ./... && go test ./... && go build  # ✅ Ready to submit
+```
+
+**📝 License:** MIT • **🙏 Thanks:** Go Team, Gin, Neon, Supabase
+
+---
+
+**⭐ Star this repo** • **🐛 Report issues** • **💡 Suggest features**
+
+**Made with ❤️ by [Majestic Coding](https://majesticcoding.com)**
+
+[🌐 Website](https://majesticcoding.com) • [📚 Docs](https://docs.majesticcoding.com) • [🔗 API](https://api.majesticcoding.com/docs)

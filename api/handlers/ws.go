@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	goaway "github.com/TwiN/go-away"
@@ -24,6 +25,60 @@ func generateAnonUsername() string {
 	return fmt.Sprintf(namesgenerator.GetRandomName(0)+"_%02d", time.Now().UnixNano()%10000)
 }
 
+// getUsernameFromAuth attempts to get username from Supabase auth token
+func getUsernameFromAuth(r *http.Request) string {
+	// Check for Authorization header
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		// Check for token in query parameters (common for WebSockets)
+		token := r.URL.Query().Get("token")
+		if token != "" {
+			authHeader = "Bearer " + token
+		}
+	}
+
+	if authHeader == "" {
+		return generateAnonUsername()
+	}
+
+	// Extract token
+	tokenString := ""
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		tokenString = strings.TrimSpace(authHeader[7:])
+	} else {
+		return generateAnonUsername()
+	}
+
+	// Verify Supabase token
+	user, err := verifySupabaseToken(tokenString)
+	if err != nil {
+		log.Printf("Auth verification failed for chat: %v", err)
+		return generateAnonUsername()
+	}
+
+	// Try to get username from user metadata first
+	if userMetadata, ok := user["user_metadata"].(map[string]interface{}); ok {
+		// Check for various username fields from different providers
+		if username, ok := userMetadata["user_name"].(string); ok && username != "" {
+			return "✓ " + username // GitHub, Twitch username
+		}
+		if username, ok := userMetadata["preferred_username"].(string); ok && username != "" {
+			return "✓ " + username // Some OAuth providers
+		}
+		if username, ok := userMetadata["name"].(string); ok && username != "" {
+			return "✓ " + username // Display name
+		}
+	}
+
+	// Fallback to email if no username found
+	if email, ok := user["email"].(string); ok && email != "" {
+		return "✓ " + email
+	}
+
+	// Fallback to anonymous
+	return generateAnonUsername()
+}
+
 func ChatWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -32,7 +87,7 @@ func ChatWebSocket(c *gin.Context) {
 	}
 	defer conn.Close()
 
-	username := generateAnonUsername()
+	username := getUsernameFromAuth(c.Request)
 
 	Mu.Lock()
 	Clients[conn] = true

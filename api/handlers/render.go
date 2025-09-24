@@ -8,13 +8,7 @@ import (
 	"majesticcoding.com/api/models"
 )
 
-func RenderWithClerk(tmpl string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, tmpl, gin.H{
-			"CLERK_PUBLISHABLE_KEY": os.Getenv("CLERK_PUBLISHABLE_KEY"),
-		})
-	}
-}
+// RenderWithClerk function removed - using Supabase authentication instead
 
 func RenderTemplate(tmpl string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -74,7 +68,7 @@ func RenderGallery(tmpl string) gin.HandlerFunc {
 		if c.Request.Header.Get("X-Forwarded-Proto") == "http" || c.Request.TLS == nil {
 			baseURL = "http://" + c.Request.Host
 		}
-		
+
 		c.HTML(http.StatusOK, tmpl, gin.H{
 			"BaseURL": baseURL,
 		})

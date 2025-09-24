@@ -1,14 +1,11 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"majesticcoding.com/api/models"
+	"majesticcoding.com/api/services"
 )
 
 func PostLLM(c *gin.Context) {
@@ -19,53 +16,49 @@ func PostLLM(c *gin.Context) {
 		return
 	}
 
-	payload := map[string]string{
-		"inputs": req.Prompt, // flan-t5-small only expects 'inputs'
-	}
-	jsonPayload, _ := json.Marshal(payload)
-
-	hfToken := os.Getenv("HF_TOKEN")
-	if hfToken == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Missing HF_TOKEN"})
-		return
+	// Convert to service request
+	aiReq := services.AIRequest{
+		Prompt:   req.Prompt,
+		Provider: services.AIProvider(req.Provider),
+		Model:    req.Model,
 	}
 
-	reqURL := "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"
-	httpReq, _ := http.NewRequest("POST", reqURL, bytes.NewBuffer(jsonPayload))
-	httpReq.Header.Set("Authorization", "Bearer "+hfToken)
-	httpReq.Header.Set("Content-Type", "application/json")
+	// If no provider specified, use fallback
+	if aiReq.Provider == "" {
+		aiReq.Provider = services.GetFallbackProvider()
+		if aiReq.Provider == "" {
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"error": "No AI providers configured. Please set at least one API key: ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, or GROQ_API_KEY",
+			})
+			return
+		}
+	}
 
-	resp, err := http.DefaultClient.Do(httpReq)
+	// Call AI service
+	resp, err := services.GenerateAIResponse(aiReq)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": "Request failed"})
-		return
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-
-	if resp.StatusCode != http.StatusOK {
 		c.JSON(http.StatusBadGateway, gin.H{
-			"error":  "Hugging Face API failed",
-			"status": resp.StatusCode,
-			"body":   string(body),
+			"error":   "AI service failed",
+			"details": err.Error(),
 		})
 		return
 	}
 
-	var hfResp map[string]interface{}
-	if err := json.Unmarshal(body, &hfResp); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse response"})
-		return
+	// Convert to response model
+	llmResp := models.LLMResponse{
+		Response: resp.Response,
+		Provider: resp.Provider,
+		Model:    resp.Model,
 	}
 
-	// Handle both single string and list of results
-	text := ""
-	if generated, ok := hfResp["generated_text"].(string); ok {
-		text = generated
-	} else if arr, ok := hfResp["generated_texts"].([]interface{}); ok && len(arr) > 0 {
-		text = arr[0].(string)
-	}
+	c.JSON(http.StatusOK, llmResp)
+}
 
-	c.JSON(http.StatusOK, models.LLMResponse{Response: text})
+// GetProviders returns available AI providers
+func GetProviders(c *gin.Context) {
+	providers := services.GetAvailableProviders()
+	c.JSON(http.StatusOK, gin.H{
+		"providers": providers,
+		"fallback":  services.GetFallbackProvider(),
+	})
 }

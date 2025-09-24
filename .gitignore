@@ -8,4 +8,4 @@ tmp/
 .vscode/
 llm/
 CLAUDE.md
-spotify_token.json
+.claude/

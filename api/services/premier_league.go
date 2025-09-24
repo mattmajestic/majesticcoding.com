@@ -49,13 +49,13 @@ func FetchPLSchedule() ([]models.PLMatch, error) {
 			Status   string `json:"status"`
 			Matchday int    `json:"matchday"`
 			HomeTeam struct {
-				ID   int    `json:"id"`
-				Name string `json:"name"`
+				ID    int    `json:"id"`
+				Name  string `json:"name"`
 				Crest string `json:"crest"`
 			} `json:"homeTeam"`
 			AwayTeam struct {
-				ID   int    `json:"id"`
-				Name string `json:"name"`
+				ID    int    `json:"id"`
+				Name  string `json:"name"`
 				Crest string `json:"crest"`
 			} `json:"awayTeam"`
 			Score struct {
@@ -80,7 +80,7 @@ func FetchPLSchedule() ([]models.PLMatch, error) {
 	matches := make([]models.PLMatch, len(apiResponse.Matches))
 	for i, match := range apiResponse.Matches {
 		date, _ := time.Parse(time.RFC3339, match.UTCDate)
-		
+
 		winner := ""
 		if match.Score.Winner != nil {
 			winner = *match.Score.Winner
@@ -92,13 +92,13 @@ func FetchPLSchedule() ([]models.PLMatch, error) {
 			Status:   match.Status,
 			Matchday: match.Matchday,
 			HomeTeam: models.PLTeam{
-				ID:   match.HomeTeam.ID,
-				Name: match.HomeTeam.Name,
+				ID:    match.HomeTeam.ID,
+				Name:  match.HomeTeam.Name,
 				Crest: match.HomeTeam.Crest,
 			},
 			AwayTeam: models.PLTeam{
-				ID:   match.AwayTeam.ID,
-				Name: match.AwayTeam.Name,
+				ID:    match.AwayTeam.ID,
+				Name:  match.AwayTeam.Name,
 				Crest: match.AwayTeam.Crest,
 			},
 			Score: models.PLScore{

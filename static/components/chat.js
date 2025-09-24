@@ -40,4 +40,4 @@ document.getElementById('insert-ai').addEventListener('click', () => {
 
 
 updateUserCount();
-setInterval(updateUserCount, 10000);
+setInterval(updateUserCount, 60000); // 1 minute

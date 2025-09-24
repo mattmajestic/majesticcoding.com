@@ -90,14 +90,14 @@ func GetRecentMessages() []models.TwitchMessage {
 func handleCheckinCommand(location, username string) {
 	// Call the geocode API endpoint
 	geocodeURL := fmt.Sprintf("http://localhost:8080/api/geocode?city=%s", url.QueryEscape(location))
-	
+
 	resp, err := http.Get(geocodeURL)
 	if err != nil {
 		log.Printf("❌ Failed to call geocode API for %s: %v", location, err)
 		return
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode == http.StatusOK {
 		log.Printf("✅ Successfully processed !checkin for %s from %s", location, username)
 	} else {

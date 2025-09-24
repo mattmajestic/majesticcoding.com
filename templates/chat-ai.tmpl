@@ -1,0 +1,124 @@
+{{ template "base" . }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Majestic Coding</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors">
+
+    <!-- Header -->
+    <div class="bg-gray-800 border-b border-gray-700 px-4 py-3">
+        <div class="flex items-center justify-between max-w-3xl mx-auto">
+            <div class="flex items-center space-x-3">
+                <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
+                     alt="AI" class="w-8 h-8 rounded-full glowing-effect" />
+                <h1 class="text-lg font-semibold text-white">AI Assistant</h1>
+            </div>
+
+            <div class="flex items-center space-x-3 text-sm">
+                <select id="ai-provider"
+                        class="px-2 py-1 bg-gray-700 text-white border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-light-blue text-sm">
+                    <option value="">Auto</option>
+                </select>
+
+                <a id="auth-status" href="/auth" class="px-3 py-1 rounded text-xs bg-red-900 text-red-300 hover:bg-red-800 transition-colors cursor-pointer">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Container - Fullscreen -->
+    <div class="flex flex-col" style="height: calc(100vh - 140px);">
+        <!-- Chat Messages Area -->
+        <div class="flex-1 overflow-hidden">
+            <div id="chat-messages" class="h-full overflow-y-auto px-4 py-6 max-w-3xl mx-auto">
+                <!-- Welcome Message -->
+                <div class="flex justify-center mb-8">
+                    <div class="text-center p-6 bg-gray-800/50 rounded-lg max-w-md border border-light-blue/30">
+                        <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
+                             alt="AI" class="w-16 h-16 rounded-full mx-auto mb-4 glowing-effect" />
+                        <h3 class="text-xl font-medium text-white mb-2">AI Assistant Ready</h3>
+                        <p class="text-gray-400">Ask me anything about coding, tech, or general questions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area - Fixed at bottom -->
+        <div class="border-t border-gray-700 bg-gray-800/30 px-4 py-4">
+            <div class="max-w-3xl mx-auto">
+                <form id="ai-chat-form" class="flex space-x-3 mb-3">
+                    <div class="flex-1">
+                        <textarea id="ai-input"
+                                  placeholder="Message AI Assistant..."
+                                  rows="1"
+                                  class="w-full px-4 py-3 bg-gray-800 text-white border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-light-blue resize-none text-base"
+                                  style="min-height: 48px; max-height: 120px;"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            id="send-button"
+                            class="px-4 py-3 bg-light-blue hover:bg-blue-400 disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center glowing-effect"
+                            disabled>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-2 mb-2">
+                    <button class="quick-action ai-quick-action"
+                            data-prompt="Explain quantum computing in simple terms">
+                        Quantum Computing
+                    </button>
+                    <button class="quick-action ai-quick-action"
+                            data-prompt="Write a Python function to reverse a string">
+                        Python Code
+                    </button>
+                    <button class="quick-action ai-quick-action"
+                            data-prompt="What are the latest trends in web development?">
+                        Web Dev Trends
+                    </button>
+                    <button class="quick-action ai-quick-action"
+                            data-prompt="Help me debug this JavaScript error">
+                        Debug Help
+                    </button>
+                    <button type="button"
+                            id="clear-chat"
+                            class="quick-action ai-quick-action text-red-400 hover:text-red-300"
+                            title="Clear chat">
+                        Clear Chat
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Messages: <span id="message-count" class="ai-stats-accent">0</span></span>
+                    <span>Provider: <span id="current-provider" class="ai-stats-accent">Auto</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{ template "footer_home" . }}
+
+    <!-- Scripts -->
+    <script src="/static/components/supabase.js"></script>
+    <script src="/static/js/supabase-auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.supabaseAuth) {
+                await window.supabaseAuth.initialize();
+            }
+        });
+    </script>
+    <script src="/static/components/chat-ai.js"></script>
+    <script src="/static/components/theme.js"></script>
+</body>
+</html>

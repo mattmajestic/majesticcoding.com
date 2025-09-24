@@ -58,7 +58,7 @@ func saveToken(token *SpotifyTokenResponse) error {
 	if database == nil {
 		return fmt.Errorf("database not available")
 	}
-	
+
 	expiresAt := time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
 	return db.SaveSpotifyToken(database, token.AccessToken, token.RefreshToken, token.TokenType, expiresAt)
 }
@@ -85,17 +85,17 @@ func loadToken() (*SavedToken, error) {
 	// Check if token is expired and try to refresh
 	if time.Now().After(token.ExpiresAt) {
 		log.Println("Saved token expired, attempting to refresh...")
-		
+
 		if token.RefreshToken == "" {
 			return nil, fmt.Errorf("token expired and no refresh token available")
 		}
-		
+
 		// Try to refresh the token
 		refreshedToken, err := refreshSpotifyToken(token.RefreshToken)
 		if err != nil {
 			return nil, fmt.Errorf("failed to refresh token: %v", err)
 		}
-		
+
 		// Create new saved token with refreshed data
 		newSavedToken := SavedToken{
 			AccessToken:  refreshedToken.AccessToken,
@@ -103,7 +103,7 @@ func loadToken() (*SavedToken, error) {
 			ExpiresAt:    time.Now().Add(time.Duration(refreshedToken.ExpiresIn) * time.Second),
 			TokenType:    refreshedToken.TokenType,
 		}
-		
+
 		// Save the refreshed token to database
 		database := db.GetDB()
 		if database != nil {
@@ -113,7 +113,7 @@ func loadToken() (*SavedToken, error) {
 				log.Printf("Failed to save refreshed token to database: %v", err)
 			}
 		}
-		
+
 		return &newSavedToken, nil
 	}
 
@@ -124,28 +124,28 @@ func loadToken() (*SavedToken, error) {
 func refreshSpotifyToken(refreshTokenStr string) (*SpotifyTokenResponse, error) {
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	clientSecret := os.Getenv("SPOTIFY_CLIENT_SECRET")
-	
+
 	if clientID == "" || clientSecret == "" {
 		return nil, fmt.Errorf("missing client credentials")
 	}
 
 	// Create basic auth header
 	auth := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
-	
+
 	// Prepare form data
 	data := url.Values{}
 	data.Set("grant_type", "refresh_token")
 	data.Set("refresh_token", refreshTokenStr)
-	
+
 	// Create request
 	req, err := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %v", err)
 	}
-	
+
 	req.Header.Set("Authorization", "Basic "+auth)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	
+
 	// Execute request
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -153,26 +153,26 @@ func refreshSpotifyToken(refreshTokenStr string) (*SpotifyTokenResponse, error) 
 		return nil, fmt.Errorf("request failed: %v", err)
 	}
 	defer resp.Body.Close()
-	
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response: %v", err)
 	}
-	
+
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("token refresh failed with status %d: %s", resp.StatusCode, string(body))
 	}
-	
+
 	var tokenResp SpotifyTokenResponse
 	if err := json.Unmarshal(body, &tokenResp); err != nil {
 		return nil, fmt.Errorf("failed to parse token response: %v", err)
 	}
-	
+
 	// If no new refresh token provided, keep the old one
 	if tokenResp.RefreshToken == "" {
 		tokenResp.RefreshToken = refreshTokenStr
 	}
-	
+
 	return &tokenResp, nil
 }
 
@@ -204,7 +204,6 @@ func InitSpotifyClient() {
 
 	// Try to load saved token
 	if savedToken, err := loadToken(); err == nil {
-		log.Printf("Loading saved Spotify token (expires: %v)", savedToken.ExpiresAt.Format("2006-01-02 15:04:05"))
 
 		// Create HTTP client with saved token
 		httpClient := &http.Client{
@@ -215,7 +214,6 @@ func InitSpotifyClient() {
 		}
 
 		spClient = spotify.New(httpClient)
-		log.Println("Spotify client ready with saved token!")
 	} else {
 		log.Printf("No valid saved token found: %v", err)
 		log.Printf("Spotify ready - ClientID: %s...", clientID[:10])

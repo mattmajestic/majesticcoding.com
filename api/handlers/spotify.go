@@ -19,7 +19,7 @@ func SpotifyCurrent(c *gin.Context) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	log.Println("Fetching currently playing track from Spotify...")
 	cp, err := spClient.PlayerCurrentlyPlaying(ctx)
 	if err != nil {
@@ -27,7 +27,7 @@ func SpotifyCurrent(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	// Nothing playing or no device
 	if cp == nil || cp.Item == nil {
 		log.Println("No track currently playing or no active device")

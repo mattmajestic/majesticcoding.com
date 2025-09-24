@@ -2,7 +2,7 @@
 
 {{ define "stream" }}
 <div class="px-4 py-4 w-full">
-  <div class="w-full max-w-[90%] mx-auto items-center">
+  <div class="w-full max-w-4xl mx-auto items-center">
     <div class="flex justify-center items-center p-4">
       <video
         id="video"
@@ -22,19 +22,21 @@
         <h1 class="stream-typing"><span id="type-line-3"></span></h1>
       </div>
       {{ template "socials" . }}
-      <div class="flex justify-center gap-2 mt-2">
+      <div class="w-full max-w-[500px] mx-auto flex flex-col items-center gap-2 mt-2">
         {{ template "docs-btn" . }}
         {{ template "dash-btn" . }}
       </div>
     </div>
-    <h1 class="mt-6 flex text-xs font-italics items-center justify-center gap-4">
-      <span class="text-lg font-bold">Powered by</span>
+    <div class="mt-6 flex justify-center">
+      <h1 class="flex text-xs font-italics items-center justify-center gap-4 max-w-md">
+        <span class="text-lg font-bold">Powered by</span>
         <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
              alt="AWS Logo"
              class="h-8 w-auto inline-block"
              style="background: transparent;" />
         <span class="text-lg font-bold">IVS</span>
       </h1>
+    </div>
   </div>
   <script>window.TYPING_SECTION = "stream";</script>
   <script src="/static/components/typing.js"></script>

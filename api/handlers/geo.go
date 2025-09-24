@@ -40,11 +40,11 @@ func GeocodeHandler() gin.HandlerFunc {
 			if city == "" {
 				city = res.Formatted
 			}
-			fmt.Printf("DEBUG: About to insert checkin - City: '%s', Country: '%s', Lat: %f, Lng: %f\n", 
+			fmt.Printf("DEBUG: About to insert checkin - City: '%s', Country: '%s', Lat: %f, Lng: %f\n",
 				city, res.Components.Country, res.Location.Lat, res.Location.Lng)
-			
+
 			// Simple direct SQL insert
-			result, err := database.Exec("INSERT INTO checkins (lat, lon, city, country) VALUES ($1, $2, $3, $4)", 
+			result, err := database.Exec("INSERT INTO checkins (lat, lon, city, country) VALUES ($1, $2, $3, $4)",
 				res.Location.Lat, res.Location.Lng, city, res.Components.Country)
 			if err != nil {
 				fmt.Printf("ERROR: Failed to insert checkin: %v\n", err)

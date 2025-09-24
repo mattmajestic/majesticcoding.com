@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	// "majesticcoding.com/api/middleware" // Temporarily disabled
 )
 
 func SetupRoutes(router *gin.Engine) {
@@ -18,13 +17,17 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Render routes
 	router.GET("/", RenderTemplate("index.tmpl"))
-	router.GET("/auth", RenderWithClerk("auth.tmpl"))
+	router.GET("/auth", RenderSupabaseAuth)
+	router.GET("/auth/callback", AuthCallbackHandler)
+	router.GET("/settings", SettingsPageHandler)
 	router.GET("/docs", RenderTemplate("docs.tmpl"))
 	router.GET("/about", RenderTemplate("about.tmpl"))
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
 	router.GET("/infrastructure", RenderTemplate("infrastructure.tmpl"))
 	router.GET("/certifications", RenderTemplate("certifications.tmpl"))
 	router.GET("/stripe", RenderStripe("stripe.tmpl"))
+	router.GET("/ai", RenderTemplate("chat-ai.tmpl"))
+	router.GET("/graphql", GraphQLPlaygroundHandler)
 
 	router.GET("/gallery", RenderGallery("gallery.tmpl"))
 	router.GET("/live/", StreamHandler)
@@ -45,9 +48,15 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/api/scenarios", LoadScenarios)
 
 	/// Session Info
-	router.GET("/api/session", GetClerkSession)
 	router.GET("/api/user/status", AuthStatus)
 	router.GET("/user/status", AuthStatusHandler)
+	router.GET("/api/config/supabase", SupabaseConfigHandler)
+	router.GET("/user-info", UserInfoHandler)
+	router.GET("/api/user-info", UserInfoAPIHandler)
+	router.GET("/simple-test", SimpleTestHandler)
+	router.GET("/show-user", ShowUserHandler)
+	router.POST("/api/user/sync", SyncUserHandler)
+	router.GET("/api/user/info", GetUserHandler)
 
 	/// 3rd Party APIs (YouTube, Github, Twitch, Leetcode)
 	router.GET("/api/stats/:provider", StatsRouter)
@@ -76,12 +85,33 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/ws/chat", ChatWebSocket)
 	router.GET("/ws/twitch", TwitchMessagesHandler)
 
+	/// Twitch Activities
+	router.GET("/api/twitch/followers", TwitchFollowersHandler)
+	router.GET("/api/twitch/raids", TwitchRaidsHandler)
+	router.GET("/api/twitch/subs", TwitchSubsHandler)
+	router.GET("/api/twitch/bits", TwitchBitsHandler)
+	router.GET("/api/twitch/lookup", TwitchUserLookupHandler)
+
+	/// Twitch OAuth for EventSub
+	router.GET("/api/twitch/oauth/start", TwitchOAuthHandler)
+	router.GET("/api/twitch/oauth/callback", TwitchOAuthCallbackHandler)
+	router.GET("/api/twitch/status", TwitchStatusHandler)
+
 	/// App Metrics (Stream)
 	router.GET("/api/stream/status", StreamStatusHandler)
 	router.GET("/api/metrics", MetricsHandler)
 
-	/// LLM API
-	router.POST("/api/llm", PostLLM)
+	/// LLM API (Protected)
+	llmGroup := router.Group("/api/llm")
+	llmGroup.Use(SupabaseAuthMiddleware())
+	{
+		llmGroup.POST("/", PostLLM)
+		llmGroup.GET("/providers", GetProviders)
+	}
+
+	/// GraphQL API
+	router.POST("/api/graphql", GraphQLHandler)
+	router.GET("/api/graphql/playground", GraphQLPlaygroundHandler)
 	/// Deploy IAC
 	router.GET("/api/deploy/:provider", DeployIACHandler)
 

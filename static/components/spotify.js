@@ -192,9 +192,9 @@
     }
   }
   
-  // Auto-refresh every 5 seconds to sync with Spotify
+  // Auto-refresh every minute to sync with Spotify
   function startAutoRefresh() {
-    setInterval(() => loadSpotifyData(false), 5000); // Poll every 5 seconds without showing loading
+    setInterval(() => loadSpotifyData(false), 60000); // Poll every minute without showing loading
   }
   
   // Initialize when DOM is ready

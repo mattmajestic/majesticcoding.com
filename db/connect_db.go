@@ -26,7 +26,13 @@ func Connect() {
 		log.Fatalf("Error: Database ping failed: %v", err)
 	}
 
-	log.Println("Connected to DB...")
+	// Set default schema to bronze
+	_, err = db.Exec("SET search_path = bronze, public")
+	if err != nil {
+		log.Printf("Warning: Could not set schema to bronze: %v", err)
+	} else {
+	}
+
 	Database = db
 }
 
