@@ -35,15 +35,15 @@ class SupabaseAuthManager {
 
         if (session?.access_token) {
           this.setAuthToken(session.access_token);
+          // Clean up URL if it contains access tokens
+          this.cleanUpURL();
         } else {
           this.clearAuthToken();
         }
 
         // Reconnect chat when auth state changes
         if (window.reconnectChat) {
-          // Use a small delay to ensure token is properly set
           setTimeout(() => {
-            console.log('🔄 Auth state changed, reconnecting chat...');
             window.reconnectChat();
           }, 100);
         }
@@ -103,13 +103,10 @@ class SupabaseAuthManager {
 
   async signInWithTwitch() {
     try {
-      // Use simple redirect to current origin + /auth/callback
-      const baseUrl = window.location.origin;
-
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'twitch',
         options: {
-          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
 
@@ -123,13 +120,10 @@ class SupabaseAuthManager {
 
   async signInWithGitHub() {
     try {
-      // Use simple redirect to current origin + /auth/callback
-      const baseUrl = window.location.origin;
-
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
 
@@ -143,13 +137,10 @@ class SupabaseAuthManager {
 
   async signInWithGoogle() {
     try {
-      // Use simple redirect to current origin + /auth/callback
-      const baseUrl = window.location.origin;
-
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
 
@@ -210,6 +201,29 @@ class SupabaseAuthManager {
 
   clearAuthToken() {
     localStorage.removeItem('supabase_token');
+  }
+
+  // Clean up URL from auth tokens
+  cleanUpURL() {
+    const url = new URL(window.location);
+    const params = url.searchParams;
+
+    // Remove common auth-related parameters
+    const authParams = ['access_token', 'refresh_token', 'expires_in', 'token_type', 'type'];
+    let hasAuthParams = false;
+
+    authParams.forEach(param => {
+      if (params.has(param)) {
+        params.delete(param);
+        hasAuthParams = true;
+      }
+    });
+
+    // If we removed auth params, update the URL without them
+    if (hasAuthParams) {
+      const newUrl = url.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+    }
   }
 
   // Update UI based on auth state
@@ -451,9 +465,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (result.success) {
           showMessage('Signed out successfully', 'success');
-          // Redirect to home after a short delay
+          // Redirect to current page to refresh auth state
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.reload();
           }, 1000);
         } else {
           showMessage('Sign out failed: ' + (result.error || 'Unknown error'), 'error');

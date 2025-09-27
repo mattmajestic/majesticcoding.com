@@ -12,7 +12,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/moby/moby/pkg/namesgenerator"
 	"majesticcoding.com/api/models"
-	"majesticcoding.com/api/services"
 	"majesticcoding.com/db"
 )
 
@@ -94,12 +93,7 @@ func ChatWebSocket(c *gin.Context) {
 	Clients[conn] = true
 	Mu.Unlock()
 
-	// Add user to Redis set for unique count tracking (30 min TTL = 1800 seconds)
-	if err := services.RedisSetAdd("chat:users:unique", username, 1800); err != nil {
-		log.Printf("⚠️ Failed to add user to Redis set: %v", err)
-	} else {
-		log.Printf("✅ Added %s to unique users set", username)
-	}
+	log.Printf("✅ User %s connected to chat", username)
 
 	// Send existing messages to the new client
 	Mu.Lock()
@@ -145,18 +139,11 @@ func ChatWebSocket(c *gin.Context) {
 }
 
 func ChatUserCount(c *gin.Context) {
-	// Get unique user count from Redis set
-	uniqueCount, err := services.RedisSetCount("chat:users:unique")
-	if err != nil {
-		log.Printf("⚠️ Failed to get unique user count from Redis: %v", err)
-		// Fallback to in-memory count
-		Mu.Lock()
-		count := len(Clients)
-		Mu.Unlock()
-		c.JSON(http.StatusOK, gin.H{"user_count": count, "source": "memory_fallback"})
-		return
-	}
+	// Simple in-memory count of connected clients
+	Mu.Lock()
+	count := len(Clients)
+	Mu.Unlock()
 
-	log.Printf("✅ Unique chat users: %d", uniqueCount)
-	c.JSON(http.StatusOK, gin.H{"user_count": uniqueCount, "source": "redis"})
+	log.Printf("✅ Connected chat users: %d", count)
+	c.JSON(http.StatusOK, gin.H{"user_count": count, "source": "memory"})
 }
