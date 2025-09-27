@@ -97,65 +97,19 @@ func GenerateAIResponse(req AIRequest) (*AIResponse, error) {
 		req.Provider = ProviderGemini
 	}
 
-	// Enhance prompt with RAG context
-	enhancedPrompt, err := enhancePromptWithRAG(req.Prompt)
-	if err != nil {
-		// If RAG fails, log but continue with original prompt
-		fmt.Printf("RAG enhancement failed: %v\n", err)
-		enhancedPrompt = req.Prompt
-	}
-
-	// Update the request with enhanced prompt
-	enhancedReq := req
-	enhancedReq.Prompt = enhancedPrompt
-
+	// Use original prompt without RAG enhancement
 	switch req.Provider {
 	case ProviderAnthropic:
-		return callAnthropic(enhancedReq)
+		return callAnthropic(req)
 	case ProviderGemini:
-		return callGemini(enhancedReq)
+		return callGemini(req)
 	case ProviderOpenAI:
-		return callOpenAI(enhancedReq)
+		return callOpenAI(req)
 	case ProviderGroq:
-		return callGroq(enhancedReq)
+		return callGroq(req)
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", req.Provider)
 	}
-}
-
-// enhancePromptWithRAG retrieves relevant context and enhances the user prompt
-func enhancePromptWithRAG(userPrompt string) (string, error) {
-	// Retrieve relevant context (limit to top 3 most relevant pieces)
-	contexts, err := RetrieveRelevantContext(userPrompt, 3)
-	if err != nil {
-		return userPrompt, err
-	}
-
-	// Get personality context
-	personalityContext := CreatePersonalityContext()
-
-	// Build enhanced prompt
-	var enhancedPrompt strings.Builder
-
-	enhancedPrompt.WriteString("You are Matt, a software engineer and content creator. Here's some context about you:\n\n")
-	enhancedPrompt.WriteString(personalityContext)
-	enhancedPrompt.WriteString("\n\n")
-
-	if len(contexts) > 0 {
-		enhancedPrompt.WriteString("Here's some current information about your online presence:\n\n")
-		for i, context := range contexts {
-			enhancedPrompt.WriteString(fmt.Sprintf("%d. %s\n", i+1, context))
-		}
-		enhancedPrompt.WriteString("\n")
-	}
-
-	enhancedPrompt.WriteString("Please respond as Matt would, using this context to provide helpful and accurate information. ")
-	enhancedPrompt.WriteString("If asked about your stats, projects, or online presence, reference the specific numbers and details provided above. ")
-	enhancedPrompt.WriteString("Be conversational, helpful, and share insights about software engineering and content creation.\n\n")
-	enhancedPrompt.WriteString("User question: ")
-	enhancedPrompt.WriteString(userPrompt)
-
-	return enhancedPrompt.String(), nil
 }
 
 func callAnthropic(req AIRequest) (*AIResponse, error) {
@@ -219,7 +173,7 @@ func callGemini(req AIRequest) (*AIResponse, error) {
 
 	model := req.Model
 	if model == "" {
-		model = "gemini-1.5-flash" // Free/cheap Gemini model
+		model = "gemini-1.5-flash-latest" // Current free Gemini model
 	}
 
 	payload := GeminiRequest{

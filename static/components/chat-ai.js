@@ -14,7 +14,8 @@ class AIChatInterface {
       authStatus: document.getElementById('auth-status'),
       providerSelect: document.getElementById('ai-provider'),
       messageCountEl: document.getElementById('message-count'),
-      currentProviderEl: document.getElementById('current-provider')
+      currentProviderEl: document.getElementById('current-provider'),
+      charCounter: document.getElementById('char-counter') // Add missing element
     };
 
     this.initializeEventListeners();
@@ -80,8 +81,10 @@ class AIChatInterface {
   }
 
   updateCharCounter() {
-    const length = this.elements.aiInput.value.length;
-    this.elements.charCounter.textContent = length > 0 ? `${length}` : '';
+    if (this.elements.charCounter) {
+      const length = this.elements.aiInput.value.length;
+      this.elements.charCounter.textContent = length > 0 ? `${length}` : '';
+    }
   }
 
   validateInput() {

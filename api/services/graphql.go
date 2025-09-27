@@ -69,12 +69,12 @@ func GetUnifiedStats(ctx context.Context) (*models.UnifiedStats, error) {
 	// Wait for all goroutines to complete
 	wg.Wait()
 
-	// Store the stats with embeddings for RAG context (async)
-	go func() {
-		if err := StoreSocialStatsContext(stats); err != nil {
-			log.Printf("Failed to store social stats context: %v", err)
-		}
-	}()
+	// RAG context storage disabled to avoid embedding API quota issues
+	// go func() {
+	// 	if err := StoreSocialStatsContext(stats); err != nil {
+	// 		log.Printf("Failed to store social stats context: %v", err)
+	// 	}
+	// }()
 
 	return stats, nil
 }

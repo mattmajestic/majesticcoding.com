@@ -72,6 +72,16 @@ function setupWebSocketHandlers() {
     chatMessages.appendChild(container);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   };
+
+  // Handle WebSocket errors silently
+  ws.onerror = (error) => {
+    // Silent error handling - don't spam console
+  };
+
+  // Handle WebSocket close silently
+  ws.onclose = (event) => {
+    // Silent close handling - don't spam console
+  };
 }
 
 // Form submission handler (outside of WebSocket setup)
@@ -92,50 +102,15 @@ if (chatForm) {
     ws.send(JSON.stringify(msg));
 
   if (content.startsWith('!ai ')) {
-    const prompt = content.slice(4);
-
-    // Get auth token - try localStorage first (more reliable)
-    let token = localStorage.getItem('supabase_token');
-
-    if (!token) {
-      const aiMsg = {
-        Content: "🤖 Please log in to use AI chat",
-        Username: "AI"
-      };
-      ws.send(JSON.stringify(aiMsg));
-      return;
-    }
-
-    // Call your AI API
-    fetch('/api/llm/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        provider: 'gemini'
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      const aiMsg = {
-        Content: "🤖 " + data.response,
-        Username: "AI (" + data.provider + ")"
-      };
-      ws.send(JSON.stringify(aiMsg));
-    })
-    .catch(error => {
-      console.error('AI API error:', error);
-      const aiMsg = {
-        Content: "🤖 Sorry, AI is temporarily unavailable",
-        Username: "AI"
-      };
-      ws.send(JSON.stringify(aiMsg));
-    });
+    // AI feature disabled - show coming soon message
+    const aiMsg = {
+      Content: "🤖 AI chat coming soon! Currently under maintenance.",
+      Username: "AI"
+    };
+    ws.send(JSON.stringify(aiMsg));
+    chatInput.value = ''; // Clear input after AI command
+    return;
   }
-
 
     chatInput.value = '';
   });

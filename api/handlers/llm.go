@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,8 @@ func PostLLM(c *gin.Context) {
 	// Call AI service
 	resp, err := services.GenerateAIResponse(aiReq)
 	if err != nil {
+		// Log the full error for debugging
+		fmt.Printf("AI service error: %v\n", err)
 		c.JSON(http.StatusBadGateway, gin.H{
 			"error":   "AI service failed",
 			"details": err.Error(),
