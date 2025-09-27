@@ -29,27 +29,24 @@ class SupabaseAuthManager {
 
       // Listen for auth changes
       this.supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        this.currentUser = session?.user || null;
-        this.updateUI(session?.user);
-
         if (session?.access_token) {
+          this.currentUser = session.user;
           this.setAuthToken(session.access_token);
-          // Clean up URL if it contains access tokens
+          this.updateUI(session.user);
           this.cleanUpURL();
         } else {
+          this.currentUser = null;
           this.clearAuthToken();
+          this.updateUI(null);
         }
 
-        // Reconnect chat when auth state changes
+        // Trigger chat update
         if (window.reconnectChat) {
-          setTimeout(() => {
-            window.reconnectChat();
-          }, 100);
+          setTimeout(window.reconnectChat, 100);
         }
       });
 
-      // Get initial session AFTER setting up listener
+      // Get initial session
       await this.getSession();
 
     } catch (error) {
@@ -60,10 +57,16 @@ class SupabaseAuthManager {
 
   async getSession() {
     const { data: { session } } = await this.supabase.auth.getSession();
-    if (session) {
+
+    if (session?.access_token) {
       this.currentUser = session.user;
       this.setAuthToken(session.access_token);
       this.updateUI(session.user);
+      this.cleanUpURL();
+    } else {
+      this.currentUser = null;
+      this.clearAuthToken();
+      this.updateUI(null);
     }
   }
 
@@ -231,19 +234,12 @@ class SupabaseAuthManager {
     const loginSection = document.getElementById('login-section');
     const loggedInSection = document.getElementById('logged-in-section');
     const userEmail = document.getElementById('user-email');
-    const userAvatar = document.getElementById('user-avatar');
 
     if (user) {
-      // User is logged in
       if (loginSection) loginSection.style.display = 'none';
       if (loggedInSection) loggedInSection.style.display = 'block';
       if (userEmail) userEmail.textContent = user.email;
-      if (userAvatar && user.user_metadata?.avatar_url) {
-        userAvatar.src = user.user_metadata.avatar_url;
-        userAvatar.style.display = 'block';
-      }
     } else {
-      // User is logged out
       if (loginSection) loginSection.style.display = 'block';
       if (loggedInSection) loggedInSection.style.display = 'none';
     }
@@ -304,6 +300,11 @@ class SupabaseAuthManager {
   // Get current user info
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  // Force refresh auth state
+  async refreshAuthState() {
+    await this.getSession();
   }
 
   // Helper to show messages

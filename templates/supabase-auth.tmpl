@@ -99,28 +99,26 @@
     // Handle OAuth return and redirect to original page
     {{ if .oauth_return }}
     window.addEventListener('DOMContentLoaded', function() {
-      // Clear any URL fragments that might contain tokens (Supabase OAuth)
-      if (window.location.hash) {
-        console.log('🧹 Clearing URL hash fragments:', window.location.hash);
-        // Use replaceState to remove hash without triggering navigation
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-
-      // Wait for auth manager to initialize and verify auth state
+      // Wait for auth manager to initialize and process tokens
       setTimeout(function() {
         if (window.authManager && window.authManager.getCurrentUser()) {
           const returnTo = "{{ .return_to }}";
-          console.log('🔄 Redirecting authenticated user to:', returnTo);
-
-          // Only redirect if we're not already on the target page to prevent loops
+          // Redirect to target page
           if (window.location.pathname !== returnTo) {
             window.location.href = returnTo;
           }
         } else {
-          // Auth failed, stay on auth page
-          console.log('⚠️ OAuth completed but user not authenticated, staying on auth page');
+          // Auth not detected yet, wait a bit more
+          setTimeout(function() {
+            if (window.authManager && window.authManager.getCurrentUser()) {
+              const returnTo = "{{ .return_to }}";
+              if (window.location.pathname !== returnTo) {
+                window.location.href = returnTo;
+              }
+            }
+          }, 2000);
         }
-      }, 1500); // Increased delay to ensure auth state is fully established
+      }, 2000); // Give Supabase time to process the tokens
     });
     {{ end }}
   </script>

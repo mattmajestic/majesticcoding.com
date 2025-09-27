@@ -28,10 +28,10 @@ async function isLiveNow() {
 
   try {
     // 1) Fetch the master (IVS returns master first)
-    const masterRes = await fetch(
-      streamSrc + (streamSrc.includes("?") ? "&" : "?") + "ping=" + Date.now(),
-      { cache: "no-store", signal: ctrl.signal }
-    );
+    const masterRes = await fetch(streamSrc, {
+      cache: "no-store",
+      signal: ctrl.signal
+    });
     clearTimeout(t);
     if (!masterRes.ok) return false;
 
@@ -42,13 +42,13 @@ async function isLiveNow() {
     const first = master.split("\n").map(s => s.trim()).find(l => l && !l.startsWith("#"));
     if (!first) return false;
 
-    // 2) If it’s a VARIANT (.m3u8), fetch it; if it’s a SEGMENT (.ts), we’re already live
+    // 2) If it's a VARIANT (.m3u8), fetch it; if it's a SEGMENT (.ts), we're already live
     if (!first.endsWith(".m3u8")) {
       return true; // already a media playlist with segments → live
     }
 
     const variantURL = new URL(first, streamSrc).toString();
-    const variantRes = await fetch(variantURL + (variantURL.includes("?") ? "&" : "?") + "ping=" + Date.now(), { cache: "no-store" });
+    const variantRes = await fetch(variantURL, { cache: "no-store" });
     if (!variantRes.ok) return false;
 
     const variant = await variantRes.text();
@@ -108,6 +108,10 @@ async function tick() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  tick();
-  setInterval(tick, 15000); // re-check every 15s
+  // Disable automatic stream checking to avoid AWS IVS requests
+  // tick();
+  // setInterval(tick, 15000); // re-check every 15s
+
+  // Show offline by default
+  showOffline();
 });
