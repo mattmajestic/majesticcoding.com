@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -76,6 +77,18 @@ func MapHandler() gin.HandlerFunc {
 
 func RecentCheckinsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		cacheKey := "checkins:recent:8h"
+
+		// Try to get from Redis cache first (5 minutes TTL = 300 seconds)
+		cachedJSON, err := services.RedisGetRawJSON(cacheKey)
+		if err == nil && cachedJSON != "" {
+			log.Printf("✅ Recent checkins cache HIT")
+			c.Header("Content-Type", "application/json")
+			c.String(http.StatusOK, cachedJSON)
+			return
+		}
+		log.Printf("🔍 Recent checkins cache MISS, fetching from DB")
+
 		database := db.GetDB()
 		if database == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "database not available"})
@@ -86,6 +99,13 @@ func RecentCheckinsHandler() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
+		}
+
+		// Cache the checkins for 5 minutes (300 seconds)
+		if err := services.RedisSetJSON(cacheKey, checkins, 300); err != nil {
+			log.Printf("⚠️ Failed to cache recent checkins: %v", err)
+		} else {
+			log.Printf("💾 Cached recent checkins for 5 minutes")
 		}
 
 		c.JSON(http.StatusOK, checkins)

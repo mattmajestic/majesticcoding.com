@@ -1,6 +1,6 @@
 
 
-# 🚀 Majestic Coding
+# <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg" width="40" height="40" style="vertical-align: middle;"> Majestic Coding
 
 **Full Stack Go Web Application with Live Streaming & AI**
 
@@ -154,10 +154,10 @@ majesticcoding.com/
 </tr>
 </table>
 
-**Backend:** Go + Gin + PostgreSQL/Neon + Swagger
-**Frontend:** Vanilla JS + Tailwind + WebSockets
-**AI:** Claude + GPT + Gemini + Groq + RAG
-**Cloud:** AWS IVS + Supabase + Docker + K8s
+- **Backend:** Go + Gin + PostgreSQL/Neon + Swagger
+- **Frontend:** Vanilla JS + Tailwind + WebSockets
+- **AI:** Claude + GPT + Gemini + Groq + RAG
+- **Cloud:** AWS IVS + Supabase + Docker + K8s
 
 ## 🌐 API Endpoints
 
@@ -211,24 +211,6 @@ AWS_IVS_CHANNEL_ARN=your-arn
 go run .
 # or
 docker compose up
-```
-
-</td>
-<td align="center" width="33%">
-
-**🚀 Production**
-```bash
-docker build -t app .
-docker run -p 8080:8080 app
-```
-
-</td>
-<td align="center" width="33%">
-
-**☁️ Cloud**
-```bash
-kubectl apply -f k8s-go.yaml
-# Ready for K8s/Cloud
 ```
 
 </td>
@@ -317,18 +299,12 @@ sequenceDiagram
 
 ## 🤝 Contributing
 
-**Fork → Clone → Code → PR**
-
-```bash
-go fmt ./... && go test ./... && go build  # ✅ Ready to submit
-```
-
-**📝 License:** MIT • **🙏 Thanks:** Go Team, Gin, Neon, Supabase
+- **Fork → Clone → Code → PR**
+- **📝 License:** MIT 
+- **🙏 Thanks:** Go Team, Gin, Neon, Supabase
 
 ---
 
 **⭐ Star this repo** • **🐛 Report issues** • **💡 Suggest features**
 
-**Made with ❤️ by [Majestic Coding](https://majesticcoding.com)**
-
-[🌐 Website](https://majesticcoding.com) • [📚 Docs](https://docs.majesticcoding.com) • [🔗 API](https://api.majesticcoding.com/docs)
+[🌐 Website](https://majesticcoding.com)

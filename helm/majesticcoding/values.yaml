@@ -15,7 +15,7 @@ ingress:
   enabled: false
   className: ""
   hosts:
-    - host: app.example.com
+    - host: majesticcoding.com
       paths:
         - path: /
           pathType: Prefix

@@ -24,11 +24,18 @@ func RenderSupabaseAuth(c *gin.Context) {
 
 // AuthCallbackHandler handles OAuth callbacks
 func AuthCallbackHandler(c *gin.Context) {
+	// Get the return URL from query parameters
+	returnTo := c.Query("returnTo")
+	if returnTo == "" {
+		returnTo = "/live" // Default to live page since that's the only page requiring auth
+	}
+
 	// This is where users land after OAuth (Google, GitHub)
 	// Supabase handles the token exchange automatically
 	c.HTML(http.StatusOK, "supabase-auth.tmpl", gin.H{
 		"title":        "Login - Majestic Coding",
 		"oauth_return": true,
+		"return_to":    returnTo,
 	})
 }
 

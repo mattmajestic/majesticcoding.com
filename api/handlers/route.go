@@ -2,7 +2,26 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"majesticcoding.com/api/middleware"
 )
+
+func InitializeRouter() *gin.Engine {
+	// Create router without default middleware
+	router := gin.New()
+
+	// Add recovery middleware
+	router.Use(gin.Recovery())
+
+	// Add custom logger that sanitizes sensitive info
+	router.Use(middleware.CustomLogger())
+
+	// Add CORS middleware
+	router.Use(middleware.CORSMiddleware())
+	router.SetTrustedProxies(nil)
+
+	SetupRoutes(router)
+	return router
+}
 
 func SetupRoutes(router *gin.Engine) {
 
@@ -60,6 +79,7 @@ func SetupRoutes(router *gin.Engine) {
 
 	/// 3rd Party APIs (YouTube, Github, Twitch, Leetcode)
 	router.GET("/api/stats/:provider", StatsRouter)
+	router.DELETE("/api/cache/stats", ClearStatsCache)
 	router.GET("/api/git/hash", GitHashHandler)
 
 	/// Football Leagues

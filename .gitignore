@@ -4,7 +4,6 @@ terraform.tfstate.backup
 .terraform/
 .terraform.lock.hcl
 tmp/
-.kiro/
 .vscode/
 llm/
 CLAUDE.md

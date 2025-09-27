@@ -40,10 +40,29 @@ func StatsRouter(c *gin.Context) {
 
 // YouTube handler for API Data
 func getYouTubeStats(c *gin.Context) {
+	cacheKey := "youtube:stats:channel"
+
+	// Try to get from Redis cache first (30 minutes TTL)
+	cachedJSON, err := services.RedisGetRawJSON(cacheKey)
+	if err == nil && cachedJSON != "" {
+		log.Printf("✅ YouTube stats cache HIT")
+		c.Header("Content-Type", "application/json")
+		c.String(http.StatusOK, cachedJSON)
+		return
+	}
+	log.Printf("🔍 YouTube stats cache MISS, fetching from API")
+
 	stats, err := services.FetchYouTubeStats()
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Cache the stats for 30 minutes (1800 seconds)
+	if err := services.RedisSetJSON(cacheKey, stats, 1800); err != nil {
+		log.Printf("⚠️ Failed to cache YouTube stats: %v", err)
+	} else {
+		log.Printf("💾 Cached YouTube stats")
 	}
 
 	// Store stats in database
@@ -78,11 +97,29 @@ func getYouTubeStats(c *gin.Context) {
 // GitHub Handler for API Data
 func getGithubStats(c *gin.Context) {
 	username := "mattmajestic"
+	cacheKey := fmt.Sprintf("github:stats:%s", username)
+
+	// Try to get from Redis cache first (30 minutes TTL)
+	cachedJSON, err := services.RedisGetRawJSON(cacheKey)
+	if err == nil && cachedJSON != "" {
+		log.Printf("✅ GitHub stats cache HIT")
+		c.Header("Content-Type", "application/json")
+		c.String(http.StatusOK, cachedJSON)
+		return
+	}
+	log.Printf("🔍 GitHub stats cache MISS, fetching from API")
 
 	stats, err := services.FetchGitHubStats(username)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Cache the stats for 30 minutes (1800 seconds)
+	if err := services.RedisSetJSON(cacheKey, stats, 1800); err != nil {
+		log.Printf("⚠️ Failed to cache GitHub stats: %v", err)
+	} else {
+		log.Printf("💾 Cached GitHub stats")
 	}
 
 	// Store stats in database
@@ -99,11 +136,29 @@ func getGithubStats(c *gin.Context) {
 // Twitch Handler for API Data
 func getTwitchStats(c *gin.Context) {
 	username := "MajesticCodingTwitch"
+	cacheKey := fmt.Sprintf("twitch:stats:%s", username)
+
+	// Try to get from Redis cache first (30 minutes TTL)
+	cachedJSON, err := services.RedisGetRawJSON(cacheKey)
+	if err == nil && cachedJSON != "" {
+		log.Printf("✅ Twitch stats cache HIT")
+		c.Header("Content-Type", "application/json")
+		c.String(http.StatusOK, cachedJSON)
+		return
+	}
+	log.Printf("🔍 Twitch stats cache MISS, fetching from API")
 
 	stats, err := services.FetchTwitchStats(username)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Cache the stats for 30 minutes (1800 seconds)
+	if err := services.RedisSetJSON(cacheKey, stats, 1800); err != nil {
+		log.Printf("⚠️ Failed to cache Twitch stats: %v", err)
+	} else {
+		log.Printf("💾 Cached Twitch stats")
 	}
 
 	// Store stats in database
@@ -130,11 +185,29 @@ func getTwitchStats(c *gin.Context) {
 
 func getLeetCodeStats(c *gin.Context) {
 	username := "mattmajestic"
+	cacheKey := fmt.Sprintf("leetcode:stats:%s", username)
+
+	// Try to get from Redis cache first (30 minutes TTL)
+	cachedJSON, err := services.RedisGetRawJSON(cacheKey)
+	if err == nil && cachedJSON != "" {
+		log.Printf("✅ LeetCode stats cache HIT")
+		c.Header("Content-Type", "application/json")
+		c.String(http.StatusOK, cachedJSON)
+		return
+	}
+	log.Printf("🔍 LeetCode stats cache MISS, fetching from API")
 
 	stats, err := services.FetchLeetCodeStats(username)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Cache the stats for 30 minutes (1800 seconds)
+	if err := services.RedisSetJSON(cacheKey, stats, 1800); err != nil {
+		log.Printf("⚠️ Failed to cache LeetCode stats: %v", err)
+	} else {
+		log.Printf("💾 Cached LeetCode stats")
 	}
 
 	// Store stats in database

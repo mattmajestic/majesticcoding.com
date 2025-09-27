@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"majesticcoding.com/api/models"
+	"majesticcoding.com/api/services"
 	"majesticcoding.com/db"
 )
 
@@ -27,6 +29,13 @@ func PostCheckinHandler() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save checkin"})
 			return
+		}
+
+		// Invalidate the unified checkins cache so globe gets fresh data
+		if err := services.RedisDelete("checkins:recent:8h"); err != nil {
+			log.Printf("⚠️ Failed to invalidate checkins cache: %v", err)
+		} else {
+			log.Printf("🗑️ Cleared checkins cache - %s will appear on globe next request", checkin.City)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

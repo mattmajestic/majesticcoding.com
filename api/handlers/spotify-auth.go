@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	spotify "github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
+	"majesticcoding.com/api/services"
 	"majesticcoding.com/db"
 )
 
@@ -52,22 +53,80 @@ func (t *tokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return t.base.RoundTrip(req)
 }
 
-// Save token to database
+// Save token to Redis with 1 hour TTL (3600 seconds)
 func saveToken(token *SpotifyTokenResponse) error {
-	database := db.GetDB()
-	if database == nil {
-		return fmt.Errorf("database not available")
+	expiresAt := time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
+
+	savedToken := SavedToken{
+		AccessToken:  token.AccessToken,
+		RefreshToken: token.RefreshToken,
+		TokenType:    token.TokenType,
+		ExpiresAt:    expiresAt,
 	}
 
-	expiresAt := time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
-	return db.SaveSpotifyToken(database, token.AccessToken, token.RefreshToken, token.TokenType, expiresAt)
+	// Save to Redis with TTL matching token expiration (usually 3600 seconds)
+	if err := services.RedisSetJSON("spotify:token", savedToken, token.ExpiresIn); err != nil {
+		log.Printf("⚠️ Failed to save Spotify token to Redis: %v", err)
+
+		// Fallback to database
+		database := db.GetDB()
+		if database == nil {
+			return fmt.Errorf("Redis save failed and database not available")
+		}
+		return db.SaveSpotifyToken(database, token.AccessToken, token.RefreshToken, token.TokenType, expiresAt)
+	}
+
+	log.Printf("💾 Saved Spotify token to Redis with %d seconds TTL", token.ExpiresIn)
+	return nil
 }
 
-// Load token from database
+// Load token from Redis first, fallback to database
 func loadToken() (*SavedToken, error) {
+	// Try Redis first
+	var token SavedToken
+	err := services.RedisGetJSON("spotify:token", &token)
+	if err == nil {
+		log.Printf("✅ Spotify token cache HIT from Redis")
+
+		// Check if token is expired and try to refresh
+		if time.Now().After(token.ExpiresAt) {
+			log.Println("Cached token expired, attempting to refresh...")
+
+			if token.RefreshToken == "" {
+				return nil, fmt.Errorf("token expired and no refresh token available")
+			}
+
+			// Try to refresh the token
+			refreshedToken, err := refreshSpotifyToken(token.RefreshToken)
+			if err != nil {
+				return nil, fmt.Errorf("failed to refresh token: %v", err)
+			}
+
+			// Save refreshed token back to Redis
+			if err := saveToken(refreshedToken); err != nil {
+				log.Printf("Failed to save refreshed token to Redis: %v", err)
+			} else {
+				log.Println("Successfully refreshed and saved new token to Redis")
+			}
+
+			// Return refreshed token
+			return &SavedToken{
+				AccessToken:  refreshedToken.AccessToken,
+				RefreshToken: refreshedToken.RefreshToken,
+				ExpiresAt:    time.Now().Add(time.Duration(refreshedToken.ExpiresIn) * time.Second),
+				TokenType:    refreshedToken.TokenType,
+			}, nil
+		}
+
+		return &token, nil
+	}
+
+	log.Printf("🔍 Spotify token cache MISS, checking database")
+
+	// Fallback to database
 	database := db.GetDB()
 	if database == nil {
-		return nil, fmt.Errorf("database not available")
+		return nil, fmt.Errorf("Redis miss and database not available")
 	}
 
 	accessToken, refreshToken, tokenType, expiresAt, err := db.GetSpotifyToken(database)
@@ -75,49 +134,52 @@ func loadToken() (*SavedToken, error) {
 		return nil, err
 	}
 
-	token := &SavedToken{
+	dbToken := &SavedToken{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		TokenType:    tokenType,
 		ExpiresAt:    expiresAt,
 	}
 
-	// Check if token is expired and try to refresh
-	if time.Now().After(token.ExpiresAt) {
-		log.Println("Saved token expired, attempting to refresh...")
+	// Migrate DB token to Redis for future requests
+	ttl := int(time.Until(dbToken.ExpiresAt).Seconds())
+	if ttl > 0 {
+		if err := services.RedisSetJSON("spotify:token", dbToken, ttl); err == nil {
+			log.Printf("💾 Migrated Spotify token from DB to Redis with %d seconds TTL", ttl)
+		}
+	}
 
-		if token.RefreshToken == "" {
+	// Check if token is expired and try to refresh
+	if time.Now().After(dbToken.ExpiresAt) {
+		log.Println("DB token expired, attempting to refresh...")
+
+		if dbToken.RefreshToken == "" {
 			return nil, fmt.Errorf("token expired and no refresh token available")
 		}
 
 		// Try to refresh the token
-		refreshedToken, err := refreshSpotifyToken(token.RefreshToken)
+		refreshedToken, err := refreshSpotifyToken(dbToken.RefreshToken)
 		if err != nil {
 			return nil, fmt.Errorf("failed to refresh token: %v", err)
 		}
 
-		// Create new saved token with refreshed data
-		newSavedToken := SavedToken{
+		// Save refreshed token to Redis
+		if err := saveToken(refreshedToken); err != nil {
+			log.Printf("Failed to save refreshed token: %v", err)
+		} else {
+			log.Println("Successfully refreshed and saved new token")
+		}
+
+		// Return refreshed token
+		return &SavedToken{
 			AccessToken:  refreshedToken.AccessToken,
 			RefreshToken: refreshedToken.RefreshToken,
 			ExpiresAt:    time.Now().Add(time.Duration(refreshedToken.ExpiresIn) * time.Second),
 			TokenType:    refreshedToken.TokenType,
-		}
-
-		// Save the refreshed token to database
-		database := db.GetDB()
-		if database != nil {
-			if err := db.UpdateSpotifyToken(database, newSavedToken.AccessToken, newSavedToken.RefreshToken, newSavedToken.ExpiresAt); err == nil {
-				log.Println("Successfully refreshed and saved new token to database")
-			} else {
-				log.Printf("Failed to save refreshed token to database: %v", err)
-			}
-		}
-
-		return &newSavedToken, nil
+		}, nil
 	}
 
-	return token, nil
+	return dbToken, nil
 }
 
 // Refresh access token using refresh token

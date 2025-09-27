@@ -22,7 +22,10 @@ function createWebSocketConnection() {
   let wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
   const token = localStorage.getItem('supabase_token');
   if (token) {
+    console.log('🔐 Connecting to chat with auth token');
     wsUrl += `?token=${encodeURIComponent(token)}`;
+  } else {
+    console.log('👤 Connecting to chat as anonymous user');
   }
 
   ws = new WebSocket(wsUrl);
@@ -84,8 +87,7 @@ if (chatForm) {
     // Check if user is authenticated
     const token = localStorage.getItem('supabase_token');
     if (!token) {
-      // Redirect to auth page if not logged in
-      window.location.href = '/auth';
+      // Don't submit, let the auth UI handle showing login prompt
       return;
     }
 
@@ -173,29 +175,85 @@ function updateChatAuthUI() {
   const token = localStorage.getItem('supabase_token');
   const authMessage = document.getElementById('auth-status-message');
   const chatForm = document.getElementById('chat-form');
-  const chatInput = document.getElementById('chat-input');
+
+  console.log('🔐 Updating chat auth UI, token:', token ? 'present' : 'missing');
 
   if (!token) {
-    // User not authenticated
-    if (authMessage) authMessage.classList.remove('hidden');
-    if (chatForm) chatForm.style.display = 'none';
+    // User not authenticated - show auth message, hide form
+    if (authMessage) {
+      authMessage.classList.remove('hidden');
+      console.log('📝 Showing auth status message');
+    }
+    if (chatForm) {
+      chatForm.style.display = 'none';
+      console.log('🚫 Hiding chat form');
+    }
   } else {
-    // User authenticated
-    if (authMessage) authMessage.classList.add('hidden');
-    if (chatForm) chatForm.style.display = 'flex';
+    // User authenticated - hide auth message, show form
+    if (authMessage) {
+      authMessage.classList.add('hidden');
+      console.log('✅ Hiding auth status message');
+    }
+    if (chatForm) {
+      chatForm.style.display = 'flex';
+      console.log('💬 Showing chat form');
+    }
   }
 }
 
 // Function to reconnect WebSocket when auth state changes
 function reconnectChat() {
   console.log('🔄 Reconnecting chat with new auth state...');
-  createWebSocketConnection();
-  updateChatAuthUI();
+  chatInitialized = false; // Reset flag to allow reinitialization
+  initializeChat();
+  updateChatAuthUI(); // Update UI immediately
 }
 
-// Initialize WebSocket connection and UI
-createWebSocketConnection();
-updateChatAuthUI();
+// Initialize chat after a short delay to allow auth to initialize
+let authInitialized = false;
+let chatInitialized = false;
+
+function initializeChat() {
+  if (chatInitialized) return;
+  chatInitialized = true;
+  createWebSocketConnection();
+  updateChatAuthUI();
+
+  // Keep updating auth UI every 500ms until we have a token or auth manager
+  const authCheckInterval = setInterval(() => {
+    const token = localStorage.getItem('supabase_token');
+    const authManager = window.authManager;
+
+    updateChatAuthUI();
+
+    // Stop checking once we have auth state established
+    if (token || (authManager && authManager.supabase)) {
+      clearInterval(authCheckInterval);
+      console.log('🔐 Auth state established, stopping auth UI updates');
+    }
+  }, 500);
+}
+
+// Check if auth is ready, otherwise wait for it
+function checkAuthAndInitialize() {
+  // Check if we have auth token or if auth manager is ready
+  const token = localStorage.getItem('supabase_token');
+  const authManager = window.authManager;
+
+  if (token || (authManager && authManager.getCurrentUser())) {
+    // We have auth info, initialize chat
+    initializeChat();
+  } else if (authManager && authManager.supabase) {
+    // Auth manager is initialized but no user - initialize chat anyway for anonymous users
+    initializeChat();
+  } else {
+    // Wait a bit more for auth to initialize
+    setTimeout(checkAuthAndInitialize, 100);
+  }
+}
+
+// Start the initialization check
+setTimeout(checkAuthAndInitialize, 50);
 
 // Listen for auth state changes to reconnect chat
 window.addEventListener('storage', (e) => {

@@ -88,8 +88,9 @@ func GetRecentMessages() []models.TwitchMessage {
 
 // handleCheckinCommand processes !checkin commands from Twitch chat
 func handleCheckinCommand(location, username string) {
-	// Call the geocode API endpoint
-	geocodeURL := fmt.Sprintf("http://localhost:8080/api/geocode?city=%s", url.QueryEscape(location))
+	// Call the geocode API endpoint with username
+	geocodeURL := fmt.Sprintf("http://localhost:8080/api/geocode?city=%s&username=%s",
+		url.QueryEscape(location), url.QueryEscape(username))
 
 	resp, err := http.Get(geocodeURL)
 	if err != nil {

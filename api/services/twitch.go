@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -11,6 +12,16 @@ import (
 )
 
 func getTwitchToken() (string, error) {
+	cacheKey := "twitch:token:oauth"
+
+	// Try to get from Redis cache first (1 hour TTL = 3600 seconds)
+	cachedToken, err := RedisGet(cacheKey)
+	if err == nil && cachedToken != "" {
+		log.Printf("✅ Twitch token cache HIT")
+		return cachedToken, nil
+	}
+	log.Printf("🔍 Twitch token cache MISS, fetching new token")
+
 	resp, err := http.PostForm("https://id.twitch.tv/oauth2/token", url.Values{
 		"client_id":     {os.Getenv("TWITCH_CLIENT_ID")},
 		"client_secret": {os.Getenv("TWITCH_CLIENT_SECRET")},
@@ -23,10 +34,24 @@ func getTwitchToken() (string, error) {
 
 	var result struct {
 		AccessToken string `json:"access_token"`
+		ExpiresIn   int    `json:"expires_in"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", err
 	}
+
+	// Cache the token for 1 hour (3600 seconds) or use expires_in from response
+	ttl := result.ExpiresIn
+	if ttl == 0 {
+		ttl = 3600 // fallback to 1 hour
+	}
+
+	if err := RedisSet(cacheKey, result.AccessToken, ttl); err != nil {
+		log.Printf("⚠️ Failed to cache Twitch token: %v", err)
+	} else {
+		log.Printf("💾 Cached Twitch token for %d seconds", ttl)
+	}
+
 	return result.AccessToken, nil
 }
 

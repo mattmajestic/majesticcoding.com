@@ -41,7 +41,11 @@ class SupabaseAuthManager {
 
         // Reconnect chat when auth state changes
         if (window.reconnectChat) {
-          window.reconnectChat();
+          // Use a small delay to ensure token is properly set
+          setTimeout(() => {
+            console.log('🔄 Auth state changed, reconnecting chat...');
+            window.reconnectChat();
+          }, 100);
         }
       });
 
@@ -99,10 +103,13 @@ class SupabaseAuthManager {
 
   async signInWithTwitch() {
     try {
+      // Use simple redirect to current origin + /auth/callback
+      const baseUrl = window.location.origin;
+
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'twitch',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
         }
       });
 
@@ -116,10 +123,33 @@ class SupabaseAuthManager {
 
   async signInWithGitHub() {
     try {
+      // Use simple redirect to current origin + /auth/callback
+      const baseUrl = window.location.origin;
+
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
+        }
+      });
+
+      if (error) throw error;
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async signInWithGoogle() {
+    try {
+      // Use simple redirect to current origin + /auth/callback
+      const baseUrl = window.location.origin;
+
+      const { data, error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${baseUrl}/auth/callback?returnTo=/live`
         }
       });
 
@@ -144,8 +174,13 @@ class SupabaseAuthManager {
 
   async resetPassword(email) {
     try {
+      // Use current domain for redirect, but fallback to majesticcoding.com for production
+      const baseUrl = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')
+        ? window.location.origin
+        : 'https://majesticcoding.com';
+
       const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`
+        redirectTo: `${baseUrl}/auth/reset-password`
       });
 
       if (error) throw error;
@@ -368,6 +403,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await authManager.signInWithGitHub();
       if (!result.success) {
         showMessage('GitHub sign in failed: ' + result.error, 'error');
+      }
+    });
+  }
+
+  // Google sign in
+  const googleLoginBtn = document.getElementById('google-login');
+  if (googleLoginBtn) {
+    googleLoginBtn.addEventListener('click', async () => {
+      const result = await authManager.signInWithGoogle();
+      if (!result.success) {
+        showMessage('Google sign in failed: ' + result.error, 'error');
       }
     });
   }

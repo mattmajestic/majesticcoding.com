@@ -45,6 +45,16 @@ func InsertCheckin(db *sql.DB, lat, lon float64, city, country string) error {
 	return err
 }
 
+// CheckCityExists checks if a city already exists in the database
+func CheckCityExists(db *sql.DB, city string) (bool, error) {
+	var count int
+	err := db.QueryRow(`SELECT COUNT(*) FROM checkins WHERE LOWER(city) = LOWER($1)`, city).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func GetCheckins(db *sql.DB) ([]models.Checkin, error) {
 	rows, err := db.Query(`SELECT id, lat, lon, COALESCE(city, ''), COALESCE(country, ''), checkin_time FROM checkins ORDER BY checkin_time DESC`)
 	if err != nil {

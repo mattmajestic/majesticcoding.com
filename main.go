@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
+
 	"majesticcoding.com/api/config"
 	"majesticcoding.com/api/handlers"
-	"majesticcoding.com/api/middleware"
 	"majesticcoding.com/api/services"
 	"majesticcoding.com/db"
 )
@@ -20,6 +20,11 @@ func main() {
 	handlers.StartBroadcaster()
 	db.Connect()
 
+	// Initialize Redis
+	if err := services.InitRedis(); err != nil {
+		log.Printf("Warning: Failed to initialize Redis: %v", err)
+	}
+
 	// Create database tables
 	database := db.GetDB()
 	if database != nil {
@@ -31,11 +36,6 @@ func main() {
 	services.StartTwitchChatFeed("majesticcodingtwitch")
 	handlers.InitSpotifyClient()
 
-	router := gin.Default()
-	router.Use(middleware.CORSMiddleware())
-	router.SetTrustedProxies(nil)
-
-	handlers.SetupRoutes(router)
-
+	router := handlers.InitializeRouter()
 	router.Run(":8080")
 }
