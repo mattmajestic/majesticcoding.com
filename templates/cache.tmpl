@@ -1,0 +1,285 @@
+{{ define "cache" }}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">⚡ Redis Cache</h2>
+    <p class="text-gray-300">High-performance caching with Upstash Redis for optimized API responses</p>
+  </div>
+
+  <!-- Tabset for Cache code examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn cache-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showCacheTab('config')">⚙️ Configuration</button>
+      <button class="tab-btn cache-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showCacheTab('socials')">📱 Socials Cache</button>
+      <button class="tab-btn cache-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showCacheTab('strategy')">📋 Strategy</button>
+      <button class="tab-btn cache-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showCacheTab('advanced')">🚀 Advanced</button>
+    </div>
+
+    <div id="cache-tab-config" class="cache-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Redis Configuration & Setup</h3>
+      <pre class="text-green-400 text-sm"><code>// Environment Variables
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-token
+
+// Redis Client Setup with Upstash
+import (
+    "github.com/go-redis/redis/v8"
+    "context"
+    "time"
+)
+
+var (
+    redisClient *redis.Client
+    ctx = context.Background()
+)
+
+func InitRedis() {
+    redisClient = redis.NewClient(&redis.Options{
+        Addr:         os.Getenv("UPSTASH_REDIS_REST_URL"),
+        Password:     os.Getenv("UPSTASH_REDIS_REST_TOKEN"),
+        DB:           0,
+        DialTimeout:  10 * time.Second,
+        ReadTimeout:  10 * time.Second,
+        WriteTimeout: 10 * time.Second,
+        PoolSize:     10,
+    })
+
+    // Test connection
+    pong, err := redisClient.Ping(ctx).Result()
+    if err != nil {
+        log.Fatalf("Redis connection failed: %v", err)
+    }
+    log.Printf("Redis connected: %s", pong)
+}</code></pre>
+    </div>
+
+    <div id="cache-tab-socials" class="cache-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Social Media Stats Caching</h3>
+      <pre class="text-green-400 text-sm"><code>func GetCachedStats(provider string) (*StatsResponse, error) {
+    cacheKey := fmt.Sprintf("stats:%s", provider)
+
+    // Try to get from cache first
+    cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+    if err == nil {
+        var stats StatsResponse
+        if err := json.Unmarshal([]byte(cachedData), &stats); err == nil {
+            log.Printf("Cache hit for %s", provider)
+            return &stats, nil
+        }
+    }
+
+    log.Printf("Cache miss for %s, fetching from API", provider)
+
+    // Fetch from API if not cached
+    stats, err := fetchFromAPI(provider)
+    if err != nil {
+        return nil, fmt.Errorf("API fetch failed: %v", err)
+    }
+
+    // Cache with appropriate TTL based on provider
+    ttl := getCacheTTL(provider)
+    jsonData, _ := json.Marshal(stats)
+
+    err = redisClient.Set(ctx, cacheKey, jsonData, ttl).Err()
+    if err != nil {
+        log.Printf("Cache set failed: %v", err)
+        // Return data anyway, caching is not critical
+    }
+
+    return stats, nil
+}
+
+// Provider-specific cache TTL
+func getCacheTTL(provider string) time.Duration {
+    switch provider {
+    case "github":
+        return 1 * time.Hour    // GitHub stats change frequently
+    case "youtube":
+        return 6 * time.Hour    // YouTube stats change slowly
+    case "twitch":
+        return 5 * time.Minute  // Twitch status is real-time critical
+    case "leetcode":
+        return 2 * time.Hour    // LeetCode stats change moderately
+    default:
+        return 30 * time.Minute // Default TTL
+    }
+}</code></pre>
+    </div>
+
+    <div id="cache-tab-strategy" class="cache-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Cache Strategy & Key Patterns</h3>
+      <pre class="text-green-400 text-sm"><code>// Cache Key Naming Convention
+const (
+    KeyStatsPrefix    = "stats:"
+    KeySessionPrefix  = "session:"
+    KeyRateLimitPrefix = "ratelimit:"
+)
+
+// Structured cache keys
+func buildCacheKey(category, provider, suffix string) string {
+    return fmt.Sprintf("%s%s:%s", category, provider, suffix)
+}
+
+// Cache strategies by data type
+var CacheStrategies = map[string]CacheConfig{
+    "github": {
+        TTL:           1 * time.Hour,
+        RefreshAsync:  true,     // Refresh in background before expiry
+        StaleWhileRevalidate: 30 * time.Minute,
+    },
+    "youtube": {
+        TTL:           6 * time.Hour,
+        RefreshAsync:  false,
+        StaleWhileRevalidate: 0,
+    },
+    "twitch": {
+        TTL:           5 * time.Minute,
+        RefreshAsync:  true,
+        StaleWhileRevalidate: 1 * time.Minute,
+    },
+}
+
+// Cache warming for critical data
+func WarmCache() {
+    providers := []string{"github", "youtube", "twitch", "leetcode"}
+
+    for _, provider := range providers {
+        go func(p string) {
+            _, err := GetCachedStats(p)
+            if err != nil {
+                log.Printf("Cache warming failed for %s: %v", p, err)
+            } else {
+                log.Printf("Cache warmed for %s", p)
+            }
+        }(provider)
+    }
+}
+
+// Cache invalidation
+func InvalidateCache(pattern string) error {
+    keys, err := redisClient.Keys(ctx, pattern).Result()
+    if err != nil {
+        return err
+    }
+
+    if len(keys) > 0 {
+        return redisClient.Del(ctx, keys...).Err()
+    }
+
+    return nil
+}</code></pre>
+    </div>
+
+    <div id="cache-tab-advanced" class="cache-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Advanced Caching Patterns</h3>
+      <pre class="text-green-400 text-sm"><code>// Circuit breaker pattern with cache fallback
+type CacheClient struct {
+    redis     *redis.Client
+    circuit   *CircuitBreaker
+    fallback  map[string]interface{}
+    mutex     sync.RWMutex
+}
+
+func (c *CacheClient) GetWithFallback(key string, fetcher func() (interface{}, error)) (interface{}, error) {
+    // Try cache first
+    if data, err := c.get(key); err == nil {
+        return data, nil
+    }
+
+    // Use circuit breaker for external API
+    result, err := c.circuit.Execute(func() (interface{}, error) {
+        return fetcher()
+    })
+
+    if err != nil {
+        // Return stale data if available
+        c.mutex.RLock()
+        stale, exists := c.fallback[key]
+        c.mutex.RUnlock()
+
+        if exists {
+            log.Printf("Returning stale data for %s", key)
+            return stale, nil
+        }
+        return nil, err
+    }
+
+    // Cache successful result
+    c.set(key, result, getCacheTTL(key))
+
+    // Update fallback store
+    c.mutex.Lock()
+    c.fallback[key] = result
+    c.mutex.Unlock()
+
+    return result, nil
+}
+
+// Distributed cache lock for preventing cache stampede
+func (c *CacheClient) GetWithLock(key string, fetcher func() (interface{}, error)) (interface{}, error) {
+    lockKey := "lock:" + key
+
+    // Try to acquire lock
+    acquired, err := c.redis.SetNX(ctx, lockKey, "1", 30*time.Second).Result()
+    if err != nil {
+        return nil, err
+    }
+
+    if acquired {
+        defer c.redis.Del(ctx, lockKey)
+
+        // We got the lock, fetch and cache
+        data, err := fetcher()
+        if err == nil {
+            c.set(key, data, getCacheTTL(key))
+        }
+        return data, err
+    }
+
+    // Someone else is fetching, wait and try cache again
+    time.Sleep(100 * time.Millisecond)
+    return c.get(key)
+}
+
+// Cache metrics and monitoring
+type CacheMetrics struct {
+    Hits   int64
+    Misses int64
+    Errors int64
+}
+
+func (c *CacheClient) recordHit() {
+    atomic.AddInt64(&c.metrics.Hits, 1)
+}
+
+func (c *CacheClient) recordMiss() {
+    atomic.AddInt64(&c.metrics.Misses, 1)
+}
+
+func (c *CacheClient) GetHitRatio() float64 {
+    hits := atomic.LoadInt64(&c.metrics.Hits)
+    misses := atomic.LoadInt64(&c.metrics.Misses)
+    total := hits + misses
+
+    if total == 0 {
+        return 0
+    }
+
+    return float64(hits) / float64(total)
+}</code></pre>
+    </div>
+  </div>
+
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 Benefits with Upstash</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Serverless:</strong> No infrastructure management required</li>
+      <li><strong>Global Edge:</strong> Low latency from anywhere in the world</li>
+      <li><strong>REST API:</strong> Easy integration without Redis protocol complexity</li>
+      <li><strong>Cost-effective:</strong> Pay only for what you use</li>
+      <li><strong>Durable:</strong> Built-in persistence and replication</li>
+    </ul>
+  </div>
+</div>
+{{ end }}

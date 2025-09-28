@@ -40,7 +40,10 @@ func DocsHandler(r *gin.Engine) {
 		section := c.Param("section")
 		for _, s := range models.DocsList {
 			if s == section {
-				c.HTML(http.StatusOK, section, nil)
+				// Render with full docs page structure
+				c.HTML(http.StatusOK, "docs.tmpl", gin.H{
+					"ActiveSection": section,
+				})
 				return
 			}
 		}

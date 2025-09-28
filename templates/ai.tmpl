@@ -1,30 +1,614 @@
 {{ define "ai" }}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">🤖 Multi-AI Platform Integration</h2>
+    <p class="text-gray-300">Multiple LLM providers with RAG for intelligent code assistance and knowledge retrieval</p>
+  </div>
 
-<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
-  <h2 class="text-2xl font-bold text-white mb-2">🤖 AI-Powered Features</h2>
-  <h2 class="text-xl font-bold mb-2 text-blue-300">
-    Leverage advanced AI capabilities to enhance your application with intelligent features.
-  </h2>
-  <ul class="list-disc list-inside text-md mb-4">
-    <li>Integrate with popular AI services like OpenAI and Google AI for natural language processing and more.</li>
-    <li>Utilize pre-built AI models or train your own custom models to meet specific business needs.</li>
-    <li>Implement AI-driven analytics to gain insights from user behavior and application performance.</li>
-    <li>Enhance user experiences with personalized content and recommendations powered by AI.</li>
-  </ul>
-  <div class="mt-4 bg-gray-900 p-3 rounded">
-    <h3 class="font-bold text-blue-300 mb-2">Terraform: Provision AI Resources</h3>
-    <pre class="text-green-400 text-sm"><code># Terraform: AI Resources
-resource "google_ai_platform_model" "my_model" {
-  name = "my-model"
-  region = "us-central1"
+  <!-- Tabset for AI implementation examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn ai-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showAiTab('providers')">🧠 LLM Providers</button>
+      <button class="tab-btn ai-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showAiTab('rag')">🔍 RAG System</button>
+      <button class="tab-btn ai-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showAiTab('embeddings')">📊 Embeddings</button>
+      <button class="tab-btn ai-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showAiTab('chat')">💬 AI Chat</button>
+    </div>
+
+    <div id="ai-tab-providers" class="ai-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Multiple LLM Provider Integration</h3>
+      <pre class="text-green-400 text-sm"><code>// AI provider interface for multiple LLMs
+type AIProvider interface {
+    GenerateResponse(prompt string, context []string) (*AIResponse, error)
+    GetModelInfo() ModelInfo
+    EstimateTokens(text string) int
 }
 
-resource "google_ai_platform_endpoint" "my_endpoint" {
-  name = "my-endpoint"
-  region = "us-central1"
+// OpenAI GPT-4 implementation
+type OpenAIProvider struct {
+    Client *openai.Client
+    Model  string
 }
-</code></pre>
+
+func (p *OpenAIProvider) GenerateResponse(prompt string, context []string) (*AIResponse, error) {
+    messages := []openai.ChatCompletionMessage{
+        {Role: openai.ChatMessageRoleSystem, Content: "You are a helpful coding assistant."},
+    }
+
+    // Add context from RAG
+    for _, ctx := range context {
+        messages = append(messages, openai.ChatCompletionMessage{
+            Role:    openai.ChatMessageRoleUser,
+            Content: fmt.Sprintf("Context: %s", ctx),
+        })
+    }
+
+    messages = append(messages, openai.ChatCompletionMessage{
+        Role:    openai.ChatMessageRoleUser,
+        Content: prompt,
+    })
+
+    resp, err := p.Client.CreateChatCompletion(context.Background(), openai.ChatCompletionRequest{
+        Model:       p.Model,
+        Messages:    messages,
+        Temperature: 0.7,
+        MaxTokens:   2000,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    return &AIResponse{
+        Content:    resp.Choices[0].Message.Content,
+        TokensUsed: resp.Usage.TotalTokens,
+        Model:      p.Model,
+        Provider:   "OpenAI",
+    }, nil
+}
+
+// Anthropic Claude implementation
+type ClaudeProvider struct {
+    Client anthropic.Client
+    Model  string
+}
+
+func (p *ClaudeProvider) GenerateResponse(prompt string, context []string) (*AIResponse, error) {
+    systemPrompt := "You are Claude, an AI assistant specialized in coding and technical documentation."
+
+    // Combine context and prompt
+    fullPrompt := prompt
+    if len(context) > 0 {
+        fullPrompt = fmt.Sprintf("Context:\n%s\n\nQuestion: %s",
+            strings.Join(context, "\n"), prompt)
+    }
+
+    resp, err := p.Client.Complete(context.Background(), &anthropic.CompletionRequest{
+        Model:     p.Model,
+        Prompt:    fmt.Sprintf("%s\n\nHuman: %s\n\nAssistant:", systemPrompt, fullPrompt),
+        MaxTokens: 2000,
+    })
+
+    return &AIResponse{
+        Content:   resp.Completion,
+        TokensUsed: resp.Usage.TotalTokens,
+        Model:     p.Model,
+        Provider:  "Anthropic",
+    }, nil
+}
+
+// Multi-provider manager
+type AIManager struct {
+    providers map[string]AIProvider
+    fallback  []string
+}
+
+func (m *AIManager) GetBestProvider(requirements ProviderRequirements) AIProvider {
+    // Select provider based on requirements (speed, cost, capability)
+    if requirements.Speed == "fast" {
+        return m.providers["claude-haiku"]
+    }
+    if requirements.Reasoning == "complex" {
+        return m.providers["gpt-4"]
+    }
+    return m.providers["claude-sonnet"] // Default
+}</code></pre>
+    </div>
+
+    <div id="ai-tab-rag" class="ai-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">RAG Implementation</h3>
+      <pre class="text-green-400 text-sm"><code>// RAG (Retrieval-Augmented Generation) system
+type RAGSystem struct {
+    VectorDB     VectorDatabase
+    Embeddings   EmbeddingService
+    ChunkSize    int
+    Overlap      int
+}
+
+// Document processing and indexing
+func (r *RAGSystem) IndexDocuments(docs []Document) error {
+    for _, doc := range docs {
+        // Split document into chunks
+        chunks := r.chunkDocument(doc, r.ChunkSize, r.Overlap)
+
+        for _, chunk := range chunks {
+            // Generate embeddings
+            embedding, err := r.Embeddings.GenerateEmbedding(chunk.Content)
+            if err != nil {
+                return err
+            }
+
+            // Store in vector database
+            err = r.VectorDB.Store(VectorDocument{
+                ID:        chunk.ID,
+                Content:   chunk.Content,
+                Embedding: embedding,
+                Metadata: map[string]interface{}{
+                    "source":   doc.Source,
+                    "type":     doc.Type,
+                    "language": doc.Language,
+                    "path":     doc.Path,
+                },
+            })
+            if err != nil {
+                return err
+            }
+        }
+    }
+    return nil
+}
+
+// Retrieve relevant context for a query
+func (r *RAGSystem) RetrieveContext(query string, limit int) ([]string, error) {
+    // Generate embedding for the query
+    queryEmbedding, err := r.Embeddings.GenerateEmbedding(query)
+    if err != nil {
+        return nil, err
+    }
+
+    // Perform semantic search
+    results, err := r.VectorDB.Search(queryEmbedding, limit)
+    if err != nil {
+        return nil, err
+    }
+
+    // Extract content from results
+    context := make([]string, len(results))
+    for i, result := range results {
+        context[i] = fmt.Sprintf("[%s] %s",
+            result.Metadata["source"], result.Content)
+    }
+
+    return context, nil
+}
+
+// Complete RAG pipeline
+func (r *RAGSystem) GenerateAnswer(question string, provider AIProvider) (*AIResponse, error) {
+    // 1. Retrieve relevant context
+    context, err := r.RetrieveContext(question, 5)
+    if err != nil {
+        return nil, err
+    }
+
+    // 2. Generate response with context
+    response, err := provider.GenerateResponse(question, context)
+    if err != nil {
+        return nil, err
+    }
+
+    // 3. Add metadata about sources used
+    response.Sources = r.extractSources(context)
+
+    return response, nil
+}
+
+// Index your codebase for AI assistance
+func IndexCodebase(repoPath string, rag *RAGSystem) error {
+    documents := []Document{}
+
+    // Walk through code files
+    err := filepath.Walk(repoPath, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+
+        // Skip non-code files
+        if !isCodeFile(path) {
+            return nil
+        }
+
+        content, err := ioutil.ReadFile(path)
+        if err != nil {
+            return err
+        }
+
+        documents = append(documents, Document{
+            ID:       generateID(path),
+            Content:  string(content),
+            Source:   path,
+            Type:     "code",
+            Language: detectLanguage(path),
+            Path:     path,
+        })
+
+        return nil
+    })
+
+    if err != nil {
+        return err
+    }
+
+    // Index all documents
+    return rag.IndexDocuments(documents)
+}</code></pre>
+    </div>
+
+    <div id="ai-tab-embeddings" class="ai-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Vector Embeddings & Search</h3>
+      <pre class="text-green-400 text-sm"><code>// Vector database interface
+type VectorDatabase interface {
+    Store(doc VectorDocument) error
+    Search(query []float32, limit int) ([]SearchResult, error)
+    Delete(id string) error
+}
+
+// OpenAI embeddings implementation
+type OpenAIEmbeddings struct {
+    Client *openai.Client
+    Model  string // text-embedding-3-small or text-embedding-3-large
+}
+
+func (e *OpenAIEmbeddings) GenerateEmbedding(text string) ([]float32, error) {
+    resp, err := e.Client.CreateEmbeddings(context.Background(), openai.EmbeddingRequest{
+        Input: []string{text},
+        Model: e.Model,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    return resp.Data[0].Embedding, nil
+}
+
+// Pinecone vector database implementation
+type PineconeDB struct {
+    Client    *pinecone.Client
+    IndexName string
+}
+
+func (p *PineconeDB) Store(doc VectorDocument) error {
+    vector := pinecone.Vector{
+        Id:       doc.ID,
+        Values:   doc.Embedding,
+        Metadata: doc.Metadata,
+    }
+
+    _, err := p.Client.UpsertVectors(context.Background(), &pinecone.UpsertRequest{
+        Vectors: []pinecone.Vector{vector},
+    })
+
+    return err
+}
+
+func (p *PineconeDB) Search(query []float32, limit int) ([]SearchResult, error) {
+    resp, err := p.Client.Query(context.Background(), &pinecone.QueryRequest{
+        Vector:          query,
+        TopK:           int32(limit),
+        IncludeMetadata: true,
+    })
+
+    if err != nil {
+        return nil, err
+    }
+
+    results := make([]SearchResult, len(resp.Matches))
+    for i, match := range resp.Matches {
+        results[i] = SearchResult{
+            ID:       match.Id,
+            Score:    match.Score,
+            Content:  match.Metadata["content"].(string),
+            Metadata: match.Metadata,
+        }
+    }
+
+    return results, nil
+}
+
+// PostgreSQL with pg_vector extension
+type PostgresVectorDB struct {
+    DB        *sql.DB
+    TableName string
+}
+
+func (p *PostgresVectorDB) Store(doc VectorDocument) error {
+    query := fmt.Sprintf(`
+        INSERT INTO %s (id, content, embedding, metadata)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (id) DO UPDATE SET
+            content = EXCLUDED.content,
+            embedding = EXCLUDED.embedding,
+            metadata = EXCLUDED.metadata
+    `, p.TableName)
+
+    metadataJSON, _ := json.Marshal(doc.Metadata)
+
+    _, err := p.DB.Exec(query, doc.ID, doc.Content,
+        pq.Array(doc.Embedding), string(metadataJSON))
+
+    return err
+}
+
+func (p *PostgresVectorDB) Search(query []float32, limit int) ([]SearchResult, error) {
+    sqlQuery := fmt.Sprintf(`
+        SELECT id, content, metadata,
+               1 - (embedding <=> $1) AS similarity
+        FROM %s
+        ORDER BY embedding <=> $1
+        LIMIT $2
+    `, p.TableName)
+
+    rows, err := p.DB.Query(sqlQuery, pq.Array(query), limit)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var results []SearchResult
+    for rows.Next() {
+        var result SearchResult
+        var metadataStr string
+
+        err := rows.Scan(&result.ID, &result.Content, &metadataStr, &result.Score)
+        if err != nil {
+            continue
+        }
+
+        json.Unmarshal([]byte(metadataStr), &result.Metadata)
+        results = append(results, result)
+    }
+
+    return results, nil
+}
+
+// Setup pg_vector table
+func SetupVectorTable(db *sql.DB, tableName string) error {
+    // Create pg_vector extension
+    _, err := db.Exec("CREATE EXTENSION IF NOT EXISTS vector")
+    if err != nil {
+        return err
+    }
+
+    // Create table with vector column
+    createTable := fmt.Sprintf(`
+        CREATE TABLE IF NOT EXISTS %s (
+            id TEXT PRIMARY KEY,
+            content TEXT NOT NULL,
+            embedding vector(1536), -- OpenAI embedding dimension
+            metadata JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `, tableName)
+
+    _, err = db.Exec(createTable)
+    if err != nil {
+        return err
+    }
+
+    // Create vector index for fast similarity search
+    createIndex := fmt.Sprintf(`
+        CREATE INDEX IF NOT EXISTS %s_embedding_idx
+        ON %s USING ivfflat (embedding vector_cosine_ops)
+        WITH (lists = 100)
+    `, tableName, tableName)
+
+    _, err = db.Exec(createIndex)
+    return err
+}
+
+// Local vector search with Chroma
+type ChromaDB struct {
+    Client *chroma.Client
+    Collection string
+}
+
+// Semantic code search example
+func SemanticCodeSearch(query string, vectorDB VectorDatabase, embeddings EmbeddingService) ([]CodeResult, error) {
+    // Generate query embedding
+    queryVector, err := embeddings.GenerateEmbedding(query)
+    if err != nil {
+        return nil, err
+    }
+
+    // Search for similar code
+    results, err := vectorDB.Search(queryVector, 10)
+    if err != nil {
+        return nil, err
+    }
+
+    codeResults := make([]CodeResult, len(results))
+    for i, result := range results {
+        codeResults[i] = CodeResult{
+            FilePath:   result.Metadata["path"].(string),
+            Language:   result.Metadata["language"].(string),
+            Content:    result.Content,
+            Similarity: result.Score,
+            LineStart:  int(result.Metadata["line_start"].(float64)),
+            LineEnd:    int(result.Metadata["line_end"].(float64)),
+        }
+    }
+
+    return codeResults, nil
+}
+
+// Smart documentation retrieval
+func FindRelevantDocs(userQuery string, rag *RAGSystem) ([]Documentation, error) {
+    context, err := rag.RetrieveContext(userQuery, 3)
+    if err != nil {
+        return nil, err
+    }
+
+    docs := make([]Documentation, len(context))
+    for i, ctx := range context {
+        docs[i] = Documentation{
+            Title:   extractTitle(ctx),
+            Content: ctx,
+            Source:  extractSource(ctx),
+        }
+    }
+
+    return docs, nil
+}</code></pre>
+    </div>
+
+    <div id="ai-tab-chat" class="ai-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">AI Chat Integration</h3>
+      <pre class="text-green-400 text-sm"><code>// AI Chat handler with RAG integration
+func HandleAIChat(c *gin.Context) {
+    var request ChatRequest
+    if err := c.ShouldBindJSON(&request); err != nil {
+        c.JSON(400, gin.H{"error": "Invalid request"})
+        return
+    }
+
+    // Initialize AI components
+    aiManager := NewAIManager()
+    ragSystem := NewRAGSystem()
+
+    // Select best provider based on query type
+    provider := aiManager.SelectProvider(ProviderSelection{
+        QueryType:    classifyQuery(request.Message),
+        UserPreference: request.PreferredModel,
+        MaxTokens:    request.MaxTokens,
+    })
+
+    // Generate response with RAG
+    response, err := ragSystem.GenerateAnswer(request.Message, provider)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "Failed to generate response"})
+        return
+    }
+
+    c.JSON(200, ChatResponse{
+        Message:     response.Content,
+        Model:       response.Model,
+        Provider:    response.Provider,
+        TokensUsed:  response.TokensUsed,
+        Sources:     response.Sources,
+        Confidence:  response.Confidence,
+        ProcessingTime: response.ProcessingTime,
+    })
+}
+
+// WebSocket AI chat for real-time assistance
+func HandleWebSocketAI(c *gin.Context) {
+    conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+    if err != nil {
+        return
+    }
+    defer conn.Close()
+
+    aiManager := NewAIManager()
+    ragSystem := NewRAGSystem()
+
+    for {
+        var message ChatMessage
+        err := conn.ReadJSON(&message)
+        if err != nil {
+            break
+        }
+
+        // Process message with AI
+        go func(msg ChatMessage) {
+            provider := aiManager.GetProvider(msg.Model)
+            response, err := ragSystem.GenerateAnswer(msg.Content, provider)
+
+            if err != nil {
+                conn.WriteJSON(ErrorMessage{Error: err.Error()})
+                return
+            }
+
+            conn.WriteJSON(AIResponse{
+                ID:       msg.ID,
+                Content:  response.Content,
+                Model:    response.Model,
+                Sources:  response.Sources,
+                Timestamp: time.Now(),
+            })
+        }(message)
+    }
+}
+
+// Code analysis with AI
+func AnalyzeCode(filePath string, aiManager *AIManager) (*CodeAnalysis, error) {
+    // Read code file
+    content, err := ioutil.ReadFile(filePath)
+    if err != nil {
+        return nil, err
+    }
+
+    // Create analysis prompt
+    prompt := fmt.Sprintf({{`Analyze this %s code for:
+1. Code quality and best practices
+2. Potential bugs or issues
+3. Performance optimizations
+4. Security vulnerabilities
+5. Suggestions for improvement
+
+Code:
+%s`}}, detectLanguage(filePath), string(content))
+
+    // Use appropriate provider for code analysis
+    provider := aiManager.GetProvider("claude-sonnet") // Good for code analysis
+
+    response, err := provider.GenerateResponse(prompt, []string{})
+    if err != nil {
+        return nil, err
+    }
+
+    return &CodeAnalysis{
+        FilePath:     filePath,
+        Analysis:     response.Content,
+        Model:        response.Model,
+        Suggestions: parseAISuggestions(response.Content),
+        Timestamp:   time.Now(),
+    }, nil
+}
+
+// Auto-documentation generation
+func GenerateDocumentation(codeContent string, aiManager *AIManager) (string, error) {
+    prompt := fmt.Sprintf({{`Generate comprehensive documentation for this code:
+- Function/method descriptions
+- Parameter explanations
+- Return value descriptions
+- Usage examples
+- Error handling
+
+Code:
+%s`}}, codeContent)
+
+    provider := aiManager.GetProvider("gpt-4") // Good for documentation
+    response, err := provider.GenerateResponse(prompt, []string{})
+
+    if err != nil {
+        return "", err
+    }
+
+    return response.Content, nil
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 AI Platform Benefits</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Multi-Provider Strategy:</strong> Avoid vendor lock-in with multiple LLM options</li>
+      <li><strong>RAG Implementation:</strong> Context-aware responses using your codebase knowledge</li>
+      <li><strong>Semantic Search:</strong> Find relevant code and documentation intelligently</li>
+      <li><strong>Cost Optimization:</strong> Select appropriate models based on task complexity</li>
+      <li><strong>Real-time Assistance:</strong> WebSocket integration for instant AI help</li>
+      <li><strong>Code Intelligence:</strong> Automated analysis, suggestions, and documentation</li>
+    </ul>
   </div>
 </div>
-
 {{ end }}

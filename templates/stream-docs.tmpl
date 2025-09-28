@@ -1,0 +1,248 @@
+{{ define "rtmp" }}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">🎥 Live Streaming Infrastructure</h2>
+    <p class="text-gray-300">Professional live streaming with AWS IVS, RTMP ingestion, and HLS delivery for global audiences</p>
+  </div>
+
+  <!-- Tabset for Stream code examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn stream-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showStreamTab('terraform')">🏗️ Infrastructure</button>
+      <button class="tab-btn stream-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showStreamTab('backend')">⚙️ Go Backend</button>
+      <button class="tab-btn stream-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showStreamTab('frontend')">🎮 Frontend</button>
+      <button class="tab-btn stream-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showStreamTab('obs')">📹 OBS Setup</button>
+      <button class="tab-btn stream-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showStreamTab('analytics')">📊 Analytics</button>
+    </div>
+
+    <div id="stream-tab-terraform" class="stream-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">AWS IVS Infrastructure (Terraform)</h3>
+      <pre class="text-green-400 text-sm"><code># AWS IVS Channel Configuration
+resource "aws_ivs_channel" "live_stream" {
+  name         = "majestic-coding-stream"
+  type         = "STANDARD"
+  latency_mode = "LOW"
+
+  tags = {
+    Environment = "production"
+    Application = "live-streaming"
+  }
+}
+
+# Stream Key for RTMP authentication
+resource "aws_ivs_stream_key" "stream_key" {
+  channel_arn = aws_ivs_channel.live_stream.arn
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+# Recording Configuration for VOD
+resource "aws_ivs_recording_configuration" "recording" {
+  name = "majestic-recordings"
+
+  destination_configuration {
+    s3 {
+      bucket_name = aws_s3_bucket.recordings.bucket
+    }
+  }
+
+  recording_reconnect_window_seconds = 60
+
+  tags = {
+    Environment = "production"
+  }
+}</code></pre>
+    </div>
+
+    <div id="stream-tab-backend" class="stream-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Go Backend Stream Management</h3>
+      <pre class="text-green-400 text-sm"><code>// Stream status monitoring
+type StreamStatus struct {
+    IsLive      bool   `json:"is_live"`
+    ViewerCount int    `json:"viewer_count"`
+    StartTime   string `json:"start_time,omitempty"`
+    Quality     string `json:"quality,omitempty"`
+}
+
+func StreamStatusHandler(c *gin.Context) {
+    channelArn := os.Getenv("AWS_IVS_CHANNEL_ARN")
+
+    // Check if stream is currently live
+    status, err := checkStreamStatus(channelArn)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "Failed to check stream"})
+        return
+    }
+
+    c.JSON(200, status)
+}
+
+func checkStreamStatus(channelArn string) (*StreamStatus, error) {
+    sess := session.Must(session.NewSession())
+    svc := ivs.New(sess)
+
+    // Get stream information
+    input := &ivs.GetStreamInput{
+        ChannelArn: aws.String(channelArn),
+    }
+
+    result, err := svc.GetStream(input)
+    if err != nil {
+        return &StreamStatus{IsLive: false}, nil
+    }
+
+    return &StreamStatus{
+        IsLive:      *result.Stream.State == "LIVE",
+        ViewerCount: int(*result.Stream.ViewerCount),
+        StartTime:   result.Stream.StartTime.Format(time.RFC3339),
+        Quality:     *result.Stream.Health,
+    }, nil
+}</code></pre>
+    </div>
+
+    <div id="stream-tab-frontend" class="stream-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Frontend Video Player Integration</h3>
+      <pre class="text-green-400 text-sm"><code>// HLS.js integration for video playback
+import Hls from 'hls.js';
+
+class StreamPlayer {
+    constructor(videoElement, playbackUrl) {
+        this.video = videoElement;
+        this.playbackUrl = playbackUrl;
+        this.hls = null;
+        this.init();
+    }
+
+    init() {
+        if (Hls.isSupported()) {
+            this.hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+            });
+
+            this.hls.loadSource(this.playbackUrl);
+            this.hls.attachMedia(this.video);
+
+            // Handle stream events
+            this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                console.log('Stream manifest loaded');
+                this.video.play();
+            });
+
+            this.hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    this.handleFatalError(data);
+                }
+            });
+        } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Native HLS support (Safari)
+            this.video.src = this.playbackUrl;
+        }
+    }
+
+    async checkStreamStatus() {
+        try {
+            const response = await fetch('/api/stream/status');
+            const status = await response.json();
+
+            if (status.is_live) {
+                this.showLiveIndicator();
+                this.updateViewerCount(status.viewer_count);
+            } else {
+                this.showOfflineMessage();
+            }
+        } catch (error) {
+            console.error('Failed to check stream status:', error);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <div id="stream-tab-obs" class="stream-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">OBS Studio Configuration</h3>
+      <pre class="text-green-400 text-sm"><code># OBS Studio Settings for AWS IVS
+Server: rtmps://your-channel-id.global-contribute.live-video.net/live
+Stream Key: [Your AWS IVS Stream Key]
+
+# Recommended Settings:
+Video Bitrate: 2500-6000 Kbps
+Audio Bitrate: 128 Kbps
+Resolution: 1920x1080
+FPS: 30 or 60
+Encoder: x264 or NVENC (if available)
+Keyframe Interval: 2 seconds
+
+# Advanced Settings:
+Profile: High
+Tune: zerolatency
+x264 Preset: veryfast (balance of quality/performance)</code></pre>
+    </div>
+
+    <div id="stream-tab-analytics" class="stream-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Stream Analytics & Monitoring</h3>
+      <pre class="text-green-400 text-sm"><code>// CloudWatch metrics integration
+func collectStreamMetrics() {
+    sess := session.Must(session.NewSession())
+    cw := cloudwatch.New(sess)
+
+    // Get concurrent viewers
+    viewers, _ := getCurrentViewers()
+
+    // Send custom metric to CloudWatch
+    _, err := cw.PutMetricData(&cloudwatch.PutMetricDataInput{
+        Namespace: aws.String("IVS/Stream"),
+        MetricData: []*cloudwatch.MetricDatum{
+            {
+                MetricName: aws.String("ConcurrentViewers"),
+                Value:      aws.Float64(float64(viewers)),
+                Unit:       aws.String("Count"),
+                Timestamp:  aws.Time(time.Now()),
+            },
+        },
+    })
+
+    if err != nil {
+        log.Printf("Failed to send metrics: %v", err)
+    }
+}
+
+// Automated stream health monitoring
+func monitorStreamHealth() {
+    ticker := time.NewTicker(30 * time.Second)
+    defer ticker.Stop()
+
+    for range ticker.C {
+        status, err := checkStreamStatus(channelArn)
+        if err != nil {
+            log.Printf("Stream health check failed: %v", err)
+            continue
+        }
+
+        if status.IsLive && status.Quality != "GOOD" {
+            // Alert on stream quality issues
+            alertStreamIssue(status)
+        }
+    }
+}</code></pre>
+    </div>
+  </div>
+
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 Streaming Features</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Enterprise Scale:</strong> AWS IVS handles millions of concurrent viewers</li>
+      <li><strong>Low Latency:</strong> Sub-second glass-to-glass latency for real-time interaction</li>
+      <li><strong>Global CDN:</strong> Automatic distribution to 400+ edge locations worldwide</li>
+      <li><strong>Adaptive Streaming:</strong> Multiple bitrates for optimal viewer experience</li>
+      <li><strong>Recording & VOD:</strong> Automatic S3 storage with lifecycle policies</li>
+      <li><strong>Real-time Analytics:</strong> Viewer metrics, quality monitoring, and alerts</li>
+      <li><strong>Multi-platform:</strong> Works on web, mobile, smart TVs, and set-top boxes</li>
+    </ul>
+  </div>
+</div>
+{{ end }}

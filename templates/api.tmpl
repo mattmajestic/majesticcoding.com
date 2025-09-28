@@ -1,32 +1,417 @@
 {{ define "api" }}
-<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
-  <h2 class="text-xl font-bold mb-4 text-white">📡 Swagger for REST API Documentation</h2>
-
-  <h2 class="text-lg font-bold mb-2 text-blue-300">
-  Swagger provides a live, interactive interface for exploring and testing your API endpoints. This setup uses <strong>swaggo/gin-swagger</strong> to auto-generate documentation from Go annotations.
-  </h2>
-
-  <ul class="list-disc list-inside text-lg text-inherit space-y-1">
-    <li>Framework: <code>Gin</code> in Go</li>
-    <li>Swagger UI hosted at <code>/swagger/index.html</code></li>
-    <li>Docs generated via annotations using <code>swag init</code></li>
-    <li>Supports endpoints for GitHub, Twitch, and analytics</li>
-  </ul>
-
-  <div class="mt-4 bg-gray-900 p-4 rounded text-green-400 text-sm font-mono">
-    <pre><code>// Example annotated handler in Go:
-  @Summary Get GitHub Profile
-  @Description Fetches GitHub data for the given username
-  @Tags GitHub
-  @Param username path string true "GitHub username"
-  @Success 200 {object} GitHubProfile
-  @Router /api/github/{username} [get]</code></pre>
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">📖 REST API Documentation</h2>
+    <p class="text-gray-300">Auto-generated Swagger documentation with interactive testing for all API endpoints</p>
   </div>
 
-  <div class="mt-4 text-xl text-gray-300">
-    🔗 Access your full Swagger UI at:<br>
-    <a href="/swagger/index.html" class="text-blue-400 hover:underline text-lg">https://majesticcoding.com/swagger/index.html</a>
+  <!-- Tabset for API documentation examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn api-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showApiTab('swagger')">📋 Swagger UI</button>
+      <button class="tab-btn api-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showApiTab('annotations')">📝 Annotations</button>
+      <button class="tab-btn api-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showApiTab('handlers')">🔧 Handlers</button>
+      <button class="tab-btn api-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showApiTab('models')">📊 Models</button>
+      <button class="tab-btn api-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showApiTab('setup')">⚙️ Setup</button>
+    </div>
+
+    <div id="api-tab-swagger" class="api-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Interactive API Documentation</h3>
+      <div class="space-y-4">
+        <div class="bg-gray-800 border border-blue-500 rounded-lg p-4">
+          <h4 class="text-blue-400 font-bold mb-2">🎯 What is Swagger?</h4>
+          <p class="text-gray-300 mb-3">
+            Swagger (now OpenAPI) is a specification for describing REST APIs. It provides a standard way to document your API endpoints,
+            request/response formats, and allows developers to interact with your API directly from a web interface.
+          </p>
+          <ul class="text-gray-300 text-sm space-y-1">
+            <li>• <strong>Interactive Testing:</strong> Try API calls directly from the browser</li>
+            <li>• <strong>Auto-Generated:</strong> Documentation stays synchronized with your code</li>
+            <li>• <strong>Schema Validation:</strong> Ensures requests match expected formats</li>
+            <li>• <strong>Code Generation:</strong> Generate client SDKs in multiple languages</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-800 border border-green-500 rounded-lg p-4">
+          <h4 class="text-green-400 font-bold mb-2">🚀 Live API Access</h4>
+          <p class="text-gray-300 mb-3">
+            Click the link below to access the interactive Swagger UI where you can explore and test all available endpoints:
+          </p>
+          <div class="bg-gray-900 border border-green-400 rounded p-3">
+            <a href="/swagger/index.html"
+               target="_blank"
+               class="text-green-400 hover:text-green-300 text-lg font-mono hover:underline flex items-center gap-2">
+              <i class="fas fa-external-link-alt"></i>
+              https://majesticcoding.com/swagger/index.html
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 border border-purple-500 rounded-lg p-4">
+          <h4 class="text-purple-400 font-bold mb-2">📊 Available Endpoints</h4>
+          <div class="grid md:grid-cols-2 gap-3 text-sm">
+            <div class="bg-gray-900 p-3 rounded">
+              <div class="text-blue-300 font-bold">GitHub Integration</div>
+              <div class="text-gray-400">GET /api/github/{username}</div>
+              <div class="text-gray-300">Fetch profile, repos, and stats</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded">
+              <div class="text-green-300 font-bold">Twitch Analytics</div>
+              <div class="text-gray-400">GET /api/twitch/analytics</div>
+              <div class="text-gray-300">Live streaming metrics</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded">
+              <div class="text-red-300 font-bold">YouTube Stats</div>
+              <div class="text-gray-400">GET /api/youtube/stats</div>
+              <div class="text-gray-300">Channel and video statistics</div>
+            </div>
+            <div class="bg-gray-900 p-3 rounded">
+              <div class="text-yellow-300 font-bold">Platform Metrics</div>
+              <div class="text-gray-400">GET /api/metrics</div>
+              <div class="text-gray-300">Aggregated platform data</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 border border-cyan-500 rounded-lg p-4">
+          <h4 class="text-cyan-400 font-bold mb-2">🔧 How to Use Swagger UI</h4>
+          <ol class="text-gray-300 text-sm space-y-2 list-decimal list-inside">
+            <li><strong>Browse Endpoints:</strong> Click on any endpoint to see details</li>
+            <li><strong>Try it Out:</strong> Click "Try it out" button to test the endpoint</li>
+            <li><strong>Enter Parameters:</strong> Fill in required path or query parameters</li>
+            <li><strong>Execute:</strong> Click "Execute" to make the actual API call</li>
+            <li><strong>View Response:</strong> See the real response data and HTTP status</li>
+            <li><strong>Copy as cURL:</strong> Get command-line examples for integration</li>
+          </ol>
+        </div>
+
+        <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500 rounded-lg p-4">
+          <h4 class="text-blue-300 font-bold mb-2">💡 Pro Tips</h4>
+          <div class="text-gray-300 text-sm space-y-1">
+            <div>• Use the <strong>Models</strong> section to understand response schemas</div>
+            <div>• Check <strong>Response Examples</strong> to see expected data formats</div>
+            <div>• Look for <strong>HTTP status codes</strong> to understand error handling</div>
+            <div>• Copy the <strong>Request URL</strong> for use in your applications</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="api-tab-annotations" class="api-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Swagger Annotations</h3>
+      <pre class="text-green-400 text-sm"><code>// GitHub API endpoint with full annotations
+// @Summary Get GitHub Profile
+// @Description Fetches comprehensive GitHub data for a username
+// @Tags GitHub
+// @Accept json
+// @Produce json
+// @Param username path string true "GitHub username"
+// @Success 200 {object} models.GitHubProfile
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /api/github/{username} [get]
+func GetGitHubProfile(c *gin.Context) {
+    username := c.Param("username")
+    profile, err := services.FetchGitHubData(username)
+    if err != nil {
+        c.JSON(404, models.ErrorResponse{
+            Error:   "User not found",
+            Message: "GitHub user does not exist",
+        })
+        return
+    }
+    c.JSON(200, profile)
+}
+
+// Twitch analytics endpoint
+// @Summary Get Twitch Analytics
+// @Description Retrieve Twitch channel statistics and analytics
+// @Tags Twitch
+// @Accept json
+// @Produce json
+// @Param channel query string false "Twitch channel name"
+// @Success 200 {object} models.TwitchAnalytics
+// @Failure 429 {object} models.ErrorResponse "Rate limit exceeded"
+// @Router /api/twitch/analytics [get]
+func GetTwitchAnalytics(c *gin.Context) {
+    // Implementation here
+}
+
+// YouTube stats endpoint
+// @Summary Get YouTube Channel Stats
+// @Description Fetch subscriber count and video statistics
+// @Tags YouTube
+// @Success 200 {object} models.YouTubeStats
+// @Router /api/youtube/stats [get]
+func GetYouTubeStats(c *gin.Context) {
+    // Implementation here
+}</code></pre>
+    </div>
+
+    <div id="api-tab-handlers" class="api-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">API Handlers Implementation</h3>
+      <pre class="text-green-400 text-sm"><code>// GitHub profile handler with error handling
+func GetGitHubProfile(c *gin.Context) {
+    username := c.Param("username")
+
+    // Validate input
+    if username == "" {
+        c.JSON(400, gin.H{
+            "error": "username is required",
+            "code":  "MISSING_USERNAME",
+        })
+        return
+    }
+
+    // Fetch data from GitHub API
+    profile, err := services.FetchGitHubData(username)
+    if err != nil {
+        log.Printf("GitHub API error for user %s: %v", username, err)
+        c.JSON(500, gin.H{
+            "error":   "Failed to fetch GitHub data",
+            "message": err.Error(),
+        })
+        return
+    }
+
+    // Return successful response
+    c.Header("Cache-Control", "public, max-age=300") // 5 min cache
+    c.JSON(200, profile)
+}
+
+// Real-time metrics endpoint
+func GetMetrics(c *gin.Context) {
+    metrics := gin.H{
+        "github": gin.H{
+            "followers":     1250,
+            "repositories":  45,
+            "stars":        892,
+        },
+        "youtube": gin.H{
+            "subscribers":   129000,
+            "views":        1500000,
+            "videos":       180,
+        },
+        "twitch": gin.H{
+            "followers":     8500,
+            "avg_viewers":   125,
+            "streams":       340,
+        },
+        "timestamp": time.Now().UTC(),
+    }
+
+    c.JSON(200, metrics)
+}
+
+// Health check endpoint
+func HealthCheck(c *gin.Context) {
+    status := gin.H{
+        "status":      "healthy",
+        "timestamp":   time.Now().UTC(),
+        "version":     os.Getenv("APP_VERSION"),
+        "environment": os.Getenv("ENVIRONMENT"),
+    }
+
+    // Check database connection
+    if db != nil {
+        if err := db.Ping(); err != nil {
+            status["database"] = "unhealthy"
+            status["status"] = "degraded"
+            c.JSON(503, status)
+            return
+        }
+        status["database"] = "healthy"
+    }
+
+    c.JSON(200, status)
+}</code></pre>
+    </div>
+
+    <div id="api-tab-models" class="api-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Data Models & Schemas</h3>
+      <pre class="text-green-400 text-sm"><code>// GitHub profile response model
+type GitHubProfile struct {
+    Username    string `json:"username" example:"mattmajestic"`
+    Name        string `json:"name" example:"Matt"`
+    Bio         string `json:"bio" example:"Full Stack Developer"`
+    Followers   int    `json:"followers" example:"1250"`
+    Following   int    `json:"following" example:"180"`
+    PublicRepos int    `json:"public_repos" example:"45"`
+    AvatarURL   string `json:"avatar_url" example:"https://github.com/avatar.jpg"`
+    Location    string `json:"location" example:"San Francisco, CA"`
+    Company     string `json:"company" example:"Majestic Coding"`
+    Blog        string `json:"blog" example:"https://majesticcoding.com"`
+}
+
+// Twitch analytics response model
+type TwitchAnalytics struct {
+    ChannelName   string      `json:"channel_name" example:"majesticcoding"`
+    Followers     int         `json:"followers" example:"8500"`
+    TotalViews    int         `json:"total_views" example:"125000"`
+    RecentStreams []Stream    `json:"recent_streams"`
+    Metrics       Metrics     `json:"metrics"`
+}
+
+type Stream struct {
+    Title       string    `json:"title" example:"Building Go APIs"`
+    ViewerCount int       `json:"viewer_count" example:"145"`
+    Duration    int       `json:"duration" example:"7200"` // seconds
+    StartedAt   time.Time `json:"started_at"`
+    GameName    string    `json:"game_name" example:"Software and Game Development"`
+}
+
+type Metrics struct {
+    AvgViewers     float64 `json:"avg_viewers" example:"125.5"`
+    PeakViewers    int     `json:"peak_viewers" example:"280"`
+    StreamsThisMonth int   `json:"streams_this_month" example:"12"`
+    HoursStreamed  float64 `json:"hours_streamed" example:"48.5"`
+}
+
+// Error response model
+type ErrorResponse struct {
+    Error     string `json:"error" example:"Not Found"`
+    Message   string `json:"message" example:"The requested resource was not found"`
+    Code      string `json:"code,omitempty" example:"RESOURCE_NOT_FOUND"`
+    Timestamp string `json:"timestamp" example:"2024-01-15T10:30:00Z"`
+}
+
+// YouTube statistics model
+type YouTubeStats struct {
+    ChannelName   string `json:"channel_name" example:"Majestic Coding"`
+    Subscribers   int    `json:"subscribers" example:"129000"`
+    TotalViews    int64  `json:"total_views" example:"1500000"`
+    VideoCount    int    `json:"video_count" example:"180"`
+    RecentVideos  []Video `json:"recent_videos"`
+}
+
+type Video struct {
+    Title       string `json:"title" example:"Go REST API Tutorial"`
+    Views       int    `json:"views" example:"15000"`
+    Likes       int    `json:"likes" example:"850"`
+    Duration    string `json:"duration" example:"PT15M30S"`
+    PublishedAt string `json:"published_at" example:"2024-01-10T14:30:00Z"`
+}</code></pre>
+    </div>
+
+    <div id="api-tab-setup" class="api-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-3 mb-2">Swagger Setup & Configuration</h3>
+      <pre class="text-green-400 text-sm"><code>// main.go - Swagger initialization
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+    "github.com/swaggo/gin-swagger"
+    "github.com/swaggo/files"
+
+    _ "majesticcoding.com/docs" // Generated swagger docs
+)
+
+// @title Majestic Coding API
+// @version 1.0
+// @description REST API for Majestic Coding platform
+// @termsOfService https://majesticcoding.com/terms
+
+// @contact.name Matt
+// @contact.url https://majesticcoding.com
+// @contact.email matt@majesticcoding.com
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @host majesticcoding.com
+// @BasePath /api
+// @schemes https http
+
+func main() {
+    router := gin.Default()
+
+    // Swagger endpoint
+    router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+    // API routes
+    api := router.Group("/api")
+    {
+        api.GET("/github/:username", GetGitHubProfile)
+        api.GET("/twitch/analytics", GetTwitchAnalytics)
+        api.GET("/youtube/stats", GetYouTubeStats)
+        api.GET("/metrics", GetMetrics)
+        api.GET("/health", HealthCheck)
+    }
+
+    router.Run(":8080")
+}
+
+// Generate docs command
+// Run this to update Swagger documentation:
+// swag init
+
+// Swagger generation configuration
+// docs/docs.go (auto-generated)
+// Package docs GENERATED BY SWAG; DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = {{`{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {
+            "name": "Matt",
+            "url": "https://majesticcoding.com",
+            "email": "matt@majesticcoding.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {}
+}`}}
+
+func init() {
+    swag.Register("swagger", &s{})
+}
+
+// Directory structure
+/*
+project/
+├── main.go
+├── docs/
+│   ├── docs.go      (generated)
+│   ├── swagger.json (generated)
+│   └── swagger.yaml (generated)
+├── api/
+│   └── handlers/
+│       ├── github.go
+│       ├── twitch.go
+│       └── youtube.go
+└── models/
+    ├── github.go
+    ├── twitch.go
+    └── response.go
+*/</code></pre>
+    </div>
   </div>
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 API Features</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Interactive Testing:</strong> Test endpoints directly from Swagger UI</li>
+      <li><strong>Auto-Generated:</strong> Documentation stays in sync with code changes</li>
+      <li><strong>Type Safety:</strong> Go struct tags define JSON schema validation</li>
+      <li><strong>Error Handling:</strong> Comprehensive HTTP status codes and error responses</li>
+      <li><strong>Rate Limiting:</strong> Built-in protection against API abuse</li>
+      <li><strong>Caching Headers:</strong> Optimize performance with appropriate cache policies</li>
+    </ul>
+  </div>
+
 </div>
-<script src="/static/components/theme.js"></script>
 {{ end }}

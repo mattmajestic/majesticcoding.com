@@ -1,23 +1,189 @@
 {{ define "db" }}
-<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
-  <h2 class="text-2xl font-bold text-white mb-2">🛢️ Neon (PostgreSQL)</h2>
-  <h2 class="text-xl font-bold mb-2 text-blue-300">
-    Serverless, scalable PostgreSQL with branching and modern developer tooling.
-  </h2>
-  <ul class="list-disc list-inside text-md text-inherit">
-    <li>Built-in autoscaling and bottomless storage</li>
-    <li>Compatible with standard Postgres drivers and ORMs</li>
-    <li>Branching support for isolated development environments</li>
-  </ul>
-  <div class="mt-4 bg-gray-900 p-3 rounded">
-    <pre class="text-green-400 text-sm"><code>// Connect using pgx or database/sql
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">🛢️ PostgreSQL Database</h2>
+    <p class="text-gray-300">Modern PostgreSQL with Neon's serverless platform for scalable data storage</p>
+  </div>
+
+  <!-- Tabset for Database code examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn db-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showDbTab('connection')">🔌 Connection</button>
+      <button class="tab-btn db-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showDbTab('schema')">🏗️ Schema</button>
+      <button class="tab-btn db-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showDbTab('operations')">⚙️ Operations</button>
+      <button class="tab-btn db-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showDbTab('advanced')">🚀 Advanced</button>
+    </div>
+
+    <div id="db-tab-connection" class="db-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Database Connection</h3>
+      <pre class="text-green-400 text-sm"><code>// PostgreSQL connection with pgx driver
+import (
+    "database/sql"
+    _ "github.com/lib/pq"
+)
+
 connStr := os.Getenv("NEON_DATABASE_URL")
 db, err := sql.Open("postgres", connStr)
 if err != nil {
-  log.Fatal(err)
+    log.Fatal("Failed to connect to PostgreSQL:", err)
 }
 defer db.Close()
-</code></pre>
+
+// Test connection
+if err := db.Ping(); err != nil {
+    log.Fatal("Database unreachable:", err)
+}
+
+// Connection pool configuration
+db.SetMaxOpenConns(25)
+db.SetMaxIdleConns(5)
+db.SetConnMaxLifetime(time.Hour)</code></pre>
+    </div>
+
+    <div id="db-tab-schema" class="db-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Schema & Tables</h3>
+      <pre class="text-green-400 text-sm"><code>-- Messages table for chat functionality
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id UUID,
+    display_time VARCHAR(50)
+);
+
+-- Geographic check-ins with PostGIS support
+CREATE TABLE checkins (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL,
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL,
+    location_name TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_messages_created_at ON messages(created_at DESC);
+CREATE INDEX idx_checkins_user_id ON checkins(user_id);
+CREATE INDEX idx_checkins_location ON checkins(latitude, longitude);
+
+-- Enable Row Level Security
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE checkins ENABLE ROW LEVEL SECURITY;</code></pre>
+    </div>
+
+    <div id="db-tab-operations" class="db-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">SQL Operations</h3>
+      <pre class="text-green-400 text-sm"><code>// Raw SQL for chat messages
+func SaveMessage(db *sql.DB, msg Message) error {
+    query := `INSERT INTO messages (content, username, user_id, display_time)
+              VALUES ($1, $2, $3, $4)`
+    _, err := db.Exec(query, msg.Content, msg.Username,
+                     msg.UserID, msg.DisplayTime)
+    return err
+}
+
+// Complex query with joins and aggregation
+func GetUserStats(db *sql.DB, userID string) (*UserStats, error) {
+    query := `
+        SELECT u.username,
+               COUNT(m.id) as message_count,
+               COUNT(c.id) as checkin_count,
+               MAX(m.created_at) as last_activity
+        FROM users u
+        LEFT JOIN messages m ON u.id = m.user_id
+        LEFT JOIN checkins c ON u.id = c.user_id
+        WHERE u.id = $1
+        GROUP BY u.id, u.username`
+
+    row := db.QueryRow(query, userID)
+    // ... scan results
+}
+
+// Batch operations for performance
+func SaveMessages(db *sql.DB, messages []Message) error {
+    tx, err := db.Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    stmt, err := tx.Prepare(`INSERT INTO messages
+        (content, username, user_id) VALUES ($1, $2, $3)`)
+    if err != nil {
+        return err
+    }
+    defer stmt.Close()
+
+    for _, msg := range messages {
+        _, err := stmt.Exec(msg.Content, msg.Username, msg.UserID)
+        if err != nil {
+            return err
+        }
+    }
+
+    return tx.Commit()
+}</code></pre>
+    </div>
+
+    <div id="db-tab-advanced" class="db-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Advanced Features</h3>
+      <pre class="text-green-400 text-sm"><code>-- JSONB for flexible data storage
+CREATE TABLE user_preferences (
+    user_id UUID PRIMARY KEY,
+    settings JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- JSONB queries and indexes
+CREATE INDEX idx_user_preferences_settings
+ON user_preferences USING GIN (settings);
+
+-- Query JSONB data
+SELECT * FROM user_preferences
+WHERE settings @> '{"theme": "dark"}';
+
+-- Window functions for analytics
+SELECT
+    username,
+    content,
+    created_at,
+    ROW_NUMBER() OVER (PARTITION BY username ORDER BY created_at DESC) as msg_rank,
+    LAG(created_at) OVER (PARTITION BY username ORDER BY created_at) as prev_msg_time
+FROM messages
+WHERE created_at > NOW() - INTERVAL '1 day';
+
+-- Common Table Expressions (CTEs)
+WITH recent_activity AS (
+    SELECT user_id, COUNT(*) as message_count
+    FROM messages
+    WHERE created_at > NOW() - INTERVAL '1 hour'
+    GROUP BY user_id
+),
+active_users AS (
+    SELECT user_id
+    FROM recent_activity
+    WHERE message_count > 5
+)
+SELECT u.username, ra.message_count
+FROM users u
+JOIN recent_activity ra ON u.id = ra.user_id
+WHERE u.id IN (SELECT user_id FROM active_users);</code></pre>
+    </div>
+  </div>
+
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 PostgreSQL Advantages</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>ACID Compliance:</strong> Full transactional support with consistency guarantees</li>
+      <li><strong>JSON Support:</strong> Native JSONB for flexible document storage</li>
+      <li><strong>Advanced Queries:</strong> CTEs, window functions, full-text search</li>
+      <li><strong>Extensibility:</strong> Custom functions, triggers, and extensions</li>
+      <li><strong>Neon Benefits:</strong> Instant provisioning, automatic backups, point-in-time recovery</li>
+      <li><strong>Developer Experience:</strong> Branch databases like Git repositories</li>
+    </ul>
   </div>
 </div>
 {{ end }}

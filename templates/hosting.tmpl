@@ -1,31 +1,23 @@
 {{ define "hosting" }}
-<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
-  <h2 class="text-2xl font-bold text-white mb-2">☁️ Multi-Cloud Hosting</h2>
-  <h2 class="text-xl font-bold mb-2 text-blue-300">
-    This platform uses both Google Cloud and AWS for scalable, flexible, and affordable infrastructure.
-  </h2>
-  <ul class="list-disc list-inside text-md mb-4">
-    <li>
-      <span class="font-bold text-white">Google Cloud Platform:</span>
-      The Go application is deployed on Cloud Run using Terraform for automated infrastructure management.
-    </li>
-    <li>
-      <span class="font-bold text-white">AWS IVS:</span>
-      Live streaming is powered by AWS IVS, leveraging Twitch’s backend for reliable, on-demand video.
-    </li>
-    <li>
-      <span class="font-bold text-white">Unified DevOps:</span>
-      Terraform is used to provision and manage resources across both clouds for a seamless multi-cloud workflow.
-    </li>
-  </ul>
-  <!-- Tabset for Terraform code -->
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">☁️ Multi-Cloud Infrastructure</h2>
+    <p class="text-gray-300">Modern cloud hosting using GCP and AWS with Infrastructure as Code for scalable deployment</p>
+  </div>
+
+  <!-- Tabset for hosting infrastructure examples -->
   <div class="mt-4">
-    <div class="flex border-b border-gray-700 mb-2">
-      <button class="tab-btn px-4 py-2 text-blue-300 font-bold focus:outline-none" onclick="showTab('gcp')">Go App (GCP)</button>
-      <button class="tab-btn px-4 py-2 text-blue-300 font-bold focus:outline-none" onclick="showTab('aws')">Video Stream (AWS IVS)</button>
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn hosting-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showHostingTab('terraform')">🏗️ Terraform</button>
+      <button class="tab-btn hosting-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showHostingTab('docker')">🐳 Docker</button>
+      <button class="tab-btn hosting-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showHostingTab('cicd')">🚀 CI/CD</button>
+      <button class="tab-btn hosting-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showHostingTab('monitoring')">📊 Monitoring</button>
     </div>
-    <div id="tab-gcp" class="tab-content bg-gray-900 p-3 rounded">
-      <pre class="text-green-400 text-sm"><code># Terraform: Deploy Go App to Cloud Run
+
+    <div id="hosting-tab-terraform" class="hosting-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Infrastructure as Code</h3>
+      <pre class="text-green-400 text-sm"><code># Google Cloud Run deployment
 resource "google_cloud_run_service" "go_app" {
   name     = "majestic-go-app"
   location = "us-central1"
@@ -34,6 +26,19 @@ resource "google_cloud_run_service" "go_app" {
     spec {
       containers {
         image = "gcr.io/my-project/go-app:latest"
+        ports {
+          container_port = 8080
+        }
+        env {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        }
+        resources {
+          limits = {
+            cpu    = "1000m"
+            memory = "512Mi"
+          }
+        }
       }
     }
   }
@@ -43,27 +48,299 @@ resource "google_cloud_run_service" "go_app" {
     latest_revision = true
   }
 }
-</code></pre>
-    </div>
-    <div id="tab-aws" class="tab-content bg-gray-900 p-3 rounded hidden">
-      <pre class="text-green-400 text-sm"><code># Terraform: AWS IVS Channel for Live Streaming
+
+# AWS IVS for live streaming
 resource "aws_ivs_channel" "live_stream" {
-  name        = "majestic-stream"
-  type        = "STANDARD"
+  name         = "majestic-stream"
+  type         = "STANDARD"
   latency_mode = "LOW"
   recording_configuration_arn = aws_ivs_recording_configuration.recording.arn
+
+  tags = {
+    Environment = "production"
+    Application = "majestic-coding"
+  }
 }
 
 resource "aws_ivs_recording_configuration" "recording" {
   name = "majestic-recording"
+
   destination_configuration {
     s3 {
-      bucket_name = "my-ivs-recordings"
+      bucket_name = aws_s3_bucket.recordings.bucket
+    }
+  }
+
+  thumbnail_configuration {
+    recording_mode = "INTERVAL"
+    target_interval_seconds = 60
+  }
+}</code></pre>
+    </div>
+
+    <div id="hosting-tab-docker" class="hosting-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Container Configuration</h3>
+      <pre class="text-green-400 text-sm"><code># Multi-stage Dockerfile for Go application
+FROM golang:1.21-alpine AS builder
+
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+# Final stage
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates tzdata
+WORKDIR /root/
+
+COPY --from=builder /app/main .
+COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/static ./static
+
+EXPOSE 8080
+CMD ["./main"]
+
+# Docker Compose for local development
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - AWS_IVS_STREAM_KEY=${AWS_IVS_STREAM_KEY}
+    depends_on:
+      - postgres
+    volumes:
+      - ./static:/root/static
+      - ./templates:/root/templates
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=majestic
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rtmp:
+    image: tiangolo/nginx-rtmp
+    ports:
+      - "1935:1935"
+      - "8081:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+volumes:
+  postgres_data:</code></pre>
+    </div>
+
+    <div id="hosting-tab-cicd" class="hosting-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Automated Deployment</h3>
+      <pre class="text-green-400 text-sm"><code># GitHub Actions workflow
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.21
+
+    - name: Run tests
+      run: |
+        go test ./...
+        go vet ./...
+
+    - name: Build and test Docker image
+      run: |
+        docker build -t majestic-app .
+        docker run --rm majestic-app ./main --version
+
+    - name: Configure GCP credentials
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: {{`${{ secrets.GCP_SA_KEY }}`}}
+
+    - name: Configure Docker for GCR
+      run: gcloud auth configure-docker
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t gcr.io/{{`${{ secrets.GCP_PROJECT_ID }}`}}/majestic-app:latest .
+        docker push gcr.io/{{`${{ secrets.GCP_PROJECT_ID }}`}}/majestic-app:latest
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy majestic-app \
+          --image gcr.io/{{`${{ secrets.GCP_PROJECT_ID }}`}}/majestic-app:latest \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated \
+          --set-env-vars DATABASE_URL={{`${{ secrets.DATABASE_URL }}`}}
+
+# Terraform deployment pipeline
+terraform {
+  backend "gcs" {
+    bucket = "majestic-terraform-state"
+    prefix = "prod"
+  }
+}
+
+# Deploy infrastructure changes
+resource "google_cloudbuild_trigger" "deploy_trigger" {
+  name = "deploy-infrastructure"
+
+  github {
+    owner = "mattmajestic"
+    name  = "majesticcoding.com"
+    push {
+      branch = "^main$"
+    }
+  }
+
+  build {
+    step {
+      name = "hashicorp/terraform:1.5"
+      entrypoint = "terraform"
+      args = ["init"]
+    }
+    step {
+      name = "hashicorp/terraform:1.5"
+      entrypoint = "terraform"
+      args = ["plan"]
+    }
+    step {
+      name = "hashicorp/terraform:1.5"
+      entrypoint = "terraform"
+      args = ["apply", "-auto-approve"]
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div id="hosting-tab-monitoring" class="hosting-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Observability & Monitoring</h3>
+      <pre class="text-green-400 text-sm"><code># Google Cloud Monitoring alerts
+resource "google_monitoring_alert_policy" "high_cpu" {
+  display_name = "High CPU Usage"
+
+  conditions {
+    display_name = "CPU usage > 80%"
+
+    condition_threshold {
+      filter         = "resource.type=\"cloud_run_revision\""
+      comparison     = "COMPARISON_GREATER_THAN"
+      threshold_value = 0.8
+      duration       = "300s"
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_MEAN"
+      }
+    }
+  }
+
+  notification_channels = [
+    google_monitoring_notification_channel.email.name
+  ]
+}
+
+# Application health check
+resource "google_cloud_run_service" "app" {
+  template {
+    spec {
+      containers {
+        image = "gcr.io/project/app:latest"
+
+        # Health check endpoints
+        startup_probe {
+          http_get {
+            path = "/health"
+            port = 8080
+          }
+          initial_delay_seconds = 10
+          period_seconds        = 5
+        }
+
+        liveness_probe {
+          http_get {
+            path = "/health"
+            port = 8080
+          }
+          period_seconds = 30
+        }
+      }
     }
   }
 }
-</code></pre>
+
+# Go application health endpoint
+func healthHandler(c *gin.Context) {
+    // Check database connection
+    if err := db.Ping(); err != nil {
+        c.JSON(500, gin.H{
+            "status": "unhealthy",
+            "error":  "database connection failed",
+        })
+        return
+    }
+
+    // Check external services
+    if !checkExternalServices() {
+        c.JSON(503, gin.H{
+            "status": "degraded",
+            "message": "some services unavailable",
+        })
+        return
+    }
+
+    c.JSON(200, gin.H{
+        "status":    "healthy",
+        "timestamp": time.Now().UTC(),
+        "version":   os.Getenv("APP_VERSION"),
+    })
+}
+
+# Logging configuration
+resource "google_logging_metric" "error_rate" {
+  name   = "error_rate"
+  filter = "resource.type=\"cloud_run_revision\" AND severity=\"ERROR\""
+
+  metric_descriptor {
+    metric_kind = "GAUGE"
+    value_type  = "DOUBLE"
+  }
+}</code></pre>
     </div>
+  </div>
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 Multi-Cloud Benefits</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Vendor Flexibility:</strong> Avoid vendor lock-in with multi-cloud strategy</li>
+      <li><strong>Best-of-Breed:</strong> Use GCP for containers, AWS for streaming services</li>
+      <li><strong>Cost Optimization:</strong> Serverless auto-scaling reduces infrastructure costs</li>
+      <li><strong>Global Reach:</strong> AWS IVS provides worldwide streaming distribution</li>
+      <li><strong>Reliability:</strong> Cross-cloud redundancy and failover capabilities</li>
+      <li><strong>DevOps Automation:</strong> Infrastructure as Code with Terraform and CI/CD</li>
+    </ul>
   </div>
 </div>
 {{ end }}

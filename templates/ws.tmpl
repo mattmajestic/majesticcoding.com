@@ -1,31 +1,346 @@
 {{ define "ws" }}
 <div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-inherit">
-  <h2 class="text-2xl font-bold mb-2 text-white">🔌 WebSocket Chat</h2>
+  <h2 class="text-2xl font-bold mb-2 text-white">💬 Real-time Chat System</h2>
 
   <h2 class="text-xl font-bold mb-2 text-blue-300">
-    Real-time chat using WebSockets for low-latency message delivery.
+    WebSocket-powered chat with authentication, persistence, and real-time messaging.
   </h2>
 
   <ul class="list-disc list-inside text-md text-inherit">
-    <li>Bidirectional communication with the server</li>
-    <li>Storing Messages in Postgres</li>
-    <li>Lightweight and persistent connection</li>
+    <li>WebSocket connections with Gorilla WebSocket library</li>
+    <li>Supabase authentication integration for secure chat</li>
+    <li>Message persistence in PostgreSQL database</li>
+    <li>Hub-based broadcasting to all connected clients</li>
+    <li>Automatic cleanup of old messages and connection management</li>
+    <li>AI chat integration with multiple LLM providers</li>
   </ul>
 
-  <div class="mt-4 bg-gray-900 p-3 rounded">
-    <pre class="text-green-400 text-sm overflow-x-auto"><code>
-// Connect to WebSocket
-const ws = new WebSocket("ws://localhost:8080/ws/chat");
+  <!-- Tabset for Chat code examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('hub')">🏠 Hub Server</button>
+      <button class="tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('auth')">🔐 Authentication</button>
+      <button class="tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('frontend')">🎮 Frontend</button>
+      <button class="tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('persistence')">💾 Persistence</button>
+      <button class="tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('ai')">🤖 AI Integration</button>
+    </div>
 
-// Send message
-ws.send(JSON.stringify({ content: "Let's go! 🎉🔥" }));
+    <div id="chat-tab-hub" class="chat-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">WebSocket Hub for Connection Management</h3>
+      <pre class="text-green-400 text-sm overflow-x-auto"><code>// WebSocket Hub for managing connections
+type Hub struct {
+    clients    map[*Client]bool
+    broadcast  chan []byte
+    register   chan *Client
+    unregister chan *Client
+}
 
-// Receive message
-ws.onmessage = (event) => {
-  const msg = JSON.parse(event.data);
-  console.log(msg.username + ": " + msg.content);
-};
-    </code></pre>
+func (h *Hub) Run() {
+    for {
+        select {
+        case client := <-h.register:
+            h.clients[client] = true
+            log.Printf("Client connected. Total: %d", len(h.clients))
+
+        case client := <-h.unregister:
+            if _, ok := h.clients[client]; ok {
+                delete(h.clients, client)
+                close(client.send)
+                log.Printf("Client disconnected. Total: %d", len(h.clients))
+            }
+
+        case message := <-h.broadcast:
+            for client := range h.clients {
+                select {
+                case client.send <- message:
+                default:
+                    close(client.send)
+                    delete(h.clients, client)
+                }
+            }
+        }
+    }
+}
+
+// Client represents a connected WebSocket client
+type Client struct {
+    hub  *Hub
+    conn *websocket.Conn
+    send chan []byte
+    user *User
+}</code></pre>
+    </div>
+
+    <div id="chat-tab-auth" class="chat-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Authentication & Connection Setup</h3>
+      <pre class="text-green-400 text-sm overflow-x-auto"><code>// WebSocket endpoint with authentication
+func ChatWebSocket(c *gin.Context) {
+    // Extract auth token from query params
+    token := c.Query("token")
+    if token == "" {
+        c.JSON(401, gin.H{"error": "Missing auth token"})
+        return
+    }
+
+    // Validate Supabase token
+    user, err := validateSupabaseToken(token)
+    if err != nil {
+        c.JSON(401, gin.H{"error": "Invalid token"})
+        return
+    }
+
+    // Upgrade HTTP connection to WebSocket
+    conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+    if err != nil {
+        log.Println("WebSocket upgrade failed:", err)
+        return
+    }
+
+    // Create new client and register with hub
+    client := &Client{
+        hub:  hub,
+        conn: conn,
+        send: make(chan []byte, 256),
+        user: user,
+    }
+
+    client.hub.register <- client
+    go client.writePump()
+    go client.readPump()
+}
+
+// WebSocket upgrader with proper headers
+var upgrader = websocket.Upgrader{
+    ReadBufferSize:  1024,
+    WriteBufferSize: 1024,
+    CheckOrigin: func(r *http.Request) bool {
+        return true // Configure properly for production
+    },
+}</code></pre>
+    </div>
+
+    <div id="chat-tab-frontend" class="chat-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Frontend WebSocket Client</h3>
+      <pre class="text-green-400 text-sm overflow-x-auto"><code>// Create authenticated WebSocket connection
+function createWebSocketConnection() {
+    const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsHost = window.location.host;
+
+    let wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
+    const token = localStorage.getItem('supabase_token');
+    if (token) {
+        wsUrl += `?token=${encodeURIComponent(token)}`;
+    }
+
+    ws = new WebSocket(wsUrl);
+    setupWebSocketHandlers();
+}
+
+// Setup event handlers
+function setupWebSocketHandlers() {
+    ws.onopen = () => {
+        console.log('Connected to chat');
+        updateConnectionStatus(true);
+    };
+
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        appendMessage(msg);
+    };
+
+    ws.onclose = () => {
+        console.log('Disconnected from chat');
+        updateConnectionStatus(false);
+        // Attempt reconnection after delay
+        setTimeout(createWebSocketConnection, 3000);
+    };
+
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+}
+
+// Send chat message with validation
+function sendMessage(content) {
+    if (!content.trim()) return;
+
+    if (!isUserAuthenticated()) {
+        window.location.href = '/auth';
+        return;
+    }
+
+    const msg = {
+        Content: content,
+        Timestamp: new Date().toISOString()
+    };
+    ws.send(JSON.stringify(msg));
+}</code></pre>
+    </div>
+
+    <div id="chat-tab-persistence" class="chat-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Message Persistence & History</h3>
+      <pre class="text-green-400 text-sm overflow-x-auto"><code>// Message struct for chat data
+type Message struct {
+    ID          int       `json:"id"`
+    Content     string    `json:"content"`
+    Username    string    `json:"username"`
+    UserID      string    `json:"user_id"`
+    CreatedAt   time.Time `json:"created_at"`
+    DisplayTime string    `json:"display_time"`
+}
+
+// Save message to PostgreSQL with transaction
+func SaveMessage(msg Message) error {
+    tx, err := db.Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    query := `INSERT INTO messages (content, username, user_id, display_time)
+              VALUES ($1, $2, $3, $4) RETURNING id, created_at`
+
+    err = tx.QueryRow(query, msg.Content, msg.Username,
+                     msg.UserID, msg.DisplayTime).Scan(&msg.ID, &msg.CreatedAt)
+    if err != nil {
+        return err
+    }
+
+    return tx.Commit()
+}
+
+// Load recent messages for new connections
+func LoadRecentMessages(limit int) ([]Message, error) {
+    query := `SELECT id, content, username, user_id, created_at, display_time
+              FROM messages
+              ORDER BY created_at DESC
+              LIMIT $1`
+
+    rows, err := db.Query(query, limit)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var messages []Message
+    for rows.Next() {
+        var msg Message
+        err := rows.Scan(&msg.ID, &msg.Content, &msg.Username,
+                        &msg.UserID, &msg.CreatedAt, &msg.DisplayTime)
+        if err != nil {
+            return nil, err
+        }
+        messages = append(messages, msg)
+    }
+
+    return messages, nil
+}
+
+// Automatic cleanup job
+func StartMessageCleanup() {
+    ticker := time.NewTicker(24 * time.Hour)
+    go func() {
+        for range ticker.C {
+            query := `DELETE FROM messages
+                      WHERE created_at < NOW() - INTERVAL '7 days'`
+            result, err := db.Exec(query)
+            if err != nil {
+                log.Printf("Cleanup failed: %v", err)
+                continue
+            }
+
+            count, _ := result.RowsAffected()
+            log.Printf("Cleaned up %d old messages", count)
+        }
+    }()
+}</code></pre>
+    </div>
+
+    <div id="chat-tab-ai" class="chat-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">AI Chat Integration</h3>
+      <pre class="text-green-400 text-sm overflow-x-auto"><code>// AI command processing in frontend
+if (content.startsWith('!ai ')) {
+    const prompt = content.substring(4);
+
+    // Show typing indicator
+    showAITyping();
+
+    try {
+        // Call AI service
+        const response = await fetch('/api/llm/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                provider: 'gemini', // or anthropic, openai, groq
+                max_tokens: 500
+            })
+        });
+
+        const aiReply = await response.json();
+
+        // Hide typing indicator
+        hideAITyping();
+
+        // Broadcast AI response to chat
+        const aiMsg = {
+            Content: `🤖 ${aiReply.response}`,
+            Username: "AI Assistant",
+            DisplayTime: new Date().toLocaleTimeString(),
+            IsAI: true
+        };
+
+        // Send through WebSocket for real-time delivery
+        ws.send(JSON.stringify(aiMsg));
+
+    } catch (error) {
+        hideAITyping();
+        console.error('AI request failed:', error);
+
+        // Send error message to chat
+        const errorMsg = {
+            Content: "🚨 AI service temporarily unavailable",
+            Username: "System",
+            DisplayTime: new Date().toLocaleTimeString()
+        };
+        ws.send(JSON.stringify(errorMsg));
+    }
+}
+
+// AI typing indicator
+function showAITyping() {
+    const indicator = document.createElement('div');
+    indicator.id = 'ai-typing';
+    indicator.className = 'typing-indicator';
+    indicator.innerHTML = '🤖 AI is thinking...';
+    chatMessages.appendChild(indicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideAITyping() {
+    const indicator = document.getElementById('ai-typing');
+    if (indicator) {
+        indicator.remove();
+    }
+}</code></pre>
+    </div>
+  </div>
+
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🚀 Chat Features</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Real-time Messaging:</strong> Instant delivery with WebSocket persistence</li>
+      <li><strong>Authentication:</strong> Supabase token-based user authentication</li>
+      <li><strong>User Management:</strong> Online user counting and session tracking</li>
+      <li><strong>Message History:</strong> PostgreSQL storage with automatic cleanup</li>
+      <li><strong>AI Integration:</strong> !ai commands with multiple LLM providers</li>
+      <li><strong>Mobile Responsive:</strong> Works seamlessly on all devices</li>
+      <li><strong>Connection Recovery:</strong> Automatic reconnection on auth state changes</li>
+    </ul>
   </div>
 </div>
 {{ end }}

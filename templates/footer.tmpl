@@ -1,20 +1,17 @@
 {{ define "footer" }}
-<footer class="text-center text-gray-500 text-md mt-8">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <div id="header-content" class="flex justify-center w-full space-x-4">
+<footer class="fixed bottom-0 left-0 right-0 w-full text-center text-gray-500 text-sm py-3 px-4 bg-transparent backdrop-blur-sm bg-opacity-60">
+    <div class="flex flex-wrap justify-center items-center gap-2 max-w-sm mx-auto">
         {{ template "theme" . }}
         {{ template "email-btn" . }}
         {{ template "lkn-btn" . }}
         <div class="icon-widget">
-            <a href="https://github.com/mattmajestic/majesticcoding.com/" 
-               id="edit-page-button" 
+            <a href="https://github.com/mattmajestic/majesticcoding.com/"
+               id="edit-page-button"
                class="icon-widget-link">
                 <span class="tooltip-text">Visit Code in Github Repo</span>
                 <i class="fab fa-golang nav-icon"></i>
             </a>
         </div>
-        
     </div>
 </footer>
 {{ end }}

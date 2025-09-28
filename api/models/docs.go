@@ -1,13 +1,12 @@
 package models
 
 var DocsList = []string{
-	"go-gin",
-	"partials",
-	"ws",
-	"cli",
-	"db",
 	"api",
-	"rtmp",
+	"partials",
+	"chat",
+	"database",
+	"stream-docs",
 	"hosting",
 	"ai",
+	"cache",
 }

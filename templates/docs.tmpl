@@ -2,30 +2,164 @@
 
 <!DOCTYPE html>
 <html lang="en" class="bg-gray-950 text-gray-200 font-sans">
-  <div class="flex flex-col items-center justify-start min-h-screen px-4 py-14 space-y-4 max-w-4xl mx-auto">
-    
-    <header class="text-center">
-      <h1 class="text-3xl font-bold text-white mb-2">📚 Infrastructure Documentation</h1>
-      <p class="text-gray-400 text-xl font-bold">This application you are using is in Go. Here's the Fullstack architecture</p>
+<head>
+  <style>
+    /* Docs header styling */
+    .docs-header {
+      background: #1f2937;
+      border: 1px solid #374151;
+    }
+
+    body.light .docs-header {
+      background: #75a7da;
+      border: 1px solid #5b8cc7;
+    }
+
+    /* Docs title - always visible */
+    .docs-title {
+      color: #75a7da !important;
+    }
+
+    body.light .docs-title {
+      color: #1f2937 !important;
+    }
+
+    /* Chat section header text - fix visibility in light mode */
+    body.light .text-blue-400 {
+      color: #1f2937 !important;
+    }
+
+    /* Fix white text contrast in light mode */
+    body.light .text-white {
+      color: #1f2937 !important;
+    }
+
+    /* Keep button text white in light mode */
+    body.light .tab-btn.text-white {
+      color: white !important;
+    }
+
+    /* Code snippet responsive styling */
+    pre {
+      overflow-x: auto;
+      word-wrap: break-word;
+      white-space: pre;
+      max-width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 #1f2937;
+    }
+
+    pre::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    pre::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 4px;
+    }
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+    }
+
+    /* Container responsive adjustments */
+    .bg-gray-800, .bg-gray-900 {
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    /* Mobile responsive code blocks */
+    @media (max-width: 768px) {
+      pre {
+        font-size: 12px;
+        padding: 8px;
+      }
+
+      .bg-gray-800 {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center justify-start min-h-screen px-4 py-14 pb-24 space-y-4 max-w-4xl mx-auto">
+
+    <header class="docs-header relative overflow-hidden mb-6 rounded-xl shadow-xl">
+      <!-- Content -->
+      <div class="relative flex items-center justify-between p-6">
+        <!-- Left side - Title and description -->
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">🚀</span>
+            <h1 class="docs-title text-2xl font-bold">
+              Live Infrastructure Docs
+            </h1>
+            <div class="flex items-center gap-1 ml-2">
+              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-green-400 text-xs font-medium">LIVE</span>
+            </div>
+          </div>
+
+          <p class="text-gray-300 text-base leading-relaxed max-w-lg">
+            You're using this Go application right now.
+            Explore the real infrastructure powering your experience.
+          </p>
+        </div>
+
+        <!-- Right side - Theme toggle -->
+        <div class="flex items-center">
+          {{ template "theme" . }}
+        </div>
+      </div>
     </header>
 
     <nav class="flex flex-wrap justify-center gap-2 border-b border-gray-700 pb-2">
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="API with Gin" data-tab="go-gin">🍸 Gin</button>
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="API Documentation" data-tab="api">📖 Swagger</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="API Documentation" data-tab="api">📖 API</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="UI of Partials/Components" data-tab="partials">🧩 UI</button>
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="RTMP Streaming via Docker" data-tab="rtmp">🎥 Stream </button>
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="WebSocket Chat" data-tab="ws">💬 Chat</button>
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="Postgres for Data Storage" data-tab="db">🛢️ Database</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title=" Streaming via AWS IVS" data-tab="stream-docs">🎥 Stream </button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="WebSocket Chat" data-tab="chat">💬 Chat</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="Postgres for Data Storage" data-tab="database">🛢️ Database</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="IAC on Multi Cloud" data-tab="hosting">☁️ Hosting</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="AI-Powered Features" data-tab="ai">🤖 AI</button>
+      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="Redis Cache with Upstash" data-tab="cache">⚡ Cache</button>
     </nav>
 
     <section id="tab-content" class="w-full">
-      {{ template "go-gin" . }}
+      {{ if eq .ActiveSection "api" }}
+        {{ template "api" . }}
+      {{ else if eq .ActiveSection "partials" }}
+        {{ template "partials" . }}
+      {{ else if eq .ActiveSection "chat" }}
+        {{ template "chat" . }}
+      {{ else if eq .ActiveSection "database" }}
+        {{ template "db" . }}
+      {{ else if eq .ActiveSection "stream-docs" }}
+        {{ template "rtmp" . }}
+      {{ else if eq .ActiveSection "hosting" }}
+        {{ template "hosting" . }}
+      {{ else if eq .ActiveSection "ai" }}
+        {{ template "ai" . }}
+      {{ else if eq .ActiveSection "cache" }}
+        {{ template "cache" . }}
+      {{ else }}
+        {{ template "api" . }}
+      {{ end }}
     </section>
+  </div>
 
-    {{template "footer_home" . }}
-  
+  <!-- Minimal Footer with Home Button -->
+  <footer class="fixed bottom-0 left-0 right-0 w-full text-center py-3 px-4 bg-transparent backdrop-blur-sm bg-gray-900/60">
+    <div class="flex justify-center">
+      {{ template "home" . }}
+    </div>
+  </footer>
+
   <script src="/static/components/docs.js"></script>
   <script src="/static/components/theme.js"></script>
+</body>
 </html>

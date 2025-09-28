@@ -1,33 +1,176 @@
 {{ define "partials" }}
-<div class="p-6 border border-gray-700 rounded-lg bg-gray-800 text-gray-300">
-  <h2 class="text-2xl font-bold text-white mb-2">🧩 Using Go Templates with <code>{{"{{ define }}"}}</code> & <code>{{"{{ template }}"}}</code></h2>
-  <h2 class="text-xl  mb-2 text-blue-300">
-    In Go’s html/template system, you can compose pages from smaller parts using <code>define</code> and <code>template</code> blocks.  Here's an example of rendering a page using reusable sections like <strong>header</strong>, <strong>body</strong>, and <strong>footer</strong>.
-  </h2>
-
-  <h3 class="text-lg text-white font-semibold mb-2">📄 Template Composition Example</h3>
-  <div class="text-green-400 bg-gray-900 text-sm p-4 rounded overflow-x-auto">
-    <pre><code>{{`{{ define "home" }}
-  {{ template "base" . }}
-{{ end }}`}}
-
-{{`{{ define "base" }}
-  {{ template "home_body" . }}
-  {{ template "home_footer" . }}
-{{ end }}`}}
-
-{{`{{ define "home_body" }}
-  {{ template "partials" . }}
-{{ end }}`}}</code></pre>
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">🧩 UI Components & Template Partials</h2>
+    <p class="text-gray-300">Modular Go templates using <code>define</code> and <code>template</code> for reusable UI components</p>
   </div>
 
-  <h2 class="text-lg text-white mb-2">
-    In this structure:
-    <ul class="list-disc list-inside text-md">
-      <li><code>home</code> is the entry point rendered by the router</li>
-      <li><code>base</code> controls layout and includes sub-templates</li>
-      <li><code>home_body</code> includes <code>partials</code>, which is this template</li>
+  <!-- Tabset for UI/Partials code examples -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn partials-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showPartialsTab('basics')">🏗️ Basics</button>
+      <button class="tab-btn partials-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showPartialsTab('buttons')">🔘 Buttons</button>
+      <button class="tab-btn partials-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showPartialsTab('layouts')">📄 Layouts</button>
+      <button class="tab-btn partials-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showPartialsTab('composition')">🔗 Composition</button>
+    </div>
+
+    <div id="partials-tab-basics" class="partials-tab-content bg-gray-900 p-3 rounded">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Template Basics & Syntax</h3>
+      <pre class="text-green-400 text-sm"><code>// Define a reusable template partial
+{{`{{ define "template-name" }}
+  <div class="component">
+    <h3>{{.Title}}</h3>
+    <p>{{.Content}}</p>
+  </div>
+{{ end }}`}}
+
+// Include the partial in another template
+{{`{{ template "template-name" . }}`}}
+
+// Example: Theme toggle component
+{{`{{ define "theme" }}
+<div class="icon-widget">
+  <button id="theme-toggle" class="icon-widget-link">
+    <span class="tooltip-text">Switch Theme</span>
+    <i id="icon-sun" class="fas fa-sun nav-icon"></i>
+    <i id="icon-moon" class="fas fa-moon nav-icon hidden"></i>
+  </button>
+</div>
+{{ end }}`}}
+
+// Include theme toggle anywhere
+{{`{{ template "theme" . }}`}}</code></pre>
+    </div>
+
+    <div id="partials-tab-buttons" class="partials-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Button Components</h3>
+      <pre class="text-green-400 text-sm"><code>// Navigation button with icon and tooltip
+{{`{{ define "about-btn" }}
+<div class="nav-card">
+  <a href="/about" class="nav-link">
+    <span class="tooltip-text">Check out some projects I've done</span>
+    <i class="fas fa-user nav-icon"></i>
+    <span class="nav-label">About Me</span>
+  </a>
+</div>
+{{ end }}`}}
+
+// Compact email button
+{{`{{ define "email-btn" }}
+<div class="icon-widget">
+  <a href="mailto:matt@majesticcoding.com" class="icon-widget-link">
+    <span class="tooltip-text">Email Me</span>
+    <i class="fas fa-envelope nav-icon"></i>
+  </a>
+</div>
+{{ end }}`}}
+
+// Live streaming button
+{{`{{ define "live-btn" }}
+<div class="nav-card">
+  <a href="/live" class="nav-link">
+    <span class="tooltip-text">Chat with Websockets</span>
+    <i class="fas fa-broadcast-tower nav-icon"></i>
+    <span class="nav-label">Live</span>
+  </a>
+</div>
+{{ end }}`}}
+
+// Use buttons in grid layout
+{{`<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+  {{ template "about-btn" . }}
+  {{ template "docs-btn" . }}
+  {{ template "live-btn" . }}
+</div>`}}</code></pre>
+    </div>
+
+    <div id="partials-tab-layouts" class="partials-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Layout Templates</h3>
+      <pre class="text-green-400 text-sm"><code>// Base template with HTML structure
+{{`{{ define "base" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ block "title" . }}Majestic Coding{{ end }}</title>
+</head>
+</html>
+{{ end }}`}}
+
+// Footer variants for different pages
+{{`{{ define "footer_home" }}
+<footer class="text-center text-gray-500 text-sm mt-8">
+    <div class="flex justify-center w-full space-x-4">
+        {{ template "theme" . }}
+        {{ template "home" . }}
+        {{ template "email-btn" . }}
+    </div>
+</footer>
+{{ end }}`}}
+
+{{`{{ define "footer" }}
+<footer class="fixed bottom-0 left-0 right-0 w-full bg-transparent backdrop-blur-sm">
+    <div class="flex justify-center items-center gap-2">
+        {{ template "theme" . }}
+        {{ template "email-btn" . }}
+        {{ template "lkn-btn" . }}
+    </div>
+</footer>
+{{ end }}`}}</code></pre>
+    </div>
+
+    <div id="partials-tab-composition" class="partials-tab-content bg-gray-900 p-3 rounded hidden">
+      <h3 class="text-lg font-bold text-blue-300 mb-2">Page Composition</h3>
+      <pre class="text-green-400 text-sm"><code>// Main page template composing multiple partials
+{{`{{ template "base" . }}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div class="min-h-screen flex flex-col pb-20">
+        <main class="flex-1 flex flex-col items-center justify-center space-y-4">
+            {{ template "booting" . }}
+
+            <div class="flex items-center justify-center gap-4">
+                <img src="avatar.jpg" class="w-32 h-32 rounded-full" />
+                {{ template "terminal" . }}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {{ template "about-btn" . }}
+                {{ template "docs-btn" . }}
+                {{ template "live-btn" . }}
+            </div>
+
+            <div class="mb-4 space-y-2">
+                {{ template "socials" . }}
+            </div>
+        </main>
+
+        {{ template "stats" . }}
+        {{ template "footer" . }}
+    </div>
+</body>
+</html>`}}
+
+// Template hierarchy example:
+// index.tmpl -> base.tmpl (HTML structure)
+//            -> terminal.tmpl (interactive component)
+//            -> about-btn.tmpl, docs-btn.tmpl, live-btn.tmpl
+//            -> footer.tmpl -> theme.tmpl, email-btn.tmpl</code></pre>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <h3 class="text-lg font-bold text-yellow-300 mb-2">🎯 Template Benefits</h3>
+    <ul class="list-disc list-inside text-sm">
+      <li><strong>Reusability:</strong> Write button components once, use everywhere</li>
+      <li><strong>Maintainability:</strong> Update UI components in one place</li>
+      <li><strong>Consistency:</strong> Same styling and behavior across pages</li>
+      <li><strong>Modularity:</strong> Clean separation of layout, components, and content</li>
+      <li><strong>Performance:</strong> Templates parsed once at startup</li>
+      <li><strong>Flexibility:</strong> Mix and match components for different layouts</li>
     </ul>
-  </h2>
+  </div>
 </div>
 {{ end }}
