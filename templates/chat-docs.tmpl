@@ -1,0 +1,327 @@
+{{ define "chat-docs" }}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-blue-400 mb-2">💬 WebSocket Chat System</h2>
+    <p class="text-gray-300">Real-time messaging with Go WebSockets, authentication, and auto-cleanup</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="mt-4">
+    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
+      <button class="tab-btn chat-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showChatTab('websocket')">🔌 WebSocket Hub</button>
+      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('handlers')">📡 HTTP Handlers</button>
+      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('frontend')">🎨 Frontend</button>
+      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('auth')">🔐 Authentication</button>
+    </div>
+  </div>
+
+  <!-- WebSocket Hub Tab -->
+  <div id="chat-tab-websocket" class="chat-tab-content">
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-xl font-semibold text-blue-400 mb-4">WebSocket Hub Implementation</h3>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Hub Structure</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type Hub struct {
+    clients    map[*Client]bool
+    broadcast  chan []byte
+    register   chan *Client
+    unregister chan *Client
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Client Management</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type Client struct {
+    hub    *Hub
+    conn   *websocket.Conn
+    send   chan []byte
+    userID string
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Hub Run Loop</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func (h *Hub) Run() {
+    for {
+        select {
+        case client := &lt;-h.register:
+            h.clients[client] = true
+
+        case client := &lt;-h.unregister:
+            if _, ok := h.clients[client]; ok {
+                delete(h.clients, client)
+                close(client.send)
+            }
+
+        case message := &lt;-h.broadcast:
+            for client := range h.clients {
+                select {
+                case client.send &lt;- message:
+                default:
+                    close(client.send)
+                    delete(h.clients, client)
+                }
+            }
+        }
+    }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTTP Handlers Tab -->
+  <div id="chat-tab-handlers" class="chat-tab-content hidden">
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-xl font-semibold text-blue-400 mb-4">HTTP Handlers & Routes</h3>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">WebSocket Upgrade</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func HandleWebSocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    client := &Client{
+        hub:    hub,
+        conn:   conn,
+        send:   make(chan []byte, 256),
+        userID: getUserID(r), // Extract from auth
+    }
+
+    client.hub.register &lt;- client
+
+    go client.writePump()
+    go client.readPump()
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Message Storage</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func SaveMessage(db *sql.DB, userID, message string) error {
+    query := `INSERT INTO messages (user_id, message, created_at)
+              VALUES ($1, $2, NOW())`
+    _, err := db.Exec(query, userID, message)
+    return err
+}
+
+func GetRecentMessages(db *sql.DB) ([]Message, error) {
+    query := `SELECT user_id, message, created_at
+              FROM messages
+              WHERE created_at > NOW() - INTERVAL '1 hour'
+              ORDER BY created_at ASC`
+    // ... implementation
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Auto-Cleanup</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func StartMessageCleanup(db *sql.DB) {
+    ticker := time.NewTicker(30 * time.Minute)
+    go func() {
+        for range ticker.C {
+            query := `DELETE FROM messages
+                      WHERE created_at < NOW() - INTERVAL '1 hour'`
+            db.Exec(query)
+        }
+    }()
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend Tab -->
+  <div id="chat-tab-frontend" class="chat-tab-content hidden">
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-xl font-semibold text-blue-400 mb-4">Frontend Implementation</h3>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">WebSocket Connection</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>class ChatClient {
+    constructor() {
+        this.ws = null;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+    }
+
+    connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/chat`;
+
+        this.ws = new WebSocket(wsUrl);
+        this.ws.onopen = () => this.onOpen();
+        this.ws.onmessage = (event) => this.onMessage(event);
+        this.ws.onclose = () => this.onClose();
+        this.ws.onerror = (error) => this.onError(error);
+    }
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Message Handling</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>onMessage(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === 'message') {
+        this.displayMessage(data);
+    } else if (data.type === 'user_count') {
+        this.updateUserCount(data.count);
+    } else if (data.type === 'history') {
+        this.loadMessageHistory(data.messages);
+    }
+}
+
+sendMessage(message) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({
+            type: 'message',
+            content: message,
+            timestamp: new Date().toISOString()
+        }));
+    }
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Auto-Reconnection</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>onClose() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+        const delay = Math.pow(2, this.reconnectAttempts) * 1000;
+        setTimeout(() => {
+            this.reconnectAttempts++;
+            this.connect();
+        }, delay);
+    }
+}
+
+// Heartbeat to keep connection alive
+startHeartbeat() {
+    setInterval(() => {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            this.ws.send(JSON.stringify({ type: 'ping' }));
+        }
+    }, 30000);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication Tab -->
+  <div id="chat-tab-auth" class="chat-tab-content hidden">
+    <div class="bg-gray-800 p-6 rounded-lg">
+      <h3 class="text-xl font-semibold text-blue-400 mb-4">Authentication Integration</h3>
+
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Supabase Auth Check</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        enableChat(user);
+        connectToChat(user.id);
+    } else {
+        showAuthPrompt();
+        disableChat();
+    }
+}
+
+function enableChat(user) {
+    document.getElementById('chat-form').style.display = 'flex';
+    document.getElementById('auth-status-message').style.display = 'none';
+
+    // Add user info to messages
+    window.currentUser = {
+        id: user.id,
+        email: user.email,
+        name: user.user_metadata?.name || user.email
+    };
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Server-Side Auth Validation</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func ValidateSupabaseToken(token string) (*User, error) {
+    req, err := http.NewRequest("GET",
+        os.Getenv("SUPABASE_URL")+"/auth/v1/user", nil)
+    if err != nil {
+        return nil, err
+    }
+
+    req.Header.Set("Authorization", "Bearer "+token)
+    req.Header.Set("apikey", os.Getenv("SUPABASE_ANON_KEY"))
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        return nil, err
+    }
+
+    // Parse user from response
+    var user User
+    json.NewDecoder(resp.Body).Decode(&user)
+    return &user, nil
+}</code></pre>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-medium text-white mb-2">Message Attribution</h4>
+          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type ChatMessage struct {
+    ID        int       `json:"id"`
+    UserID    string    `json:"user_id"`
+    UserName  string    `json:"user_name"`
+    Message   string    `json:"message"`
+    CreatedAt time.Time `json:"created_at"`
+}
+
+func BroadcastMessage(hub *Hub, msg ChatMessage) {
+    messageJSON, _ := json.Marshal(map[string]interface{}{
+        "type":      "message",
+        "user_id":   msg.UserID,
+        "user_name": msg.UserName,
+        "message":   msg.Message,
+        "timestamp": msg.CreatedAt.Format(time.RFC3339),
+    })
+
+    hub.broadcast <- messageJSON
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture Overview -->
+  <div class="bg-gray-800 p-6 rounded-lg">
+    <h3 class="text-xl font-semibold text-blue-400 mb-4">🏗️ System Architecture</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-gray-900 p-4 rounded">
+        <h4 class="font-semibold text-white mb-2">Technologies Used</h4>
+        <ul class="text-gray-300 space-y-1">
+          <li>• <strong class="text-blue-400">Go WebSockets</strong> - Real-time communication</li>
+          <li>• <strong class="text-green-400">PostgreSQL</strong> - Message persistence</li>
+          <li>• <strong class="text-purple-400">Supabase Auth</strong> - User authentication</li>
+          <li>• <strong class="text-yellow-400">Vanilla JS</strong> - Frontend client</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 p-4 rounded">
+        <h4 class="font-semibold text-white mb-2">Key Features</h4>
+        <ul class="text-gray-300 space-y-1">
+          <li>• Real-time message broadcasting</li>
+          <li>• Auto-cleanup (1 hour message retention)</li>
+          <li>• Authentication required to send</li>
+          <li>• Connection resilience & reconnection</li>
+          <li>• User presence tracking</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

@@ -1,327 +1,80 @@
 {{ define "chat" }}
-<div class="space-y-6">
-  <!-- Header -->
-  <div class="text-center mb-8">
-    <h2 class="text-3xl font-bold text-blue-400 mb-2">💬 WebSocket Chat System</h2>
-    <p class="text-gray-300">Real-time messaging with Go WebSockets, authentication, and auto-cleanup</p>
+<div class="relative w-full">
+  <!-- Chat Toggle Button -->
+  <button id="chat-toggle"
+          class="absolute top-2 left-2 z-10 p-1 bg-gray-800 rounded text-white focus:outline-none">
+    <i id="eye-open" class="fas fa-eye fa-1x"></i>
+    <i id="eye-closed" class="fas fa-eye-slash fa-1x hidden"></i>
+    <span class="sr-only">Show/Hide Chat</span>
+  </button>
+
+  <!-- Chat Hidden Message -->
+  <div id="chat-hidden-msg" class="hidden text-white text-lg p-4 text-center">
+    💬 Chat is hidden
   </div>
 
-  <!-- Tab Navigation -->
-  <div class="mt-4">
-    <div class="flex border-b border-gray-700 mb-2 flex-wrap">
-      <button class="tab-btn chat-tab-btn px-3 py-2 bg-gray-700 text-white font-bold focus:outline-none text-sm" onclick="showChatTab('websocket')">🔌 WebSocket Hub</button>
-      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('handlers')">📡 HTTP Handlers</button>
-      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('frontend')">🎨 Frontend</button>
-      <button class="tab-btn chat-tab-btn px-3 py-2 text-blue-300 font-bold focus:outline-none text-sm" onclick="showChatTab('auth')">🔐 Authentication</button>
+  <!-- Chat Widget Container -->
+  <div id="chat-widget"
+       class="flex flex-col h-[600px] w-[300px] bg-[#04141d] overflow-hidden">
+
+    <!-- Top Header -->
+    <div class="flex flex-col p-2">
+      <span class="font-bold text-blue-400 text-center text-2xl">💬 Live Chat</span>
+      <span class="text-md text-white text-center">Chats delete after 1 Hour 🕓</span>
     </div>
-  </div>
 
-  <!-- WebSocket Hub Tab -->
-  <div id="chat-tab-websocket" class="chat-tab-content">
-    <div class="bg-gray-800 p-6 rounded-lg">
-      <h3 class="text-xl font-semibold text-blue-400 mb-4">WebSocket Hub Implementation</h3>
+    <!-- Scrollable Chat Area -->
+    <div id="chat-messages"
+         class="flex-1 min-h-0 max-h-[500px] overflow-y-auto p-2 text-md font-mono space-y-2">
+    </div>
 
-      <div class="space-y-4">
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Hub Structure</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type Hub struct {
-    clients    map[*Client]bool
-    broadcast  chan []byte
-    register   chan *Client
-    unregister chan *Client
-}</code></pre>
+    <!-- Auth Status Message -->
+    <div id="auth-status-message"
+         class="hidden p-3 border-t auth-status-border auth-status-bg text-center">
+      <div class="flex flex-col items-center space-y-2">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+          <i class="fas fa-lock text-white text-sm"></i>
         </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Client Management</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type Client struct {
-    hub    *Hub
-    conn   *websocket.Conn
-    send   chan []byte
-    userID string
-}</code></pre>
+        <div class="px-2">
+          <p class="auth-status-title font-semibold text-xs mb-1">Authentication Required</p>
+          <p class="auth-status-subtitle text-xs">Sign in to join the conversation</p>
         </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Hub Run Loop</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func (h *Hub) Run() {
-    for {
-        select {
-        case client := &lt;-h.register:
-            h.clients[client] = true
-
-        case client := &lt;-h.unregister:
-            if _, ok := h.clients[client]; ok {
-                delete(h.clients, client)
-                close(client.send)
-            }
-
-        case message := &lt;-h.broadcast:
-            for client := range h.clients {
-                select {
-                case client.send &lt;- message:
-                default:
-                    close(client.send)
-                    delete(h.clients, client)
-                }
-            }
-        }
-    }
-}</code></pre>
-        </div>
+        <a href="/auth"
+           class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium text-xs rounded-md shadow-md transition-all duration-200 transform hover:scale-105 w-full max-w-[200px] justify-center">
+          <i class="fas fa-sign-in-alt mr-1"></i>
+          Sign In
+        </a>
       </div>
     </div>
+
+    <!-- Chat Form -->
+    <form id="chat-form"
+          class="flex items-center p-2 border-t border-gray-700 shrink-0">
+      <textarea id="chat-input"
+                class="flex-1 px-2 py-1.5 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500 resize-none"
+                placeholder="Type a message..."
+                autocomplete="off"
+                rows="1.5"></textarea>
+
+      <button type="button"
+              id="insert-ai"
+              class="ml-2 px-4 py-1 text-xl font-bold glowing-effect text-gray-900 bg-green-300 rounded transition flex items-center justify-center"
+              title="Ask !ai">
+        AI
+      </button>
+
+      <button type="submit"
+              class="ml-2 px-4 py-1 rounded bg-light-blue text-white transition flex items-center justify-center"
+              title="Send Chat">
+        <i class="fas fa-paper-plane text-xl"></i>
+      </button>
+    </form>
   </div>
 
-  <!-- HTTP Handlers Tab -->
-  <div id="chat-tab-handlers" class="chat-tab-content hidden">
-    <div class="bg-gray-800 p-6 rounded-lg">
-      <h3 class="text-xl font-semibold text-blue-400 mb-4">HTTP Handlers & Routes</h3>
+  {{ template "footer_chat" . }}
 
-      <div class="space-y-4">
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">WebSocket Upgrade</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func HandleWebSocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
-    conn, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        log.Println(err)
-        return
-    }
-
-    client := &Client{
-        hub:    hub,
-        conn:   conn,
-        send:   make(chan []byte, 256),
-        userID: getUserID(r), // Extract from auth
-    }
-
-    client.hub.register &lt;- client
-
-    go client.writePump()
-    go client.readPump()
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Message Storage</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func SaveMessage(db *sql.DB, userID, message string) error {
-    query := `INSERT INTO messages (user_id, message, created_at)
-              VALUES ($1, $2, NOW())`
-    _, err := db.Exec(query, userID, message)
-    return err
-}
-
-func GetRecentMessages(db *sql.DB) ([]Message, error) {
-    query := `SELECT user_id, message, created_at
-              FROM messages
-              WHERE created_at > NOW() - INTERVAL '1 hour'
-              ORDER BY created_at ASC`
-    // ... implementation
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Auto-Cleanup</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func StartMessageCleanup(db *sql.DB) {
-    ticker := time.NewTicker(30 * time.Minute)
-    go func() {
-        for range ticker.C {
-            query := `DELETE FROM messages
-                      WHERE created_at < NOW() - INTERVAL '1 hour'`
-            db.Exec(query)
-        }
-    }()
-}</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Frontend Tab -->
-  <div id="chat-tab-frontend" class="chat-tab-content hidden">
-    <div class="bg-gray-800 p-6 rounded-lg">
-      <h3 class="text-xl font-semibold text-blue-400 mb-4">Frontend Implementation</h3>
-
-      <div class="space-y-4">
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">WebSocket Connection</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>class ChatClient {
-    constructor() {
-        this.ws = null;
-        this.reconnectAttempts = 0;
-        this.maxReconnectAttempts = 5;
-    }
-
-    connect() {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws/chat`;
-
-        this.ws = new WebSocket(wsUrl);
-        this.ws.onopen = () => this.onOpen();
-        this.ws.onmessage = (event) => this.onMessage(event);
-        this.ws.onclose = () => this.onClose();
-        this.ws.onerror = (error) => this.onError(error);
-    }
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Message Handling</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>onMessage(event) {
-    const data = JSON.parse(event.data);
-
-    if (data.type === 'message') {
-        this.displayMessage(data);
-    } else if (data.type === 'user_count') {
-        this.updateUserCount(data.count);
-    } else if (data.type === 'history') {
-        this.loadMessageHistory(data.messages);
-    }
-}
-
-sendMessage(message) {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify({
-            type: 'message',
-            content: message,
-            timestamp: new Date().toISOString()
-        }));
-    }
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Auto-Reconnection</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>onClose() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-        const delay = Math.pow(2, this.reconnectAttempts) * 1000;
-        setTimeout(() => {
-            this.reconnectAttempts++;
-            this.connect();
-        }, delay);
-    }
-}
-
-// Heartbeat to keep connection alive
-startHeartbeat() {
-    setInterval(() => {
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify({ type: 'ping' }));
-        }
-    }, 30000);
-}</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Authentication Tab -->
-  <div id="chat-tab-auth" class="chat-tab-content hidden">
-    <div class="bg-gray-800 p-6 rounded-lg">
-      <h3 class="text-xl font-semibold text-blue-400 mb-4">Authentication Integration</h3>
-
-      <div class="space-y-4">
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Supabase Auth Check</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>async function checkAuth() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (user) {
-        enableChat(user);
-        connectToChat(user.id);
-    } else {
-        showAuthPrompt();
-        disableChat();
-    }
-}
-
-function enableChat(user) {
-    document.getElementById('chat-form').style.display = 'flex';
-    document.getElementById('auth-status-message').style.display = 'none';
-
-    // Add user info to messages
-    window.currentUser = {
-        id: user.id,
-        email: user.email,
-        name: user.user_metadata?.name || user.email
-    };
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Server-Side Auth Validation</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>func ValidateSupabaseToken(token string) (*User, error) {
-    req, err := http.NewRequest("GET",
-        os.Getenv("SUPABASE_URL")+"/auth/v1/user", nil)
-    if err != nil {
-        return nil, err
-    }
-
-    req.Header.Set("Authorization", "Bearer "+token)
-    req.Header.Set("apikey", os.Getenv("SUPABASE_ANON_KEY"))
-
-    resp, err := http.DefaultClient.Do(req)
-    if err != nil {
-        return nil, err
-    }
-
-    // Parse user from response
-    var user User
-    json.NewDecoder(resp.Body).Decode(&user)
-    return &user, nil
-}</code></pre>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-medium text-white mb-2">Message Attribution</h4>
-          <pre class="bg-gray-900 p-4 rounded text-green-400 text-sm overflow-x-auto"><code>type ChatMessage struct {
-    ID        int       `json:"id"`
-    UserID    string    `json:"user_id"`
-    UserName  string    `json:"user_name"`
-    Message   string    `json:"message"`
-    CreatedAt time.Time `json:"created_at"`
-}
-
-func BroadcastMessage(hub *Hub, msg ChatMessage) {
-    messageJSON, _ := json.Marshal(map[string]interface{}{
-        "type":      "message",
-        "user_id":   msg.UserID,
-        "user_name": msg.UserName,
-        "message":   msg.Message,
-        "timestamp": msg.CreatedAt.Format(time.RFC3339),
-    })
-
-    hub.broadcast <- messageJSON
-}</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Architecture Overview -->
-  <div class="bg-gray-800 p-6 rounded-lg">
-    <h3 class="text-xl font-semibold text-blue-400 mb-4">🏗️ System Architecture</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-gray-900 p-4 rounded">
-        <h4 class="font-semibold text-white mb-2">Technologies Used</h4>
-        <ul class="text-gray-300 space-y-1">
-          <li>• <strong class="text-blue-400">Go WebSockets</strong> - Real-time communication</li>
-          <li>• <strong class="text-green-400">PostgreSQL</strong> - Message persistence</li>
-          <li>• <strong class="text-purple-400">Supabase Auth</strong> - User authentication</li>
-          <li>• <strong class="text-yellow-400">Vanilla JS</strong> - Frontend client</li>
-        </ul>
-      </div>
-      <div class="bg-gray-900 p-4 rounded">
-        <h4 class="font-semibold text-white mb-2">Key Features</h4>
-        <ul class="text-gray-300 space-y-1">
-          <li>• Real-time message broadcasting</li>
-          <li>• Auto-cleanup (1 hour message retention)</li>
-          <li>• Authentication required to send</li>
-          <li>• Connection resilience & reconnection</li>
-          <li>• User presence tracking</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <script src="/static/components/chat.js"></script>
+  <script type="module" src="/static/components/supabase-auth.js"></script>
+  <script src="/static/components/ws.js"></script>
 </div>
 {{ end }}
