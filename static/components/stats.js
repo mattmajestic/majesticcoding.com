@@ -51,6 +51,8 @@ function populateModalContent(data) {
       let formattedValue = v;
       if (!isNaN(v)) {
         formattedValue = Number(v).toLocaleString();
+      } else {
+        formattedValue = String(v);
       }
 
       // Format camelCase labels to have spaces (e.g., MainLanguages -> Main Languages)
@@ -66,6 +68,46 @@ function populateModalContent(data) {
     .join("");
 
   document.getElementById("stats-content").innerHTML = content;
+
+  // Dynamically adjust modal width based on content length
+  adjustModalSize(data);
+}
+
+function adjustModalSize(data) {
+  const modalContent = document.getElementById("stats-modal-content");
+
+  // Calculate the longest text in the data
+  let maxLength = 0;
+  let hasLongWord = false;
+
+  Object.entries(data).forEach(([k, v]) => {
+    const keyLength = k.replace(/([A-Z])/g, ' $1').trim().length;
+    const valueStr = String(v);
+    const valueLength = valueStr.length;
+
+    // Check if there's a single word longer than 18 chars (like MajesticCodingTwitch)
+    const words = valueStr.split(/\s+/);
+    words.forEach(word => {
+      if (word.length > 18) {
+        hasLongWord = true;
+      }
+    });
+
+    maxLength = Math.max(maxLength, keyLength, valueLength);
+  });
+
+  // Adjust size based on content - prioritize long single words
+  if (hasLongWord || maxLength > 22) {
+    modalContent.classList.remove("max-w-md", "max-w-lg");
+    modalContent.classList.add("max-w-xl");
+  } else if (maxLength > 16) {
+    modalContent.classList.remove("max-w-md", "max-w-xl");
+    modalContent.classList.add("max-w-lg");
+  } else {
+    // Keep default max-w-md
+    modalContent.classList.remove("max-w-lg", "max-w-xl");
+    modalContent.classList.add("max-w-md");
+  }
 }
 
 function closeModal() {

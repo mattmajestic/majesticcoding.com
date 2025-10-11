@@ -670,10 +670,11 @@ footer {
   font-size: 1.2rem;
   font-weight: bold;
   color: #ffffff;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  overflow-wrap: anywhere;
   line-height: 1.4;
+  text-wrap: pretty;
+  word-break: keep-all;
+  white-space: normal;
 }
 
 /* Dashboard Styling - Modern shadcn-inspired design */
