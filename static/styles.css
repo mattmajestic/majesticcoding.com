@@ -166,24 +166,24 @@ body.light .social-link {
     transform: scale(1.1);
 }
 
-/* Platform-specific colors */
-.social-link.youtube:hover .social-icon {
+/* Platform-specific colors - apply to entire link on hover */
+.social-link.youtube:hover {
     color: #ff0000;
 }
 
-.social-link.github:hover .social-icon {
-    color: #333;
+.social-link.github:hover {
+    color: #ffffff;
 }
 
-body.light .social-link.github:hover .social-icon {
+body.light .social-link.github:hover {
     color: #000;
 }
 
-.social-link.leetcode:hover .social-icon {
+.social-link.leetcode:hover {
     color: #ffa500;
 }
 
-.social-link.twitch:hover .social-icon {
+.social-link.twitch:hover {
     color: #9146ff;
 }
 

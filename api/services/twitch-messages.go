@@ -46,7 +46,7 @@ func StartTwitchChatFeed(channel string) {
 			if err := db.InsertTwitchMessage(database, twitchMsg); err != nil {
 				log.Printf("❌ Failed to save Twitch message to database: %v", err)
 			} else {
-				log.Printf("💬 Saved Twitch message from %s", msg.User.DisplayName)
+				log.Printf("💬 Saved Twitch message from %s: %s", msg.User.DisplayName, msg.Message)
 			}
 		}
 

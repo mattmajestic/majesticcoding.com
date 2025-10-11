@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -199,6 +200,19 @@ func getLeetCodeStats(c *gin.Context) {
 
 	stats, err := services.FetchLeetCodeStats(username)
 	if err != nil {
+		// Check if it's a rate limit error
+		if errors.Is(err, services.ErrRateLimited) {
+			// Try to get latest stats from database
+			database := db.GetDB()
+			if database != nil {
+				dbStats, dbErr := db.GetLatestLeetCodeStats(database, username)
+				if dbErr == nil {
+					c.JSON(http.StatusOK, dbStats)
+					return
+				}
+			}
+		}
+
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
 	}

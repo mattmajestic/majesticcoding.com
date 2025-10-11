@@ -245,6 +245,22 @@ func InsertLeetCodeStats(db *sql.DB, username string, solved, ranking int, langu
 	return err
 }
 
+func GetLatestLeetCodeStats(db *sql.DB, username string) (*models.LeetCodeStats, error) {
+	var stats models.LeetCodeStats
+	err := db.QueryRow(`
+		SELECT username, solved_count, ranking, main_language
+		FROM bronze.leetcode_stats
+		WHERE username = $1
+		ORDER BY recorded_at DESC
+		LIMIT 1
+	`, username).Scan(&stats.Username, &stats.SolvedCount, &stats.Ranking, &stats.Languages)
+
+	if err != nil {
+		return nil, err
+	}
+	return &stats, nil
+}
+
 // Twitch Activities insert functions
 func InsertTwitchFollower(db *sql.DB, follower models.TwitchFollower) error {
 	_, err := db.Exec(`
