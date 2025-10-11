@@ -16,10 +16,10 @@ func FetchLaLigaSchedule() ([]models.LaLigaMatch, error) {
 		return nil, fmt.Errorf("EPL_TOKEN not found")
 	}
 
-	// Get matches for the current week (next 7 days)
+	// Get matches from today for the next 14 days to ensure we capture the upcoming weekend
 	today := time.Now()
 	from := today.Format("2006-01-02")
-	to := today.AddDate(0, 0, 7).Format("2006-01-02")
+	to := today.AddDate(0, 0, 14).Format("2006-01-02")
 
 	url := fmt.Sprintf("https://api.football-data.org/v4/competitions/PD/matches?dateFrom=%s&dateTo=%s", from, to)
 

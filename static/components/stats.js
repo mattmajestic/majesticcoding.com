@@ -52,9 +52,13 @@ function populateModalContent(data) {
       if (!isNaN(v)) {
         formattedValue = Number(v).toLocaleString();
       }
+
+      // Format camelCase labels to have spaces (e.g., MainLanguages -> Main Languages)
+      const formattedKey = k.replace(/([A-Z])/g, ' $1').trim();
+
       return `
         <div class="stat-box glowing-effect">
-          <div class="stat-key">${k}</div>
+          <div class="stat-key">${formattedKey}</div>
           <div class="stat-value">${formattedValue}</div>
         </div>
       `;

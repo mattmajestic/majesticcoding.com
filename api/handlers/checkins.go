@@ -31,11 +31,21 @@ func PostCheckinHandler() gin.HandlerFunc {
 			return
 		}
 
-		// Invalidate the unified checkins cache so globe gets fresh data
-		if err := services.RedisDelete("checkins:recent:8h"); err != nil {
-			log.Printf("⚠️ Failed to invalidate checkins cache: %v", err)
+		// Get fresh checkins from database and update Redis cache
+		checkins, err := db.GetRecentCheckins(database, 8) // Last 8 hours
+		if err != nil {
+			log.Printf("⚠️ Failed to get recent checkins after insert: %v", err)
+			// Fallback: just delete cache to force refresh
+			if err := services.RedisDelete("checkins:recent:8h"); err != nil {
+				log.Printf("⚠️ Failed to invalidate checkins cache: %v", err)
+			}
 		} else {
-			log.Printf("🗑️ Cleared checkins cache - %s will appear on globe next request", checkin.City)
+			// Update the cache with fresh data (5 minutes TTL = 300 seconds)
+			if err := services.RedisSetJSON("checkins:recent:8h", checkins, 300); err != nil {
+				log.Printf("⚠️ Failed to update checkins cache: %v", err)
+			} else {
+				log.Printf("✅ Updated checkins:recent:8h cache with new %s checkin", checkin.City)
+			}
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

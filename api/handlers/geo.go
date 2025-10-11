@@ -72,30 +72,27 @@ func GeocodeHandler() gin.HandlerFunc {
 			fmt.Printf("DEBUG: About to check/insert checkin - City: '%s', Country: '%s', Lat: %f, Lng: %f\n",
 				city, res.Components.Country, res.Location.Lat, res.Location.Lng)
 
-			// Check if city already exists in database
-			cityExists, err := db.CheckCityExists(database, city)
+			// Always insert the checkin (allow duplicates for different users)
+			err := db.InsertCheckin(database, res.Location.Lat, res.Location.Lng, city, res.Components.Country)
 			if err != nil {
-				fmt.Printf("ERROR: Failed to check if city exists: %v\n", err)
-			} else if cityExists {
-				fmt.Printf("INFO: %s already exists in database, skipping insert\n", city)
-				// Still invalidate cache so it shows up on globe
-				if err := services.RedisDelete("checkins:recent:8h"); err != nil {
-					log.Printf("⚠️ Failed to invalidate checkins cache: %v", err)
-				} else {
-					log.Printf("🗑️ Cleared checkins cache - existing %s will appear on globe", city)
-				}
+				fmt.Printf("ERROR: Failed to insert checkin: %v\n", err)
 			} else {
-				// City doesn't exist, insert it
-				err := db.InsertCheckin(database, res.Location.Lat, res.Location.Lng, city, res.Components.Country)
+				fmt.Printf("SUCCESS: New checkin saved for %s from %s!\n", city, username)
+
+				// Get fresh checkins from database and update Redis cache
+				checkins, err := db.GetRecentCheckins(database, 8) // Last 8 hours
 				if err != nil {
-					fmt.Printf("ERROR: Failed to insert checkin: %v\n", err)
-				} else {
-					fmt.Printf("SUCCESS: New checkin saved for %s!\n", city)
-					// Invalidate the unified checkins cache so globe gets fresh data
+					log.Printf("⚠️ Failed to get recent checkins after insert: %v", err)
+					// Fallback: just delete cache to force refresh
 					if err := services.RedisDelete("checkins:recent:8h"); err != nil {
 						log.Printf("⚠️ Failed to invalidate checkins cache: %v", err)
+					}
+				} else {
+					// Update the cache with fresh data (5 minutes TTL = 300 seconds)
+					if err := services.RedisSetJSON("checkins:recent:8h", checkins, 300); err != nil {
+						log.Printf("⚠️ Failed to update checkins cache: %v", err)
 					} else {
-						log.Printf("🗑️ Cleared checkins cache - %s will appear on globe next request", city)
+						log.Printf("✅ Updated checkins:recent:8h cache with new %s checkin", city)
 					}
 				}
 			}

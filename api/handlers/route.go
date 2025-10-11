@@ -48,7 +48,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/ai", RenderTemplate("chat-ai.tmpl"))
 	router.GET("/graphql", GraphQLPlaygroundHandler)
 
-	router.GET("/gallery", RenderGallery("gallery.tmpl"))
+	router.GET("/gallery", RenderTemplate("gallery.tmpl"))
 	router.GET("/live/", StreamHandler)
 
 	/// Streaming Widgets

@@ -69,47 +69,60 @@
     }
 
     globe = Globe()(container)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundColor('rgba(0,0,0,0)')
-      .atmosphereColor('rgba(255,107,53,0.6)')
-      .atmosphereAltitude(0.15)
+      .atmosphereColor('#00ffff')
+      .atmosphereAltitude(0.25)
       .width(container.clientWidth || 800)
       .height(container.clientHeight || 600)
       .pointsData(points)
-      .pointAltitude(d => 0.02)
-      .pointColor(d => '#ff6b35')
-      .pointRadius(d => 1.8)
+      .pointAltitude(d => 0.01)
+      .pointColor(d => '#00ffff')
+      .pointRadius(d => 2.5)
       .pointsMerge(true)
       .pointLabel(d => {
         const timeAgo = d.time ? new Date(d.time).toLocaleDateString() : 'Recently';
         return `
-          <div style="background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(30,30,50,0.9)); backdrop-filter: blur(10px); padding: 12px; border-radius: 8px; color: white; font-family: 'Inter', 'Segoe UI', sans-serif; text-align: center; min-width: 140px; border: 1px solid rgba(255,107,53,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-            <div style="font-weight: 600; font-size: 15px; color: #ff6b35; margin-bottom: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${d.city}</div>
-            <div style="font-size: 12px; color: #e0e0e0; margin-bottom: 4px;">${d.country}</div>
-            <div style="font-size: 10px; color: #a0a0a0; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,107,53,0.2);">📍 ${timeAgo}</div>
+          <div style="background: linear-gradient(135deg, rgba(0,10,20,0.95), rgba(0,30,60,0.95)); backdrop-filter: blur(15px); padding: 14px 18px; border-radius: 12px; color: white; font-family: 'Courier New', 'Consolas', monospace; text-align: center; min-width: 180px; border: 2px solid rgba(0,255,255,0.6); box-shadow: 0 0 20px rgba(0,255,255,0.4), inset 0 0 20px rgba(0,255,255,0.1); position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #00ffff, transparent); animation: scan 2s linear infinite;"></div>
+            <div style="font-weight: 700; font-size: 16px; color: #00ffff; margin-bottom: 8px; text-shadow: 0 0 10px rgba(0,255,255,0.8); letter-spacing: 1px;">${d.city.toUpperCase()}</div>
+            <div style="font-size: 13px; color: #66ffff; margin-bottom: 6px; opacity: 0.9;">${d.country}</div>
+            <div style="font-size: 11px; color: #00ff88; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,255,255,0.3); font-family: 'Courier New', monospace;">⚡ SIGNAL: ${timeAgo}</div>
           </div>
+          <style>
+            @keyframes scan {
+              0%, 100% { transform: translateY(0); opacity: 0; }
+              50% { transform: translateY(20px); opacity: 1; }
+            }
+          </style>
         `;
       })
       .labelsData(points)
       .labelLat(d => d.lat)
       .labelLng(d => d.lng)
       .labelText(d => d.city)
-      .labelSize(3.5)
-      .labelDotRadius(0.8)
-      .labelColor(() => '#ff6b35')
+      .labelSize(4)
+      .labelDotRadius(1.2)
+      .labelColor(() => '#00ffff')
       .labelResolution(6)
-      .labelAltitude(d => 0.08);
+      .labelAltitude(d => 0.12);
 
-   
-    globe.pointOfView({ lat: 30, lng: -20, altitude: 2.2 });
+    // Animate points with pulsing effect
+    setInterval(() => {
+      globe.pointsData(points.map(p => ({
+        ...p,
+        size: 0.8 + Math.random() * 0.4
+      })));
+    }, 1000);
 
+    globe.pointOfView({ lat: 30, lng: -20, altitude: 2.5 });
 
     globe.controls().enableZoom = true;
     globe.controls().enablePan = true;
     globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.5;
+    globe.controls().autoRotateSpeed = 0.8;
     globe.controls().enableDamping = true;
-    globe.controls().dampingFactor = 0.15;
+    globe.controls().dampingFactor = 0.1;
     globe.controls().minDistance = 180;
     globe.controls().maxDistance = 800;
   }

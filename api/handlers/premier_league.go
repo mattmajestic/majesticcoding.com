@@ -18,7 +18,7 @@ import (
 func GetPremierLeagueSchedule(c *gin.Context) {
 	cacheKey := "epl:schedule:weekly"
 
-	// Try to get from Redis cache first (7 days TTL = 604800 seconds)
+	// Try to get from Redis cache first (6 hours TTL = 21600 seconds)
 	cachedJSON, err := services.RedisGetRawJSON(cacheKey)
 	if err == nil && cachedJSON != "" {
 		log.Printf("✅ EPL schedule cache HIT")
@@ -39,11 +39,11 @@ func GetPremierLeagueSchedule(c *gin.Context) {
 		"count":   len(matches),
 	}
 
-	// Cache the schedule for 7 days (604800 seconds)
-	if err := services.RedisSetJSON(cacheKey, response, 604800); err != nil {
+	// Cache the schedule for 6 hours (21600 seconds)
+	if err := services.RedisSetJSON(cacheKey, response, 21600); err != nil {
 		log.Printf("⚠️ Failed to cache EPL schedule: %v", err)
 	} else {
-		log.Printf("💾 Cached EPL schedule for 7 days")
+		log.Printf("💾 Cached EPL schedule for 6 hours")
 	}
 
 	c.JSON(http.StatusOK, response)
