@@ -245,29 +245,6 @@ graph TD
 
 ```
 
-### UI Architecture Diagram
-
-```mermaid
-sequenceDiagram
-  autonumber
-  participant U as "User"
-  participant H as "Gin Handler (/live)"
-  participant T as "Templates (base + partials)"
-  participant P as "Live Page"
-  participant API as "Go API"
-  participant SV as "IVS / DB"
-
-  U->>H: GET /live
-  H->>T: Render base with stream/chat/footer
-  T-->>P: HTML
-  P->>API: fetch "/api/stream/status"
-  API->>SV: Query
-  SV-->>API: Status + URL
-  API-->>P: JSON { live, playbackUrl }
-  P->>P: Update #stream and chat
-```
-
-
 ### Live Stream Architecture Diagram
 
 ```mermaid
@@ -296,15 +273,5 @@ sequenceDiagram
         JS->>JS: Show "Offline" UI, hide/disable player
     end
 ```
-
-## 🤝 Contributing
-
-- **Fork → Clone → Code → PR**
-- **📝 License:** MIT 
-- **🙏 Thanks:** Go Team, Gin, Neon, Supabase
-
----
-
-**⭐ Star this repo** • **🐛 Report issues** • **💡 Suggest features**
 
 [🌐 Website](https://majesticcoding.com)
