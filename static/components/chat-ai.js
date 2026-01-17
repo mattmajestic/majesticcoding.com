@@ -135,6 +135,31 @@ class AIChatInterface {
     return token;
   }
 
+  getUserAvatar() {
+    // Try to get avatar from Supabase auth manager
+    if (window.authManager && window.authManager.currentUser) {
+      const user = window.authManager.currentUser;
+
+      // Try multiple possible avatar fields
+      const avatarFields = [
+        user.user_metadata?.avatar_url,
+        user.user_metadata?.picture,
+        user.user_metadata?.avatar,
+        user.identities?.[0]?.identity_data?.avatar_url,
+        user.identities?.[0]?.identity_data?.picture
+      ];
+
+      for (const avatar of avatarFields) {
+        if (avatar) {
+          return avatar;
+        }
+      }
+    }
+
+    // Default fallback avatar
+    return 'https://via.placeholder.com/32/75a7da/FFFFFF?text=U';
+  }
+
   showAuthMessage() {
     const authMessage = this.createMessage('system', 'Please log in to start chatting with AI. Click "Sign In" in the top right corner.', 'System');
     this.elements.chatMessages.appendChild(authMessage);
@@ -271,7 +296,9 @@ class AIChatInterface {
       avatar.alt = 'AI Assistant';
       avatar.className = 'w-8 h-8 rounded-full flex-shrink-0 mt-1';
     } else {
-      avatar.src = 'https://via.placeholder.com/32/75a7da/FFFFFF?text=U';
+      // Get user avatar from Supabase auth
+      const userAvatar = this.getUserAvatar();
+      avatar.src = userAvatar;
       avatar.alt = 'User';
       avatar.className = 'w-8 h-8 rounded-full flex-shrink-0 mt-1 border-2 border-white shadow-md';
     }

@@ -11,12 +11,21 @@ const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
 const wsHost = window.location.host;
 
 let ws;
+let wsConnecting = false;
 
 // Function to create WebSocket connection with auth
 function createWebSocketConnection() {
-  if (ws) {
+  // Prevent multiple simultaneous connection attempts
+  if (wsConnecting) {
+    return;
+  }
+
+  // Close existing connection if open
+  if (ws && ws.readyState !== WebSocket.CLOSED) {
     ws.close();
   }
+
+  wsConnecting = true;
 
   // Get auth token for WebSocket connection
   let wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
@@ -25,8 +34,12 @@ function createWebSocketConnection() {
     wsUrl += `?token=${encodeURIComponent(token)}`;
   }
 
-  ws = new WebSocket(wsUrl);
-  setupWebSocketHandlers();
+  try {
+    ws = new WebSocket(wsUrl);
+    setupWebSocketHandlers();
+  } catch (error) {
+    wsConnecting = false;
+  }
 }
 
 // Color of Username
@@ -49,6 +62,11 @@ function getColorForUsername(username) {
 
 // Setup WebSocket event handlers
 function setupWebSocketHandlers() {
+  // Connection opened
+  ws.onopen = () => {
+    wsConnecting = false;
+  };
+
   // Websocket Connection
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
@@ -75,12 +93,12 @@ function setupWebSocketHandlers() {
 
   // Handle WebSocket errors silently
   ws.onerror = (error) => {
-    // Silent error handling - don't spam console
+    wsConnecting = false;
   };
 
   // Handle WebSocket close silently
   ws.onclose = (event) => {
-    // Silent close handling - don't spam console
+    wsConnecting = false;
   };
 }
 
@@ -160,7 +178,16 @@ function updateChatAuthUI() {
 
 // Function to reconnect WebSocket when auth state changes
 function reconnectChat() {
+  // Only reconnect if WebSocket is not already open
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    // Already connected, just update UI
+    updateChatAuthUI();
+    return;
+  }
+
+  // Reset and reconnect
   chatInitialized = false;
+  wsConnecting = false;
   initializeChat();
   updateChatAuthUI();
 }
@@ -175,8 +202,24 @@ function initializeChat() {
   updateChatAuthUI();
 }
 
-// Initialize chat immediately
-initializeChat();
+// Wait for page to fully load and auth to be ready before initializing chat
+function waitForAuthAndInitialize() {
+  // Check if auth manager is available and initialized
+  if (window.authManager && window.authManager.supabase) {
+    // Auth is ready, wait a bit more to ensure any OAuth flow is complete
+    setTimeout(initializeChat, 1000);
+  } else {
+    // Auth not ready yet, check again in 200ms
+    setTimeout(waitForAuthAndInitialize, 200);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', waitForAuthAndInitialize);
+} else {
+  // Document already loaded
+  waitForAuthAndInitialize();
+}
 
 // Listen for auth state changes to reconnect chat
 window.addEventListener('storage', (e) => {

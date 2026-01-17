@@ -28,7 +28,7 @@ class SupabaseAuthManager {
       supabase = this.supabase; // Set global reference
 
       // Listen for auth changes
-      this.supabase.auth.onAuthStateChange(async (event, session) => {
+      this.supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session?.access_token) {
           this.currentUser = session.user;
           this.setAuthToken(session.access_token);
@@ -46,8 +46,30 @@ class SupabaseAuthManager {
         }
       });
 
-      // Get initial session
-      await this.getSession();
+      // Check if this is an OAuth callback with tokens in the URL fragment
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const hasOAuthTokens = hashParams.has('access_token');
+
+      if (hasOAuthTokens) {
+        // Extract tokens from URL
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        if (accessToken && refreshToken) {
+          // Set the session using the tokens from the URL
+          const { error } = await this.supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+
+          if (error) {
+            this.showMessage('Authentication failed: ' + error.message, 'error');
+          }
+        }
+      } else {
+        // Only get session if not an OAuth callback
+        await this.getSession();
+      }
 
     } catch (error) {
       console.error('Failed to initialize Supabase:', error);
@@ -211,8 +233,8 @@ class SupabaseAuthManager {
     const url = new URL(window.location);
     const params = url.searchParams;
 
-    // Remove common auth-related parameters
-    const authParams = ['access_token', 'refresh_token', 'expires_in', 'token_type', 'type'];
+    // Remove common auth-related parameters from query string
+    const authParams = ['access_token', 'refresh_token', 'expires_in', 'token_type', 'type', 'provider_token', 'expires_at', 'provider_refresh_token'];
     let hasAuthParams = false;
 
     authParams.forEach(param => {
@@ -222,8 +244,11 @@ class SupabaseAuthManager {
       }
     });
 
-    // If we removed auth params, update the URL without them
-    if (hasAuthParams) {
+    // Check if URL has a fragment (hash) with auth tokens
+    const hasFragment = window.location.hash && window.location.hash.includes('access_token');
+
+    // If we have auth params in query or fragment, clean up the URL
+    if (hasAuthParams || hasFragment) {
       const newUrl = url.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
     }
@@ -458,11 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
   signOutBtns.forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
-      console.log('Sign out clicked from:', btn.id);
 
       try {
         const result = await authManager.signOut();
-        console.log('Sign out result:', result);
 
         if (result.success) {
           showMessage('Signed out successfully', 'success');
@@ -474,7 +497,6 @@ document.addEventListener('DOMContentLoaded', () => {
           showMessage('Sign out failed: ' + (result.error || 'Unknown error'), 'error');
         }
       } catch (error) {
-        console.error('Sign out error:', error);
         showMessage('Sign out error: ' + error.message, 'error');
       }
     });

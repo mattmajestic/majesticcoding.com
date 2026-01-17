@@ -173,7 +173,7 @@ func callGemini(req AIRequest) (*AIResponse, error) {
 
 	model := req.Model
 	if model == "" {
-		model = "gemini-1.5-flash-latest" // Current free Gemini model
+		model = "gemini-2.5-flash" // Current free Gemini model
 	}
 
 	payload := GeminiRequest{
