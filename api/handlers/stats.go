@@ -91,6 +91,9 @@ func getYouTubeStats(c *gin.Context) {
 			log.Printf("❌ Failed to save YouTube stats: %v", err)
 		}
 	}
+	if err := services.StoreLatestSocialStatsContextFromDB(); err != nil {
+		log.Printf("⚠️ Failed to refresh social context: %v", err)
+	}
 
 	c.JSON(http.StatusOK, stats)
 }
@@ -130,6 +133,9 @@ func getGithubStats(c *gin.Context) {
 			log.Printf("❌ Failed to save GitHub stats: %v", err)
 		}
 	}
+	if err := services.StoreLatestSocialStatsContextFromDB(); err != nil {
+		log.Printf("⚠️ Failed to refresh social context: %v", err)
+	}
 
 	c.JSON(http.StatusOK, stats)
 }
@@ -168,6 +174,9 @@ func getTwitchStats(c *gin.Context) {
 		if err := db.InsertTwitchStats(database, username, stats.Followers, 0, false); err != nil {
 			log.Printf("❌ Failed to save Twitch stats: %v", err)
 		}
+	}
+	if err := services.StoreLatestSocialStatsContextFromDB(); err != nil {
+		log.Printf("⚠️ Failed to refresh social context: %v", err)
 	}
 
 	c.JSON(http.StatusOK, stats)
@@ -230,6 +239,9 @@ func getLeetCodeStats(c *gin.Context) {
 		if err := db.InsertLeetCodeStats(database, username, stats.SolvedCount, stats.Ranking, stats.Languages); err != nil {
 			log.Printf("❌ Failed to save LeetCode stats: %v", err)
 		}
+	}
+	if err := services.StoreLatestSocialStatsContextFromDB(); err != nil {
+		log.Printf("⚠️ Failed to refresh social context: %v", err)
 	}
 
 	c.JSON(http.StatusOK, stats)

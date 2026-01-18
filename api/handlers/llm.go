@@ -20,8 +20,13 @@ func PostLLM(c *gin.Context) {
 	}
 
 	// Convert to service request
+	prompt := req.Prompt
+	if contexts, err := services.RetrieveRelevantContext(req.Prompt, 4); err == nil && len(contexts) > 0 {
+		prompt = fmt.Sprintf("Use the following context to answer the user:\n- %s\n\nUser question: %s", strings.Join(contexts, "\n- "), req.Prompt)
+	}
+
 	aiReq := services.AIRequest{
-		Prompt:   req.Prompt,
+		Prompt:   prompt,
 		Provider: services.AIProvider(req.Provider),
 		Model:    req.Model,
 	}

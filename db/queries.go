@@ -270,6 +270,48 @@ func GetLatestLeetCodeStats(db *sql.DB, username string) (*models.LeetCodeStats,
 	return &stats, nil
 }
 
+func GetLatestYouTubeStats(db *sql.DB) (*models.YouTubeStats, error) {
+	var stats models.YouTubeStats
+	err := db.QueryRow(`
+		SELECT channel_id, subscriber_count, view_count, video_count
+		FROM bronze.youtube_stats
+		ORDER BY recorded_at DESC
+		LIMIT 1
+	`).Scan(&stats.ChannelName, &stats.Subscribers, &stats.Views, &stats.Videos)
+	if err != nil {
+		return nil, err
+	}
+	return &stats, nil
+}
+
+func GetLatestGitHubStats(db *sql.DB) (*models.GitHubStats, error) {
+	var stats models.GitHubStats
+	err := db.QueryRow(`
+		SELECT username, public_repos, followers, total_stars
+		FROM bronze.github_stats
+		ORDER BY recorded_at DESC
+		LIMIT 1
+	`).Scan(&stats.Username, &stats.PublicRepos, &stats.Followers, &stats.StarsReceived)
+	if err != nil {
+		return nil, err
+	}
+	return &stats, nil
+}
+
+func GetLatestTwitchStats(db *sql.DB) (*models.TwitchStats, error) {
+	var stats models.TwitchStats
+	err := db.QueryRow(`
+		SELECT username, follower_count
+		FROM bronze.twitch_stats
+		ORDER BY recorded_at DESC
+		LIMIT 1
+	`).Scan(&stats.DisplayName, &stats.Followers)
+	if err != nil {
+		return nil, err
+	}
+	return &stats, nil
+}
+
 // Twitch Activities insert functions
 func InsertTwitchFollower(db *sql.DB, follower models.TwitchFollower) error {
 	_, err := db.Exec(`

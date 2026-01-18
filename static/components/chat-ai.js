@@ -816,16 +816,29 @@ class AIChatInterface {
     const token = this.getAuthToken();
 
     if (token) {
-      this.elements.authStatus.textContent = '✅ Authenticated';
+      this.elements.authStatus.innerHTML = `
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1119.5 8.5m0 0a9.003 9.003 0 00-9-9m9 9l-4 4m0 0l-2-2m2 2l4-4"></path>
+          </svg>
+          Profile
+        </span>
+      `;
       this.elements.authStatus.className = 'px-3 py-1 rounded text-xs bg-green-900 text-green-300 hover:bg-green-800 transition-colors cursor-pointer';
       this.elements.authStatus.href = '/settings';
       this.elements.authStatus.title = 'View Profile & Settings';
     } else {
-      this.elements.authStatus.textContent = 'Sign In';
+      this.elements.authStatus.innerHTML = `
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"></path>
+          </svg>
+          Sign In
+        </span>
+      `;
       this.elements.authStatus.className = 'px-3 py-1 rounded text-xs bg-red-900 text-red-300 hover:bg-red-800 transition-colors cursor-pointer';
       this.elements.authStatus.href = '/auth';
       this.elements.authStatus.title = 'Click to sign in';
-      this.showAuthMessage();
     }
 
     this.validateInput();

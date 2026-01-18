@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"majesticcoding.com/api/models"
@@ -212,6 +213,70 @@ func StoreSocialStatsContext(stats *models.UnifiedStats) error {
 		if err := StoreWebsiteContext(contentType, title, contextText, "", metadata, 3); err != nil {
 			fmt.Printf("Failed to store %s: %v\n", title, err)
 		}
+	}
+
+	return nil
+}
+
+// StoreLatestSocialStatsContextFromDB fetches latest stats rows and stores them as context.
+func StoreLatestSocialStatsContextFromDB() error {
+	database := db.GetDB()
+	if database == nil {
+		return fmt.Errorf("database not available")
+	}
+
+	var failures []string
+
+	if stats, err := db.GetLatestYouTubeStats(database); err == nil {
+		content := fmt.Sprintf(
+			"YouTube Channel: %s has %d subscribers, %d total views across %d videos.",
+			stats.ChannelName, stats.Subscribers, stats.Views, stats.Videos,
+		)
+		if err := StoreWebsiteContext("social_stats", "YouTube Channel Stats", content, "", stats, 3); err != nil {
+			failures = append(failures, "youtube")
+		}
+	} else {
+		failures = append(failures, "youtube")
+	}
+
+	if stats, err := db.GetLatestGitHubStats(database); err == nil {
+		content := fmt.Sprintf(
+			"GitHub Profile: %s has %d public repositories, %d followers, and %d total stars.",
+			stats.Username, stats.PublicRepos, stats.Followers, stats.StarsReceived,
+		)
+		if err := StoreWebsiteContext("social_stats", "GitHub Profile Stats", content, "", stats, 3); err != nil {
+			failures = append(failures, "github")
+		}
+	} else {
+		failures = append(failures, "github")
+	}
+
+	if stats, err := db.GetLatestTwitchStats(database); err == nil {
+		content := fmt.Sprintf(
+			"Twitch Channel: %s has %d followers.",
+			stats.DisplayName, stats.Followers,
+		)
+		if err := StoreWebsiteContext("social_stats", "Twitch Channel Stats", content, "", stats, 3); err != nil {
+			failures = append(failures, "twitch")
+		}
+	} else {
+		failures = append(failures, "twitch")
+	}
+
+	if stats, err := db.GetLatestLeetCodeStats(database, "mattmajestic"); err == nil {
+		content := fmt.Sprintf(
+			"LeetCode Profile: %s has solved %d problems and is ranked #%d. Primary languages: %s.",
+			stats.Username, stats.SolvedCount, stats.Ranking, stats.Languages,
+		)
+		if err := StoreWebsiteContext("social_stats", "LeetCode Profile Stats", content, "", stats, 3); err != nil {
+			failures = append(failures, "leetcode")
+		}
+	} else {
+		failures = append(failures, "leetcode")
+	}
+
+	if len(failures) > 0 {
+		return fmt.Errorf("failed to refresh contexts: %s", strings.Join(failures, ", "))
 	}
 
 	return nil

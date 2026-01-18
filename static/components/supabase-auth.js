@@ -179,8 +179,23 @@ class SupabaseAuthManager {
 
   async signOut() {
     try {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      if (!session?.access_token) {
+        this.clearAuthToken();
+        this.updateUI(null);
+        return { success: true };
+      }
+
       const { error } = await this.supabase.auth.signOut();
-      if (error) throw error;
+      if (error) {
+        const message = (error.message || '').toLowerCase();
+        if (error.status === 403 || message.includes('auth session missing')) {
+          this.clearAuthToken();
+          this.updateUI(null);
+          return { success: true };
+        }
+        throw error;
+      }
 
       return { success: true };
     } catch (error) {
