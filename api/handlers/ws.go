@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -17,7 +19,7 @@ import (
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		return isAllowedWSOrigin(r)
 	},
 }
 
@@ -25,27 +27,34 @@ func generateAnonUsername() string {
 	return fmt.Sprintf(namesgenerator.GetRandomName(0)+"_%02d", time.Now().UnixNano()%10000)
 }
 
+func isAllowedWSOrigin(r *http.Request) bool {
+	origin := r.Header.Get("Origin")
+	if origin == "" {
+		return true
+	}
+
+	allowedOrigins := strings.Split(os.Getenv("WS_ALLOWED_ORIGINS"), ",")
+	if len(allowedOrigins) > 0 && strings.TrimSpace(allowedOrigins[0]) != "" {
+		for _, allowed := range allowedOrigins {
+			if strings.TrimSpace(allowed) == origin {
+				return true
+			}
+		}
+		return false
+	}
+
+	parsed, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+
+	return parsed.Host == r.Host
+}
+
 // getUsernameFromAuth attempts to get username from Supabase auth token
 func getUsernameFromAuth(r *http.Request) string {
-	// Check for Authorization header
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		// Check for token in query parameters (common for WebSockets)
-		token := r.URL.Query().Get("token")
-		if token != "" {
-			authHeader = "Bearer " + token
-		}
-	}
-
-	if authHeader == "" {
-		return generateAnonUsername()
-	}
-
-	// Extract token
-	tokenString := ""
-	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
-		tokenString = strings.TrimSpace(authHeader[7:])
-	} else {
+	tokenString := getSupabaseTokenFromRequest(r)
+	if tokenString == "" {
 		return generateAnonUsername()
 	}
 

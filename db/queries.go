@@ -21,6 +21,15 @@ func InsertChatMessage(db *sql.DB, username, content string) error {
 	return err
 }
 
+// InsertAIChatMessage inserts a new AI chat exchange into bronze.ai_chat_messages
+func InsertAIChatMessage(db *sql.DB, userID, userEmail, provider, model, prompt, response string) error {
+	_, err := db.Exec(`
+		INSERT INTO ai_chat_messages (supabase_user_id, user_email, provider, model, prompt, response)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`, userID, userEmail, provider, model, prompt, response)
+	return err
+}
+
 // GetRecentMessages fetches the most recent messages up to the given limit
 func GetRecentMessages(db *sql.DB, limit int) ([]models.Message, error) {
 	rows, err := db.Query(`SELECT id, content, created_at FROM messages ORDER BY created_at DESC LIMIT $1`, limit)

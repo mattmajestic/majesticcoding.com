@@ -104,6 +104,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/api/chat/users", ChatUserCount)
 	router.GET("/ws/chat", ChatWebSocket)
 	router.GET("/ws/twitch", TwitchMessagesHandler)
+	router.GET("/ws/speech", SpeechWebSocket)
 
 	/// Twitch Activities
 	router.GET("/api/twitch/followers", TwitchFollowersHandler)
@@ -127,6 +128,13 @@ func SetupRoutes(router *gin.Engine) {
 	{
 		llmGroup.POST("/", PostLLM)
 		llmGroup.GET("/providers", GetProviders)
+	}
+
+	/// Speech API (Protected)
+	speechGroup := router.Group("/api/speech")
+	speechGroup.Use(SupabaseAuthMiddleware())
+	{
+		speechGroup.POST("/transcribe", PostSpeechTranscribe)
 	}
 
 	/// GraphQL API

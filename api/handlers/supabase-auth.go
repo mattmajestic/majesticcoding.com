@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -67,13 +68,36 @@ func SupabaseAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Add user info to context
+		// Add user info to context with safe fallbacks
 		c.Set("user", user)
-		c.Set("user_id", user["sub"])
-		c.Set("user_email", user["email"])
+		c.Set("user_id", extractUserID(user))
+		c.Set("user_email", extractUserEmail(user))
 
 		c.Next()
 	}
+}
+
+func extractUserID(user map[string]interface{}) string {
+	if value, ok := user["id"].(string); ok && value != "" {
+		return value
+	}
+	if value, ok := user["sub"].(string); ok && value != "" {
+		return value
+	}
+	if value, ok := user["user_id"].(string); ok && value != "" {
+		return value
+	}
+	if value, ok := user["email"].(string); ok && value != "" {
+		return value
+	}
+	return ""
+}
+
+func extractUserEmail(user map[string]interface{}) string {
+	if value, ok := user["email"].(string); ok && value != "" {
+		return value
+	}
+	return ""
 }
 
 // verifySupabaseToken verifies a Supabase JWT token with caching
@@ -83,6 +107,14 @@ func verifySupabaseToken(tokenString string) (map[string]interface{}, error) {
 
 	if tokenString == "" {
 		return nil, fmt.Errorf("empty token")
+	}
+
+	expired, err := isTokenExpired(tokenString)
+	if err != nil {
+		return nil, fmt.Errorf("invalid token")
+	}
+	if expired {
+		return nil, fmt.Errorf("token expired")
 	}
 
 	// Try to get from cache first
@@ -147,6 +179,35 @@ func verifySupabaseToken(tokenString string) (map[string]interface{}, error) {
 	}
 
 	return user, nil
+}
+
+func isTokenExpired(tokenString string) (bool, error) {
+	parts := strings.Split(tokenString, ".")
+	if len(parts) < 2 {
+		return true, fmt.Errorf("invalid token format")
+	}
+
+	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return true, err
+	}
+
+	var claims map[string]interface{}
+	if err := json.Unmarshal(payload, &claims); err != nil {
+		return true, err
+	}
+
+	expRaw, ok := claims["exp"]
+	if !ok {
+		return false, nil
+	}
+
+	expFloat, ok := expRaw.(float64)
+	if !ok {
+		return false, nil
+	}
+
+	return time.Now().Unix() >= int64(expFloat), nil
 }
 
 // Helper function to get map keys for debugging
@@ -271,8 +332,6 @@ func SyncUserHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No token"})
 		return
 	}
-
-	fmt.Printf("🔑 Auth header present: %s...\n", authHeader[:20])
 	tokenString := strings.TrimSpace(strings.Replace(authHeader, "Bearer ", "", 1))
 
 	fmt.Printf("🔍 Verifying token...\n")
@@ -320,14 +379,17 @@ func AutoSyncHandler(c *gin.Context) {
 
 // DebugSyncHandler - simple debug endpoint
 func DebugSyncHandler(c *gin.Context) {
+	if os.Getenv("DEBUG_AUTH") != "true" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		return
+	}
+
 	fmt.Printf("🔍 Debug sync called\n")
-	fmt.Printf("Auth header: %s\n", c.GetHeader("Authorization"))
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Debug endpoint works",
 		"headers": map[string]string{
-			"authorization": c.GetHeader("Authorization"),
-			"content-type":  c.GetHeader("Content-Type"),
+			"content-type": c.GetHeader("Content-Type"),
 		},
 	})
 }

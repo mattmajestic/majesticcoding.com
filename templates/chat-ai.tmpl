@@ -42,7 +42,7 @@
                         <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
                              alt="AI" class="w-16 h-16 rounded-full mx-auto mb-4 glowing-effect" />
                         <h3 class="text-xl font-medium text-white mb-2">AI Assistant Ready</h3>
-                        <p class="text-gray-400">Ask me anything about coding, tech, or general questions.</p>
+                        <p class="text-gray-400">PGVector RAG with Gemini Embeddings & Voice to text.</p>
                     </div>
                 </div>
             </div>
@@ -60,12 +60,36 @@
                                   style="min-height: 48px; max-height: 120px;"></textarea>
                     </div>
 
+                    <div class="relative">
+                        <div class="flex items-center overflow-hidden rounded-xl border border-gray-600">
+                        <button type="button"
+                                id="mic-button"
+                                class="h-12 px-4 bg-gray-700 hover:bg-gray-600 text-white transition-colors flex items-center justify-center"
+                                title="Start voice input">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3zM5 11a7 7 0 0014 0M12 18v4m-4 0h8"></path>
+                            </svg>
+                        </button>
+                        <button type="button"
+                                id="mic-menu-button"
+                                class="h-12 px-2 bg-gray-700 hover:bg-gray-600 text-white transition-colors flex items-center justify-center border-l border-gray-600"
+                                title="Select microphone">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        </div>
+                        <div id="mic-device-menu"
+                             class="hidden absolute right-0 bottom-full mb-2 w-64 bg-gray-700 border border-gray-600 rounded-lg shadow-xl z-20 overflow-hidden divide-y divide-gray-600">
+                        </div>
+                    </div>
+
                     <button type="submit"
                             id="send-button"
                             class="px-4 py-3 bg-light-blue hover:bg-blue-400 disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center glowing-effect"
                             disabled>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
                         </svg>
                     </button>
                 </form>
@@ -117,6 +141,9 @@
                 await window.supabaseAuth.initialize();
             }
         });
+    </script>
+    <script>
+        window.AI_CHAT_STT = 'server_stream';
     </script>
     <script src="/static/components/chat-ai.js"></script>
     <script src="/static/components/theme.js"></script>

@@ -28,14 +28,12 @@ function createWebSocketConnection() {
   wsConnecting = true;
 
   // Get auth token for WebSocket connection
-  let wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
+  const wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
   const token = localStorage.getItem('supabase_token');
-  if (token) {
-    wsUrl += `?token=${encodeURIComponent(token)}`;
-  }
 
   try {
-    ws = new WebSocket(wsUrl);
+    const protocols = token ? ['supabase-auth', token] : undefined;
+    ws = new WebSocket(wsUrl, protocols);
     setupWebSocketHandlers();
   } catch (error) {
     wsConnecting = false;

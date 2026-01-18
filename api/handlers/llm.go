@@ -3,10 +3,12 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"majesticcoding.com/api/models"
 	"majesticcoding.com/api/services"
+	"majesticcoding.com/db"
 )
 
 func PostLLM(c *gin.Context) {
@@ -52,6 +54,25 @@ func PostLLM(c *gin.Context) {
 		Response: resp.Response,
 		Provider: resp.Provider,
 		Model:    resp.Model,
+	}
+
+	if database := db.GetDB(); database != nil {
+		userID, _ := c.Get("user_id")
+		userEmail, _ := c.Get("user_email")
+		userIDValue := strings.TrimSpace(fmt.Sprint(userID))
+		userEmailValue := strings.TrimSpace(fmt.Sprint(userEmail))
+		if userIDValue == "" || userIDValue == "<nil>" {
+			userIDValue = userEmailValue
+		}
+		_ = db.InsertAIChatMessage(
+			database,
+			userIDValue,
+			userEmailValue,
+			llmResp.Provider,
+			llmResp.Model,
+			req.Prompt,
+			llmResp.Response,
+		)
 	}
 
 	c.JSON(http.StatusOK, llmResp)
