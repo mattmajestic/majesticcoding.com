@@ -28,13 +28,13 @@ type speechWSResponse struct {
 }
 
 type speechWSState struct {
-	mu            sync.Mutex
-	contentType   string
-	filename      string
-	language      string
-	data          []byte
-	lastAudioAt   time.Time
-	transcribing  bool
+	mu             sync.Mutex
+	contentType    string
+	filename       string
+	language       string
+	data           []byte
+	lastAudioAt    time.Time
+	transcribing   bool
 	lastTranscript string
 }
 

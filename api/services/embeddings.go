@@ -233,10 +233,10 @@ func StoreLatestSocialStatsContextFromDB() error {
 			stats.ChannelName, stats.Subscribers, stats.Views, stats.Videos,
 		)
 		if err := StoreWebsiteContext("social_stats", "YouTube Channel Stats", content, "", stats, 3); err != nil {
-			failures = append(failures, "youtube")
+			failures = append(failures, fmt.Sprintf("youtube: %v", err))
 		}
 	} else {
-		failures = append(failures, "youtube")
+		failures = append(failures, fmt.Sprintf("youtube: %v", err))
 	}
 
 	if stats, err := db.GetLatestGitHubStats(database); err == nil {
@@ -245,10 +245,10 @@ func StoreLatestSocialStatsContextFromDB() error {
 			stats.Username, stats.PublicRepos, stats.Followers, stats.StarsReceived,
 		)
 		if err := StoreWebsiteContext("social_stats", "GitHub Profile Stats", content, "", stats, 3); err != nil {
-			failures = append(failures, "github")
+			failures = append(failures, fmt.Sprintf("github: %v", err))
 		}
 	} else {
-		failures = append(failures, "github")
+		failures = append(failures, fmt.Sprintf("github: %v", err))
 	}
 
 	if stats, err := db.GetLatestTwitchStats(database); err == nil {
@@ -257,10 +257,10 @@ func StoreLatestSocialStatsContextFromDB() error {
 			stats.DisplayName, stats.Followers,
 		)
 		if err := StoreWebsiteContext("social_stats", "Twitch Channel Stats", content, "", stats, 3); err != nil {
-			failures = append(failures, "twitch")
+			failures = append(failures, fmt.Sprintf("twitch: %v", err))
 		}
 	} else {
-		failures = append(failures, "twitch")
+		failures = append(failures, fmt.Sprintf("twitch: %v", err))
 	}
 
 	if stats, err := db.GetLatestLeetCodeStats(database, "mattmajestic"); err == nil {
@@ -269,10 +269,10 @@ func StoreLatestSocialStatsContextFromDB() error {
 			stats.Username, stats.SolvedCount, stats.Ranking, stats.Languages,
 		)
 		if err := StoreWebsiteContext("social_stats", "LeetCode Profile Stats", content, "", stats, 3); err != nil {
-			failures = append(failures, "leetcode")
+			failures = append(failures, fmt.Sprintf("leetcode: %v", err))
 		}
 	} else {
-		failures = append(failures, "leetcode")
+		failures = append(failures, fmt.Sprintf("leetcode: %v", err))
 	}
 
 	if len(failures) > 0 {
@@ -342,8 +342,5 @@ func CreatePersonalityContext() string {
 	- I maintain open source projects on GitHub
 	- I live stream programming and tech content on Twitch
 	- I solve competitive programming problems on LeetCode
-	- I blog about software engineering and technology
-
-	I'm passionate about sharing knowledge, building useful tools, and helping others learn to code.
 	My content focuses on practical software development, DevOps, cloud technologies, and programming best practices.`
 }

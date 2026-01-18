@@ -22,22 +22,37 @@ func getTwitchToken() (string, error) {
 	}
 	log.Printf("🔍 Twitch token cache MISS, fetching new token")
 
+	clientID := os.Getenv("TWITCH_CLIENT_ID")
+	clientSecret := os.Getenv("TWITCH_CLIENT_SECRET")
+
+	if clientID == "" || clientSecret == "" {
+		return "", fmt.Errorf("TWITCH_CLIENT_ID or TWITCH_CLIENT_SECRET not set")
+	}
+
 	resp, err := http.PostForm("https://id.twitch.tv/oauth2/token", url.Values{
-		"client_id":     {os.Getenv("TWITCH_CLIENT_ID")},
-		"client_secret": {os.Getenv("TWITCH_CLIENT_SECRET")},
+		"client_id":     {clientID},
+		"client_secret": {clientSecret},
 		"grant_type":    {"client_credentials"},
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to get twitch token: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("twitch token API returned status %d", resp.StatusCode)
+	}
 
 	var result struct {
 		AccessToken string `json:"access_token"`
 		ExpiresIn   int    `json:"expires_in"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to decode token response: %w", err)
+	}
+
+	if result.AccessToken == "" {
+		return "", fmt.Errorf("received empty access token from Twitch")
 	}
 
 	// Cache the token for 1 hour (3600 seconds) or use expires_in from response
@@ -62,6 +77,10 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 	}
 
 	clientID := os.Getenv("TWITCH_CLIENT_ID")
+	if clientID == "" {
+		return models.TwitchStats{}, fmt.Errorf("TWITCH_CLIENT_ID not set")
+	}
+
 	url := fmt.Sprintf("https://api.twitch.tv/helix/users?login=%s", username)
 
 	req, _ := http.NewRequest("GET", url, nil)
@@ -70,9 +89,14 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return models.TwitchStats{}, err
+		return models.TwitchStats{}, fmt.Errorf("http request failed: %w", err)
 	}
 	defer resp.Body.Close()
+
+	// Check HTTP status code
+	if resp.StatusCode != http.StatusOK {
+		return models.TwitchStats{}, fmt.Errorf("twitch API returned status %d", resp.StatusCode)
+	}
 
 	var result struct {
 		Data []struct {
@@ -82,8 +106,12 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 			ID              string `json:"id"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil || len(result.Data) == 0 {
-		return models.TwitchStats{}, fmt.Errorf("failed to fetch user data")
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return models.TwitchStats{}, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	if len(result.Data) == 0 {
+		return models.TwitchStats{}, fmt.Errorf("no user found for username: %s", username)
 	}
 
 	user := result.Data[0]
@@ -96,15 +124,20 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 
 	resp2, err := http.DefaultClient.Do(req2)
 	if err != nil {
-		return models.TwitchStats{}, err
+		return models.TwitchStats{}, fmt.Errorf("followers request failed: %w", err)
 	}
 	defer resp2.Body.Close()
+
+	// Check HTTP status code for followers endpoint
+	if resp2.StatusCode != http.StatusOK {
+		return models.TwitchStats{}, fmt.Errorf("followers API returned status %d", resp2.StatusCode)
+	}
 
 	var followResult struct {
 		Total int `json:"total"`
 	}
 	if err := json.NewDecoder(resp2.Body).Decode(&followResult); err != nil {
-		return models.TwitchStats{}, err
+		return models.TwitchStats{}, fmt.Errorf("failed to decode followers: %w", err)
 	}
 
 	return models.TwitchStats{
