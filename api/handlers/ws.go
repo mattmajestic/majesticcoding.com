@@ -21,7 +21,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return isAllowedWSOrigin(r)
 	},
-	Subprotocols: []string{"supabase-auth"},
+	Subprotocols: []string{"clerk-auth", "supabase-auth"},
 }
 
 func generateAnonUsername() string {
@@ -52,40 +52,34 @@ func isAllowedWSOrigin(r *http.Request) bool {
 	return parsed.Host == r.Host
 }
 
-// getUsernameFromAuth attempts to get username from Supabase auth token
+// getUsernameFromAuth extracts a display name from a Clerk JWT
 func getUsernameFromAuth(r *http.Request) string {
-	tokenString := getSupabaseTokenFromRequest(r)
+	tokenString := getTokenFromRequest(r)
 	if tokenString == "" {
 		return generateAnonUsername()
 	}
 
-	// Verify Supabase token
-	user, err := verifySupabaseToken(tokenString)
+	claims, err := verifyClerkToken(r.Context(), tokenString)
 	if err != nil {
-		log.Printf("Auth verification failed for chat: %v", err)
+		log.Printf("Clerk token verify failed: %v", err)
 		return generateAnonUsername()
 	}
 
-	// Try to get username from user metadata first
-	if userMetadata, ok := user["user_metadata"].(map[string]interface{}); ok {
-		// Check for various username fields from different providers
-		if username, ok := userMetadata["user_name"].(string); ok && username != "" {
-			return "✓ " + username // GitHub, Twitch username
-		}
-		if username, ok := userMetadata["preferred_username"].(string); ok && username != "" {
-			return "✓ " + username // Some OAuth providers
-		}
-		if username, ok := userMetadata["name"].(string); ok && username != "" {
-			return "✓ " + username // Display name
-		}
+	if username, ok := claims["username"].(string); ok && username != "" {
+		return "✓ " + username
 	}
-
-	// Fallback to email if no username found
-	if email, ok := user["email"].(string); ok && email != "" {
+	if name, ok := claims["name"].(string); ok && name != "" {
+		return "✓ " + name
+	}
+	if email, ok := claims["email"].(string); ok && email != "" {
 		return "✓ " + email
 	}
 
-	// Fallback to anonymous
+	// JWT verified but no profile data — show user ID prefix so at least it's not anon
+	log.Printf("Clerk user verified (sub=%s) but no name/email returned", claims["sub"])
+	if sub, ok := claims["sub"].(string); ok && len(sub) > 8 {
+		return "✓ " + sub[:12]
+	}
 	return generateAnonUsername()
 }
 

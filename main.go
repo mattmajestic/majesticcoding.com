@@ -17,6 +17,7 @@ import (
 
 func main() {
 	config.LoadEnv()
+	handlers.InitClerk()
 	handlers.StartBroadcaster()
 	db.Connect()
 
@@ -29,6 +30,7 @@ func main() {
 	database := db.GetDB()
 	if database != nil {
 		db.InitializeDatabaseTables(database)
+		handlers.LoadMessagesFromDB(database)
 		services.StartSessionCleanup(database)
 	}
 

@@ -36,8 +36,8 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Render routes
 	router.GET("/", RenderTemplate("index.tmpl"))
-	router.GET("/auth", RenderSupabaseAuth)
-	router.GET("/auth/callback", AuthCallbackHandler)
+	router.GET("/auth", RenderClerkAuth)
+	router.GET("/auth/callback", RenderClerkAuth)
 	router.GET("/settings", SettingsPageHandler)
 	router.GET("/docs", RenderTemplate("docs.tmpl"))
 	router.GET("/about", RenderTemplate("about.tmpl"))
@@ -69,7 +69,7 @@ func SetupRoutes(router *gin.Engine) {
 	/// Session Info
 	router.GET("/api/user/status", AuthStatus)
 	router.GET("/user/status", AuthStatusHandler)
-	router.GET("/api/config/supabase", SupabaseConfigHandler)
+	router.GET("/api/config/clerk", ClerkConfigHandler)
 	router.GET("/user-info", UserInfoHandler)
 	router.GET("/api/user-info", UserInfoAPIHandler)
 	router.GET("/simple-test", SimpleTestHandler)
@@ -124,7 +124,7 @@ func SetupRoutes(router *gin.Engine) {
 
 	/// LLM API (Protected)
 	llmGroup := router.Group("/api/llm")
-	llmGroup.Use(SupabaseAuthMiddleware())
+	llmGroup.Use(ClerkAuthMiddleware())
 	{
 		llmGroup.POST("/", PostLLM)
 		llmGroup.GET("/providers", GetProviders)
@@ -132,7 +132,7 @@ func SetupRoutes(router *gin.Engine) {
 
 	/// Speech API (Protected)
 	speechGroup := router.Group("/api/speech")
-	speechGroup.Use(SupabaseAuthMiddleware())
+	speechGroup.Use(ClerkAuthMiddleware())
 	{
 		speechGroup.POST("/transcribe", PostSpeechTranscribe)
 	}

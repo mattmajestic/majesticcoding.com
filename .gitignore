@@ -1,4 +1,5 @@
 .env
+.env.local
 terraform.tfstate
 terraform.tfstate.backup
 .terraform/

@@ -150,14 +150,9 @@
     {{ template "footer_home" . }}
 
     <!-- Scripts -->
-    <script src="/static/components/supabase.js"></script>
-    <script type="module" src="/static/components/supabase-auth.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (window.supabaseAuth) {
-                await window.supabaseAuth.initialize();
-            }
-        });
+        // clerk-auth.js initializes automatically
     </script>
     <script>
         window.AI_CHAT_STT = 'server_stream';

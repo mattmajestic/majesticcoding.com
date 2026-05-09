@@ -30,9 +30,14 @@ func InsertAIChatMessage(db *sql.DB, userID, userEmail, provider, model, prompt,
 	return err
 }
 
-// GetRecentMessages fetches the most recent messages up to the given limit
+// GetRecentMessages fetches messages from the last hour, oldest first
 func GetRecentMessages(db *sql.DB, limit int) ([]models.Message, error) {
-	rows, err := db.Query(`SELECT id, content, created_at FROM messages ORDER BY created_at DESC LIMIT $1`, limit)
+	rows, err := db.Query(`
+		SELECT COALESCE(username, 'anon'), content, created_at
+		FROM messages
+		WHERE created_at > NOW() - INTERVAL '1 hour'
+		ORDER BY created_at ASC
+		LIMIT $1`, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +49,7 @@ func GetRecentMessages(db *sql.DB, limit int) ([]models.Message, error) {
 		if err := rows.Scan(&msg.Username, &msg.Content, &msg.Timestamp); err != nil {
 			return nil, err
 		}
+		msg.DisplayTime = msg.Timestamp.Format("15:04:05")
 		messages = append(messages, msg)
 	}
 	return messages, nil

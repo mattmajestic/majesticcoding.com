@@ -29,10 +29,10 @@ function createWebSocketConnection() {
 
   // Get auth token for WebSocket connection
   const wsUrl = `${wsProtocol}://${wsHost}/ws/chat`;
-  const token = localStorage.getItem('supabase_token');
+  const token = getValidClerkToken();
 
   try {
-    const protocols = token ? ['supabase-auth', token] : undefined;
+    const protocols = token ? ['clerk-auth', token] : undefined;
     ws = new WebSocket(wsUrl, protocols);
     setupWebSocketHandlers();
   } catch (error) {
@@ -153,9 +153,24 @@ function appendMessage(msg) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+// Returns clerk_token only if it's actually a Clerk JWT (iss contains 'clerk').
+// Clears and returns null if it's a stale token from another provider (e.g. Supabase).
+function getValidClerkToken() {
+  const token = localStorage.getItem('clerk_token');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    if (!payload.iss || !payload.iss.includes('clerk')) {
+      localStorage.removeItem('clerk_token');
+      return null;
+    }
+  } catch (_) { /* malformed JWT — let server reject it */ }
+  return token;
+}
+
 // Simple function to check if user is authenticated
 function isUserAuthenticated() {
-  return localStorage.getItem('supabase_token') !== null;
+  return getValidClerkToken() !== null;
 }
 
 // Function to update chat UI based on auth state
@@ -176,14 +191,11 @@ function updateChatAuthUI() {
 
 // Function to reconnect WebSocket when auth state changes
 function reconnectChat() {
-  // Only reconnect if WebSocket is not already open
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    // Already connected, just update UI
-    updateChatAuthUI();
-    return;
+  // Force close existing connection so we reconnect with the new auth state
+  if (ws) {
+    ws.close();
+    ws = null;
   }
-
-  // Reset and reconnect
   chatInitialized = false;
   wsConnecting = false;
   initializeChat();
@@ -202,13 +214,11 @@ function initializeChat() {
 
 // Wait for page to fully load and auth to be ready before initializing chat
 function waitForAuthAndInitialize() {
-  // Check if auth manager is available and initialized
-  if (window.authManager && window.authManager.supabase) {
-    // Auth is ready, wait a bit more to ensure any OAuth flow is complete
-    setTimeout(initializeChat, 1000);
+  // Wait for clerk-auth.js to finish loading and caching the token
+  if (window.clerkAuthReady) {
+    initializeChat();
   } else {
-    // Auth not ready yet, check again in 200ms
-    setTimeout(waitForAuthAndInitialize, 200);
+    document.addEventListener('clerk-auth-ready', initializeChat, { once: true });
   }
 }
 
@@ -221,10 +231,11 @@ if (document.readyState === 'loading') {
 
 // Listen for auth state changes to reconnect chat
 window.addEventListener('storage', (e) => {
-  if (e.key === 'supabase_token') {
+  if (e.key === 'clerk_token') {
     reconnectChat();
   }
 });
+document.addEventListener('clerk-auth-change', reconnectChat);
 
 // Also expose reconnection function globally for auth manager
 window.reconnectChat = reconnectChat;

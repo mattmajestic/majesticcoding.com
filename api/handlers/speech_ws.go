@@ -41,12 +41,12 @@ type speechWSState struct {
 const maxSpeechBufferBytes = 8 * 1024 * 1024
 
 func SpeechWebSocket(c *gin.Context) {
-	token := getSupabaseTokenFromRequest(c.Request)
+	token := getTokenFromRequest(c.Request)
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing auth token"})
 		return
 	}
-	if _, err := verifySupabaseToken(token); err != nil {
+	if _, err := verifyClerkToken(c.Request.Context(), token); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return
 	}

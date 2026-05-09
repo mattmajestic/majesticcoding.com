@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -11,11 +12,15 @@ import (
 	"majesticcoding.com/api/models"
 )
 
-func getTwitchToken() (string, error) {
-	cacheKey := "twitch:token:oauth"
+const twitchTokenCacheKey = "twitch:token:oauth"
 
+func invalidateTwitchTokenCache() {
+	RedisDelete(twitchTokenCacheKey)
+}
+
+func getTwitchToken() (string, error) {
 	// Try to get from Redis cache first (1 hour TTL = 3600 seconds)
-	cachedToken, err := RedisGet(cacheKey)
+	cachedToken, err := RedisGet(twitchTokenCacheKey)
 	if err == nil && cachedToken != "" {
 		log.Printf("✅ Twitch token cache HIT")
 		return cachedToken, nil
@@ -61,7 +66,7 @@ func getTwitchToken() (string, error) {
 		ttl = 3600 // fallback to 1 hour
 	}
 
-	if err := RedisSet(cacheKey, result.AccessToken, ttl); err != nil {
+	if err := RedisSet(twitchTokenCacheKey, result.AccessToken, ttl); err != nil {
 		log.Printf("⚠️ Failed to cache Twitch token: %v", err)
 	} else {
 		log.Printf("💾 Cached Twitch token for %d seconds", ttl)
@@ -93,7 +98,17 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 	}
 	defer resp.Body.Close()
 
-	// Check HTTP status code
+	// 401: cached token expired — clear and retry once with fresh token
+	if resp.StatusCode == http.StatusUnauthorized {
+		invalidateTwitchTokenCache()
+		return FetchTwitchStats(username)
+	}
+	// 403: log the full response body so we can see Twitch's reason
+	if resp.StatusCode == http.StatusForbidden {
+		body, _ := io.ReadAll(resp.Body)
+		log.Printf("⚠️ Twitch 403 body: %s | Client-ID=%s", string(body), clientID)
+		return models.TwitchStats{}, fmt.Errorf("twitch 403: %s", string(body))
+	}
 	if resp.StatusCode != http.StatusOK {
 		return models.TwitchStats{}, fmt.Errorf("twitch API returned status %d", resp.StatusCode)
 	}
@@ -116,34 +131,29 @@ func FetchTwitchStats(username string) (models.TwitchStats, error) {
 
 	user := result.Data[0]
 
-	// Fetch followers
+	// Fetch followers — requires moderator:read:followers user scope; fall back to 0 if unavailable
+	followers := 0
 	followersURL := fmt.Sprintf("https://api.twitch.tv/helix/channels/followers?broadcaster_id=%s", user.ID)
 	req2, _ := http.NewRequest("GET", followersURL, nil)
 	req2.Header.Set("Client-ID", clientID)
 	req2.Header.Set("Authorization", "Bearer "+token)
 
-	resp2, err := http.DefaultClient.Do(req2)
-	if err != nil {
-		return models.TwitchStats{}, fmt.Errorf("followers request failed: %w", err)
-	}
-	defer resp2.Body.Close()
-
-	// Check HTTP status code for followers endpoint
-	if resp2.StatusCode != http.StatusOK {
-		return models.TwitchStats{}, fmt.Errorf("followers API returned status %d", resp2.StatusCode)
-	}
-
-	var followResult struct {
-		Total int `json:"total"`
-	}
-	if err := json.NewDecoder(resp2.Body).Decode(&followResult); err != nil {
-		return models.TwitchStats{}, fmt.Errorf("failed to decode followers: %w", err)
+	if resp2, err := http.DefaultClient.Do(req2); err == nil {
+		defer resp2.Body.Close()
+		if resp2.StatusCode == http.StatusOK {
+			var followResult struct {
+				Total int `json:"total"`
+			}
+			if err := json.NewDecoder(resp2.Body).Decode(&followResult); err == nil {
+				followers = followResult.Total
+			}
+		}
 	}
 
 	return models.TwitchStats{
 		DisplayName:     user.DisplayName,
 		Description:     user.Description,
 		BroadcasterType: user.BroadcasterType,
-		Followers:       followResult.Total,
+		Followers:       followers,
 	}, nil
 }

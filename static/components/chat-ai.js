@@ -562,7 +562,7 @@ class AIChatInterface {
   createSpeechSocket(token) {
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const wsUrl = `${protocol}://${window.location.host}/ws/speech`;
-    const socket = new WebSocket(wsUrl, ['supabase-auth', token]);
+    const socket = new WebSocket(wsUrl, ['clerk-auth', token]);
 
     socket.addEventListener('open', () => {
       const startMessage = {
@@ -731,7 +731,8 @@ class AIChatInterface {
   }
 
   async transcribeAudio(blob) {
-    const token = this.getAuthToken();
+    let token = this.getAuthToken();
+    if (!token && window.getAuthToken) token = await window.getAuthToken();
     if (!token) {
       this.checkAuthStatus();
       return;
@@ -845,39 +846,23 @@ class AIChatInterface {
   }
 
   getAuthToken() {
-    // Try localStorage first
-    let token = localStorage.getItem('supabase_token');
+    return localStorage.getItem('clerk_token') || null;
+  }
 
-    // Fallback to Supabase session if available
-    if (!token && window.supabaseAuth) {
-      token = window.supabaseAuth.getAuthToken();
+  async refreshAuthToken() {
+    if (window.getAuthToken) {
+      const token = await window.getAuthToken();
+      if (token) localStorage.setItem('clerk_token', token);
+      return token;
     }
-
-    return token;
+    return null;
   }
 
   getUserAvatar() {
-    // Try to get avatar from Supabase auth manager
-    if (window.authManager && window.authManager.currentUser) {
-      const user = window.authManager.currentUser;
-
-      // Try multiple possible avatar fields
-      const avatarFields = [
-        user.user_metadata?.avatar_url,
-        user.user_metadata?.picture,
-        user.user_metadata?.avatar,
-        user.identities?.[0]?.identity_data?.avatar_url,
-        user.identities?.[0]?.identity_data?.picture
-      ];
-
-      for (const avatar of avatarFields) {
-        if (avatar) {
-          return avatar;
-        }
-      }
+    if (window.getCurrentUser) {
+      const user = window.getCurrentUser();
+      if (user?.imageUrl) return user.imageUrl;
     }
-
-    // Default fallback avatar
     return 'https://via.placeholder.com/32/75a7da/FFFFFF?text=U';
   }
 
@@ -946,7 +931,8 @@ class AIChatInterface {
     const message = this.elements.aiInput.value.trim();
     if (!message || this.isLoading) return;
 
-    const token = this.getAuthToken();
+    let token = this.getAuthToken();
+    if (!token && window.getAuthToken) token = await window.getAuthToken();
     if (!token) {
       this.checkAuthStatus();
       return;
@@ -1192,8 +1178,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.aiChat = new AIChatInterface();
 });
 
-// Re-check auth when Supabase auth changes
-document.addEventListener('supabase-auth-change', () => {
+// Re-check auth when Clerk auth changes
+document.addEventListener('clerk-auth-change', () => {
   if (window.aiChat) {
     window.aiChat.checkAuthStatus();
     window.aiChat.loadProviders();

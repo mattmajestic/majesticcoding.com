@@ -1,0 +1,58 @@
+{{ template "base" . }}
+
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-200 dark:border-gray-700">
+
+        <div class="text-center mb-8">
+          <img src="https://avatars.githubusercontent.com/u/33904170?v=4" alt="Majestic Coding" class="w-20 h-20 rounded-full mx-auto mb-4">
+          <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Welcome Back</h1>
+          <p class="text-gray-600 dark:text-gray-300">Sign in to access your dashboard</p>
+        </div>
+
+        <div id="clerk-sign-in"></div>
+        <p id="clerk-error" style="display:none;color:red;text-align:center"></p>
+
+        <div class="text-center mt-6">
+          <a href="/" class="text-blue-600 hover:text-blue-500 dark:text-blue-400 text-sm">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const publishableKey = "{{ .publishableKey }}";
+    const clerkDomain = "{{ .clerkDomain }}";
+
+    const script = document.createElement('script');
+    script.setAttribute('data-clerk-publishable-key', publishableKey);
+    script.src = `https://${clerkDomain}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`;
+    document.head.appendChild(script);
+
+    // window 'load' fires after all resources including the Clerk script
+    // have fully loaded and executed — avoids the race with Clerk's async init
+    window.addEventListener('load', async () => {
+      if (!window.Clerk) {
+        document.getElementById('clerk-error').style.display = 'block';
+        document.getElementById('clerk-error').textContent = 'Clerk failed to load';
+        return;
+      }
+      try {
+        await window.Clerk.load();
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect_url') || '/';
+        window.Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+          afterSignInUrl: redirectUrl,
+        });
+      } catch(e) {
+        console.error('Clerk error:', e);
+        document.getElementById('clerk-error').style.display = 'block';
+        document.getElementById('clerk-error').textContent = e.message;
+      }
+    });
+  </script>
+  <script src="/static/components/theme.js"></script>
+</body>
+
+{{ template "footer_home" . }}
