@@ -1108,6 +1108,8 @@ class AIChatInterface {
       .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="ai-code-block">$2</pre>')
       // Inline code - before other processing to avoid conflicts
       .replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>')
+      // Markdown links [text](url)
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
       // Bold text
       .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
       // Bulleted lists (lines starting with * or -, but not bold markers)

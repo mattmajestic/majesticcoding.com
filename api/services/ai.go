@@ -7,16 +7,13 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
 )
 
 type AIProvider string
 
 const (
-	ProviderAnthropic AIProvider = "anthropic"
-	ProviderGemini    AIProvider = "gemini"
-	ProviderOpenAI    AIProvider = "openai"
-	ProviderGroq      AIProvider = "groq"
+	ProviderGemini      AIProvider = "gemini"
+	ProviderHuggingFace AIProvider = "HuggingFace"
 )
 
 type AIRequest struct {
@@ -31,25 +28,6 @@ type AIResponse struct {
 	Model    string `json:"model"`
 }
 
-// AnthropicRequest represents the request format for Claude API
-type AnthropicRequest struct {
-	Model     string    `json:"model"`
-	MaxTokens int       `json:"max_tokens"`
-	Messages  []Message `json:"messages"`
-}
-
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-type AnthropicResponse struct {
-	Content []struct {
-		Text string `json:"text"`
-	} `json:"content"`
-}
-
-// GeminiRequest represents the request format for Gemini API
 type GeminiRequest struct {
 	Contents []GeminiContent `json:"contents"`
 }
@@ -72,7 +50,6 @@ type GeminiResponse struct {
 	} `json:"candidates"`
 }
 
-// OpenAIRequest represents the request format for OpenAI API
 type OpenAIRequest struct {
 	Model    string          `json:"model"`
 	Messages []OpenAIMessage `json:"messages"`
@@ -92,77 +69,18 @@ type OpenAIResponse struct {
 }
 
 func GenerateAIResponse(req AIRequest) (*AIResponse, error) {
-	// Default to Gemini if no provider specified
 	if req.Provider == "" {
 		req.Provider = ProviderGemini
 	}
 
-	// Use original prompt without RAG enhancement
 	switch req.Provider {
-	case ProviderAnthropic:
-		return callAnthropic(req)
 	case ProviderGemini:
 		return callGemini(req)
-	case ProviderOpenAI:
-		return callOpenAI(req)
-	case ProviderGroq:
-		return callGroq(req)
+	case ProviderHuggingFace:
+		return callHuggingFace(req)
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", req.Provider)
 	}
-}
-
-func callAnthropic(req AIRequest) (*AIResponse, error) {
-	apiKey := os.Getenv("ANTHROPIC_API_KEY")
-	if apiKey == "" {
-		return nil, fmt.Errorf("ANTHROPIC_API_KEY not set")
-	}
-
-	model := req.Model
-	if model == "" {
-		model = "claude-3-haiku-20240307" // Cheapest Claude model
-	}
-
-	payload := AnthropicRequest{
-		Model:     model,
-		MaxTokens: 1000,
-		Messages: []Message{
-			{Role: "user", Content: req.Prompt},
-		},
-	}
-
-	jsonData, _ := json.Marshal(payload)
-	httpReq, _ := http.NewRequest("POST", "https://api.anthropic.com/v1/messages", bytes.NewBuffer(jsonData))
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("x-api-key", apiKey)
-	httpReq.Header.Set("anthropic-version", "2023-06-01")
-
-	resp, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("anthropic API error: %s", string(body))
-	}
-
-	var anthResp AnthropicResponse
-	if err := json.Unmarshal(body, &anthResp); err != nil {
-		return nil, err
-	}
-
-	response := ""
-	if len(anthResp.Content) > 0 {
-		response = anthResp.Content[0].Text
-	}
-
-	return &AIResponse{
-		Response: response,
-		Provider: string(ProviderAnthropic),
-		Model:    model,
-	}, nil
 }
 
 func callGemini(req AIRequest) (*AIResponse, error) {
@@ -173,7 +91,7 @@ func callGemini(req AIRequest) (*AIResponse, error) {
 
 	model := req.Model
 	if model == "" {
-		model = "gemini-2.5-flash" // Current free Gemini model
+		model = "gemini-2.5-flash"
 	}
 
 	payload := GeminiRequest{
@@ -219,15 +137,15 @@ func callGemini(req AIRequest) (*AIResponse, error) {
 	}, nil
 }
 
-func callOpenAI(req AIRequest) (*AIResponse, error) {
-	apiKey := os.Getenv("OPENAI_API_KEY")
+func callHuggingFace(req AIRequest) (*AIResponse, error) {
+	apiKey := os.Getenv("HF_TOKEN")
 	if apiKey == "" {
-		return nil, fmt.Errorf("OPENAI_API_KEY not set")
+		return nil, fmt.Errorf("HF_TOKEN not set")
 	}
 
 	model := req.Model
 	if model == "" {
-		model = "gpt-4o-mini" // Cheapest GPT-4 model
+		model = "Qwen/Qwen2.5-72B-Instruct"
 	}
 
 	payload := OpenAIRequest{
@@ -238,7 +156,7 @@ func callOpenAI(req AIRequest) (*AIResponse, error) {
 	}
 
 	jsonData, _ := json.Marshal(payload)
-	httpReq, _ := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(jsonData))
+	httpReq, _ := http.NewRequest("POST", "https://router.huggingface.co/v1/chat/completions", bytes.NewBuffer(jsonData))
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("Authorization", "Bearer "+apiKey)
 
@@ -250,73 +168,22 @@ func callOpenAI(req AIRequest) (*AIResponse, error) {
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("openai API error: %s", string(body))
+		return nil, fmt.Errorf("huggingface API error: %s", string(body))
 	}
 
-	var openaiResp OpenAIResponse
-	if err := json.Unmarshal(body, &openaiResp); err != nil {
+	var hfResp OpenAIResponse
+	if err := json.Unmarshal(body, &hfResp); err != nil {
 		return nil, err
 	}
 
 	response := ""
-	if len(openaiResp.Choices) > 0 {
-		response = openaiResp.Choices[0].Message.Content
+	if len(hfResp.Choices) > 0 {
+		response = hfResp.Choices[0].Message.Content
 	}
 
 	return &AIResponse{
 		Response: response,
-		Provider: string(ProviderOpenAI),
-		Model:    model,
-	}, nil
-}
-
-func callGroq(req AIRequest) (*AIResponse, error) {
-	apiKey := os.Getenv("GROQ_API_KEY")
-	if apiKey == "" {
-		return nil, fmt.Errorf("GROQ_API_KEY not set")
-	}
-
-	model := req.Model
-	if model == "" {
-		model = "llama3-8b-8192" // Free Groq model
-	}
-
-	payload := OpenAIRequest{ // Groq uses OpenAI-compatible format
-		Model: model,
-		Messages: []OpenAIMessage{
-			{Role: "user", Content: req.Prompt},
-		},
-	}
-
-	jsonData, _ := json.Marshal(payload)
-	httpReq, _ := http.NewRequest("POST", "https://api.groq.com/openai/v1/chat/completions", bytes.NewBuffer(jsonData))
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("Authorization", "Bearer "+apiKey)
-
-	resp, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("groq API error: %s", string(body))
-	}
-
-	var groqResp OpenAIResponse
-	if err := json.Unmarshal(body, &groqResp); err != nil {
-		return nil, err
-	}
-
-	response := ""
-	if len(groqResp.Choices) > 0 {
-		response = groqResp.Choices[0].Message.Content
-	}
-
-	return &AIResponse{
-		Response: response,
-		Provider: string(ProviderGroq),
+		Provider: string(ProviderHuggingFace),
 		Model:    model,
 	}, nil
 }
@@ -325,17 +192,11 @@ func callGroq(req AIRequest) (*AIResponse, error) {
 func GetAvailableProviders() []string {
 	var providers []string
 
-	if os.Getenv("ANTHROPIC_API_KEY") != "" {
-		providers = append(providers, string(ProviderAnthropic))
-	}
 	if os.Getenv("GEMINI_API_KEY") != "" {
 		providers = append(providers, string(ProviderGemini))
 	}
-	if os.Getenv("OPENAI_API_KEY") != "" {
-		providers = append(providers, string(ProviderOpenAI))
-	}
-	if os.Getenv("GROQ_API_KEY") != "" {
-		providers = append(providers, string(ProviderGroq))
+	if os.Getenv("HF_TOKEN") != "" {
+		providers = append(providers, string(ProviderHuggingFace))
 	}
 
 	return providers
@@ -347,15 +208,5 @@ func GetFallbackProvider() AIProvider {
 	if len(providers) == 0 {
 		return ""
 	}
-
-	// Prefer Gemini for free tier, then Groq, then others
-	for _, provider := range []string{"gemini", "groq", "anthropic", "openai"} {
-		for _, available := range providers {
-			if strings.ToLower(available) == provider {
-				return AIProvider(available)
-			}
-		}
-	}
-
 	return AIProvider(providers[0])
 }
