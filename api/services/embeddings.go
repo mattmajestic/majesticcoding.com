@@ -20,6 +20,7 @@ type GeminiEmbeddingRequest struct {
 			Text string `json:"text"`
 		} `json:"parts"`
 	} `json:"content"`
+	OutputDimensionality int `json:"outputDimensionality,omitempty"`
 }
 
 type GeminiEmbeddingResponse struct {
@@ -28,7 +29,7 @@ type GeminiEmbeddingResponse struct {
 	} `json:"embedding"`
 }
 
-// GenerateEmbedding creates an embedding for the given text using Gemini
+// GenerateEmbedding creates a 768-dim embedding using gemini-embedding-001.
 func GenerateEmbedding(text string) ([]float64, error) {
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
@@ -36,25 +37,18 @@ func GenerateEmbedding(text string) ([]float64, error) {
 	}
 
 	reqBody := GeminiEmbeddingRequest{
-		Content: struct {
-			Parts []struct {
-				Text string `json:"text"`
-			} `json:"parts"`
-		}{
-			Parts: []struct {
-				Text string `json:"text"`
-			}{
-				{Text: text},
-			},
-		},
+		OutputDimensionality: 768, // match vector(768) column
 	}
+	reqBody.Content.Parts = []struct {
+		Text string `json:"text"`
+	}{{Text: text}}
 
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=%s", apiKey)
+	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=%s", apiKey)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -121,46 +115,58 @@ func ConvertStatsToText(stats *models.UnifiedStats) []string {
 	return contexts
 }
 
-// StoreWebsiteContext stores general website context with embeddings
+// StoreWebsiteContext stores context with an optional embedding.
+// If embedding generation fails the row is still stored with a NULL vector
+// so full-text search can serve it as a fallback.
 func StoreWebsiteContext(contentType, title, content, sourceURL string, metadata interface{}, priority int) error {
 	database := db.GetDB()
 	if database == nil {
 		return fmt.Errorf("database not available")
 	}
 
-	// Generate embedding
-	embedding, err := GenerateEmbedding(content)
-	if err != nil {
-		return fmt.Errorf("failed to generate embedding: %w", err)
-	}
-
-	// Convert embedding to PostgreSQL array format
-	embeddingJSON, err := json.Marshal(embedding)
-	if err != nil {
-		return fmt.Errorf("failed to marshal embedding: %w", err)
-	}
-
-	var metadataJSON []byte
+	// Use *string so we can pass nil (SQL NULL) when there's no metadata.
+	var metadataArg *string
+	var err error
 	if metadata != nil {
-		metadataJSON, err = json.Marshal(metadata)
+		b, err := json.Marshal(metadata)
 		if err != nil {
 			return fmt.Errorf("failed to marshal metadata: %w", err)
 		}
+		s := string(b)
+		metadataArg = &s
 	}
 
-	// Insert or update context (upsert based on content_type and title)
-	_, err = database.Exec(`
-		INSERT INTO bronze.website_context (content_type, title, content_text, source_url, metadata, embedding, priority)
-		VALUES ($1, $2, $3, $4, $5, $6::vector, $7)
-		ON CONFLICT (content_type, title)
-		DO UPDATE SET
-			content_text = EXCLUDED.content_text,
-			source_url = EXCLUDED.source_url,
-			metadata = EXCLUDED.metadata,
-			embedding = EXCLUDED.embedding,
-			priority = EXCLUDED.priority,
-			updated_at = CURRENT_TIMESTAMP
-	`, contentType, title, content, sourceURL, string(metadataJSON), string(embeddingJSON), priority)
+	// Try to generate embedding; proceed without it on failure.
+	embedding, embErr := GenerateEmbedding(content)
+	if embErr != nil {
+		fmt.Printf("⚠️  Embedding unavailable for %q, storing without vector: %v\n", title, embErr)
+
+		_, err = database.Exec(`
+			INSERT INTO bronze.website_context (content_type, title, content_text, source_url, metadata, embedding, priority)
+			VALUES ($1, $2, $3, $4, $5, NULL, $6)
+			ON CONFLICT (content_type, title)
+			DO UPDATE SET
+				content_text = EXCLUDED.content_text,
+				source_url   = EXCLUDED.source_url,
+				metadata     = EXCLUDED.metadata,
+				priority     = EXCLUDED.priority,
+				updated_at   = CURRENT_TIMESTAMP
+		`, contentType, title, content, sourceURL, metadataArg, priority)
+	} else {
+		embeddingJSON, _ := json.Marshal(embedding)
+		_, err = database.Exec(`
+			INSERT INTO bronze.website_context (content_type, title, content_text, source_url, metadata, embedding, priority)
+			VALUES ($1, $2, $3, $4, $5, $6::vector, $7)
+			ON CONFLICT (content_type, title)
+			DO UPDATE SET
+				content_text = EXCLUDED.content_text,
+				source_url   = EXCLUDED.source_url,
+				metadata     = EXCLUDED.metadata,
+				embedding    = EXCLUDED.embedding,
+				priority     = EXCLUDED.priority,
+				updated_at   = CURRENT_TIMESTAMP
+		`, contentType, title, content, sourceURL, metadataArg, string(embeddingJSON), priority)
+	}
 
 	if err != nil {
 		return fmt.Errorf("failed to store website context: %w", err)
@@ -282,55 +288,83 @@ func StoreLatestSocialStatsContextFromDB() error {
 	return nil
 }
 
-// RetrieveRelevantContext finds relevant context based on user query
+// RetrieveRelevantContext finds relevant context for the query.
+// It tries vector similarity first; if embeddings are unavailable it falls
+// back to Postgres full-text search, then to top rows by priority.
 func RetrieveRelevantContext(query string, limit int) ([]string, error) {
 	database := db.GetDB()
 	if database == nil {
 		return nil, fmt.Errorf("database not available")
 	}
 
-	// Generate embedding for the query
-	queryEmbedding, err := GenerateEmbedding(query)
-	if err != nil {
-		return nil, fmt.Errorf("failed to generate query embedding: %w", err)
+	// --- attempt vector search ---
+	if embedding, err := GenerateEmbedding(query); err == nil {
+		embJSON, _ := json.Marshal(embedding)
+		rows, err := database.Query(`
+			SELECT content_text
+			FROM bronze.website_context
+			WHERE embedding IS NOT NULL AND is_active = true
+			  AND (embedding <=> $1::vector) < 0.5
+			ORDER BY priority DESC, (embedding <=> $1::vector) ASC
+			LIMIT $2
+		`, string(embJSON), limit)
+		if err == nil {
+			defer rows.Close()
+			var contexts []string
+			for rows.Next() {
+				var text string
+				if rows.Scan(&text) == nil {
+					contexts = append(contexts, text)
+				}
+			}
+			if len(contexts) > 0 {
+				return contexts, nil
+			}
+		}
 	}
 
-	queryEmbeddingJSON, err := json.Marshal(queryEmbedding)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal query embedding: %w", err)
-	}
-
-	// Search for similar context using cosine similarity, prioritizing active content
+	// --- fallback: Postgres full-text search ---
 	rows, err := database.Query(`
-		SELECT title, content_text, content_type, priority,
-		       (embedding <=> $1::vector) as distance
+		SELECT content_text
 		FROM bronze.website_context
-		WHERE embedding IS NOT NULL AND is_active = true
-		ORDER BY priority DESC, distance ASC
+		WHERE is_active = true
+		  AND to_tsvector('english', content_text) @@ plainto_tsquery('english', $1)
+		ORDER BY priority DESC
 		LIMIT $2
-	`, string(queryEmbeddingJSON), limit)
+	`, query, limit)
+	if err == nil {
+		defer rows.Close()
+		var contexts []string
+		for rows.Next() {
+			var text string
+			if rows.Scan(&text) == nil {
+				contexts = append(contexts, text)
+			}
+		}
+		if len(contexts) > 0 {
+			return contexts, nil
+		}
+	}
 
+	// --- last resort: top rows by priority ---
+	rows2, err := database.Query(`
+		SELECT content_text
+		FROM bronze.website_context
+		WHERE is_active = true
+		ORDER BY priority DESC
+		LIMIT $1
+	`, limit)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query context: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
-
+	defer rows2.Close()
 	var contexts []string
-	for rows.Next() {
-		var title, contentText, contentType string
-		var priority int
-		var distance float64
-
-		if err := rows.Scan(&title, &contentText, &contentType, &priority, &distance); err != nil {
-			continue
-		}
-
-		// Include relevant context (distance < 0.4 for Gemini embeddings)
-		if distance < 0.4 {
-			contexts = append(contexts, contentText)
+	for rows2.Next() {
+		var text string
+		if rows2.Scan(&text) == nil {
+			contexts = append(contexts, text)
 		}
 	}
-
 	return contexts, nil
 }
 

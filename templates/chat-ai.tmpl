@@ -13,21 +13,24 @@
     <div class="bg-gray-950 border-b border-gray-800 px-4 py-3">
         <div class="flex items-center justify-between max-w-3xl mx-auto">
             <div class="flex items-center space-x-3">
-                <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
-                     alt="AI" class="w-8 h-8 rounded-full glowing-effect border border-gray-700" />
+                <div class="relative">
+                    <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
+                         alt="AI" class="w-9 h-9 rounded-full border border-gray-700" />
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-gray-950"></span>
+                </div>
                 <div>
-                    <h1 class="text-lg font-semibold text-white leading-tight">AI Assistant</h1>
-                    <p class="text-xs text-gray-400">Voice + RAG + site context</p>
+                    <h1 class="text-sm font-semibold text-white leading-tight">Majestic AI</h1>
+                    <p class="text-xs text-green-400">Online</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3 text-sm">
+            <div class="flex items-center space-x-2">
                 <select id="ai-provider"
-                        class="px-2 py-1 bg-gray-700 text-white border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-light-blue text-sm">
+                        class="px-2 py-1 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg focus:outline-none text-xs">
                     <option value="">Auto</option>
                 </select>
 
-                <a id="auth-status" href="/auth" class="px-3 py-1 rounded text-xs bg-red-900 text-red-300 hover:bg-red-800 transition-colors cursor-pointer inline-flex items-center gap-1">
+                <a id="auth-status" href="/auth" class="px-3 py-1.5 rounded-lg text-xs bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700 transition-colors cursor-pointer inline-flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"></path>
                     </svg>
@@ -43,104 +46,97 @@
         <div class="flex-1 overflow-hidden">
             <div id="chat-messages" class="h-full overflow-y-auto px-4 py-6 max-w-3xl mx-auto">
                 <!-- Welcome Message -->
-                <div class="flex justify-center mb-8">
-                    <div class="text-center p-6 rounded-2xl max-w-md border border-gray-700 bg-gradient-to-b from-gray-800/90 to-gray-900/80 shadow-xl relative overflow-hidden">
-                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.15),transparent_60%)]"></div>
-                        <div class="relative">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 text-xs uppercase tracking-widest text-light-blue bg-gray-900/70 border border-gray-700 rounded-full mb-4">
-                                AI Assistant
-                            </div>
-                            <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
-                                 alt="AI" class="w-16 h-16 rounded-full mx-auto mb-4 glowing-effect border border-gray-700" />
-                            <h3 class="text-xl font-semibold text-white mb-2">Ask me anything</h3>
-                            <p class="text-gray-400">Website context, socials stats, and hands-free voice chat.</p>
-                            <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-gray-300">
-                                <span class="px-2 py-1 bg-gray-900/70 border border-gray-700 rounded-full">RAG</span>
-                                <span class="px-2 py-1 bg-gray-900/70 border border-gray-700 rounded-full">Voice</span>
-                                <span class="px-2 py-1 bg-gray-900/70 border border-gray-700 rounded-full">Supabase</span>
-                            </div>
+                <div class="flex items-start space-x-3 mb-6">
+                    <img src="https://avatars.githubusercontent.com/u/33904170?v=4"
+                         alt="AI" class="w-8 h-8 rounded-full flex-shrink-0 mt-1 border border-gray-700" />
+                    <div class="message-assistant-bubble">
+                        <p class="text-sm leading-relaxed mb-3">Hey! I'm Majestic AI — ask me anything about this site, coding, or just chat.</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 bg-gray-700/60 text-gray-300 rounded-full text-xs">RAG</span>
+                            <span class="px-2 py-0.5 bg-gray-700/60 text-gray-300 rounded-full text-xs">Voice</span>
+                            <span class="px-2 py-0.5 bg-gray-700/60 text-gray-300 rounded-full text-xs">Multi-model</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Input Area - Fixed at bottom -->
-        <div class="border-t border-gray-700 bg-gray-800/30 px-4 py-4">
+        <!-- Quick action chips — always visible -->
+        <div class="border-t border-gray-800 bg-gray-950 px-4 pt-3">
             <div class="max-w-3xl mx-auto">
-                <form id="ai-chat-form" class="flex space-x-3 mb-3">
-                    <div class="flex-1">
+                <div id="quick-actions-container" class="flex flex-wrap gap-1.5 min-h-[28px]"></div>
+            </div>
+        </div>
+
+        <!-- Auth Gate (shown when signed out) -->
+        <div id="ai-auth-gate" class="hidden bg-gray-950 px-4 py-4">
+            <div class="max-w-3xl mx-auto flex flex-col items-center gap-3 py-2">
+                <div class="flex items-center gap-3 text-gray-400 text-sm">
+                    <div class="w-8 h-8 bg-gray-800 border border-gray-700 rounded-full flex items-center justify-center">
+                        <i class="fas fa-lock text-xs text-gray-500"></i>
+                    </div>
+                    <span>Sign in to chat with Majestic AI</span>
+                </div>
+                <a href="/auth"
+                   class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-xl transition-colors">
+                    <i class="fas fa-sign-in-alt text-xs"></i>
+                    Sign In
+                </a>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div id="ai-input-area" class="border-t border-gray-800 bg-gray-950 px-4 py-3">
+            <div class="max-w-3xl mx-auto">
+
+                <form id="ai-chat-form" class="flex items-end gap-2">
+                    <div class="flex-1 relative">
                         <textarea id="ai-input"
-                                  placeholder="Message AI Assistant..."
+                                  placeholder="Message Majestic AI..."
                                   rows="1"
-                                  class="w-full px-4 py-3 bg-gray-800 text-white border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-light-blue resize-none text-base"
-                                  style="min-height: 48px; max-height: 120px;"></textarea>
+                                  class="w-full px-4 py-3 pr-12 bg-gray-800 text-white border border-gray-700 rounded-2xl focus:outline-none focus:border-gray-500 resize-none text-sm leading-relaxed"
+                                  style="min-height: 48px; max-height: 140px;"></textarea>
                     </div>
 
-                    <div class="relative">
-                        <div class="flex items-center overflow-hidden rounded-xl border border-gray-600">
-                        <button type="button"
-                                id="mic-button"
-                                class="h-12 px-4 bg-gray-700 hover:bg-gray-600 text-white transition-colors flex items-center justify-center"
-                                title="Start voice input">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3zM5 11a7 7 0 0014 0M12 18v4m-4 0h8"></path>
-                            </svg>
-                        </button>
-                        <button type="button"
-                                id="mic-menu-button"
-                                class="h-12 px-2 bg-gray-700 hover:bg-gray-600 text-white transition-colors flex items-center justify-center border-l border-gray-600"
-                                title="Select microphone">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
+                    <!-- Mic button -->
+                    <div class="relative flex-shrink-0">
+                        <div class="flex overflow-hidden rounded-xl border border-gray-700">
+                            <button type="button" id="mic-button"
+                                    class="h-12 w-10 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors flex items-center justify-center"
+                                    title="Voice input">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3zM5 11a7 7 0 0014 0M12 18v4m-4 0h8"></path>
+                                </svg>
+                            </button>
+                            <button type="button" id="mic-menu-button"
+                                    class="h-12 w-7 bg-gray-800 hover:bg-gray-700 text-gray-500 hover:text-white transition-colors flex items-center justify-center border-l border-gray-700"
+                                    title="Select mic">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
                         </div>
                         <div id="mic-device-menu"
-                             class="hidden absolute right-0 bottom-full mb-2 w-64 bg-gray-700 border border-gray-600 rounded-lg shadow-xl z-20 overflow-hidden divide-y divide-gray-600">
+                             class="hidden absolute right-0 bottom-full mb-2 w-64 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-20 overflow-hidden divide-y divide-gray-700">
                         </div>
                     </div>
 
-                    <button type="submit"
-                            id="send-button"
-                            class="px-4 py-3 bg-light-blue hover:bg-blue-400 disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center glowing-effect"
+                    <!-- Send button -->
+                    <button type="submit" id="send-button"
+                            class="h-12 w-12 flex-shrink-0 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white rounded-xl transition-colors flex items-center justify-center"
                             disabled>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
                         </svg>
                     </button>
                 </form>
 
-                <!-- Quick Actions -->
-                <div class="flex flex-wrap gap-2 mb-2">
-                    <button class="quick-action ai-quick-action"
-                            data-prompt="Explain quantum computing in simple terms">
-                        Quantum Computing
-                    </button>
-                    <button class="quick-action ai-quick-action"
-                            data-prompt="Write a Python function to reverse a string">
-                        Python Code
-                    </button>
-                    <button class="quick-action ai-quick-action"
-                            data-prompt="What are the latest trends in web development?">
-                        Web Dev Trends
-                    </button>
-                    <button class="quick-action ai-quick-action"
-                            data-prompt="Help me debug this JavaScript error">
-                        Debug Help
-                    </button>
-                    <button type="button"
-                            id="clear-chat"
-                            class="quick-action ai-quick-action text-red-400 hover:text-red-300"
-                            title="Clear chat">
-                        Clear Chat
-                    </button>
-                </div>
-
-                <!-- Stats -->
-                <div class="flex justify-between text-xs text-gray-500">
-                    <span>Messages: <span id="message-count" class="ai-stats-accent">0</span></span>
-                    <span>Provider: <span id="current-provider" class="ai-stats-accent">Auto</span></span>
+                <div class="flex justify-between text-xs text-gray-600 mt-2">
+                    <span><span id="message-count">0</span> messages</span>
+                    <div class="flex items-center gap-3">
+                        <span><span id="current-provider" class="text-gray-500">Auto</span></span>
+                        <button type="button" id="clear-chat" class="text-gray-600 hover:text-red-400 transition-colors">Clear</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -137,6 +137,13 @@ func SetupRoutes(router *gin.Engine) {
 		speechGroup.POST("/transcribe", PostSpeechTranscribe)
 	}
 
+	/// RAG context seeding (Protected)
+	contextGroup := router.Group("/api/context")
+	contextGroup.Use(ClerkAuthMiddleware())
+	{
+		contextGroup.POST("/seed", SeedContext)
+	}
+
 	/// GraphQL API
 	router.POST("/api/graphql", GraphQLHandler)
 	router.GET("/api/graphql/playground", GraphQLPlaygroundHandler)

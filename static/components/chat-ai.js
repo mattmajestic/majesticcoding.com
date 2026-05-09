@@ -15,11 +15,16 @@ class AIChatInterface {
       micDeviceMenu: document.getElementById('mic-device-menu'),
       clearButton: document.getElementById('clear-chat'),
       authStatus: document.getElementById('auth-status'),
+      authGate: document.getElementById('ai-auth-gate'),
+      inputArea: document.getElementById('ai-input-area'),
       providerSelect: document.getElementById('ai-provider'),
       messageCountEl: document.getElementById('message-count'),
       currentProviderEl: document.getElementById('current-provider'),
-      charCounter: document.getElementById('char-counter') // Add missing element
+      charCounter: document.getElementById('char-counter'),
+      quickActionsContainer: document.getElementById('quick-actions-container')
     };
+
+    this.contextData = {};
 
     this.speechState = {
       supported: false,
@@ -56,7 +61,7 @@ class AIChatInterface {
     this.setupMediaRecorder();
     this.checkAuthStatus();
     this.loadProviders();
-    this.setupQuickActions();
+    this.loadContextAndBuildPrompts();
     this.setupTextarea();
   }
 
@@ -133,15 +138,48 @@ class AIChatInterface {
     });
   }
 
-  setupQuickActions() {
-    const quickActions = document.querySelectorAll('.quick-action');
-    quickActions.forEach(button => {
-      button.addEventListener('click', () => {
-        const prompt = button.getAttribute('data-prompt');
+  loadContextAndBuildPrompts() {
+    const container = this.elements.quickActionsContainer;
+    if (!container) return;
+
+    // Site context injected into each prompt so the AI has real grounding.
+    // These will be replaced by pgvector RAG results once the embeddings
+    // pipeline is set up (GitHub repos, YouTube videos, site pages).
+    const prompts = [
+      {
+        label: 'About this site',
+        prompt: `Context: Majestic Coding (majesticcoding.com) is a personal developer site built by Matt. Stack: Go, Gin, Tailwind CSS, HTMX, PostgreSQL (Neon), Redis, Clerk auth, AWS IVS for live streaming, Google Cloud Run deployment. Features: live coding streams, WebSocket chat, AI chat (this page), GitHub/YouTube/Twitch stats, LeetCode tracker, Spotify widget, check-ins map.\n\nWhat is Majestic Coding and what makes it interesting?`
+      },
+      {
+        label: 'Socials & channels',
+        prompt: `Context: Majestic Coding's social presence — GitHub: github.com/mattmajestic (open source projects, tools, tutorials), YouTube: "Majestic Coding" channel (live coding videos, tutorials, tech walkthroughs), Twitch: live coding streams integrated directly into this site, Twitter/X: @mattmajestic.\n\nWhat social channels does Majestic Coding have and what kind of content does each one focus on?`
+      },
+      {
+        label: 'Projects & repos',
+        prompt: `Context: Matt (mattmajestic on GitHub) builds and open-sources projects primarily in Go, JavaScript/TypeScript, Docker, and Kubernetes. Projects span web apps, developer tools, streaming infrastructure, and AI integrations. This site itself (majesticcoding.com) is open source.\n\nWhat kinds of projects does Majestic Coding work on and where can someone find them?`
+      },
+      {
+        label: 'Live streams',
+        prompt: `Context: Majestic Coding live streams coding sessions. Stream infrastructure: AWS IVS for RTMP ingest and HLS playback, custom WebSocket chat embedded on this site, Twitch chat integration side-by-side. Streams cover building this site live, Go backend, DevOps, AI features, and viewer Q&A.\n\nWhat does a Majestic Coding live stream look like and how can I watch or join?`
+      }
+    ];
+
+    container.innerHTML = '';
+    prompts.forEach(({ label, prompt }) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ai-quick-action';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        if (!this.getAuthToken()) {
+          window.location.href = '/auth';
+          return;
+        }
         this.elements.aiInput.value = prompt;
         this.validateInput();
-        this.elements.aiInput.focus();
+        this.sendMessage();
       });
+      container.appendChild(btn);
     });
   }
 
@@ -818,28 +856,30 @@ class AIChatInterface {
 
     if (token) {
       this.elements.authStatus.innerHTML = `
-        <span class="inline-flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1119.5 8.5m0 0a9.003 9.003 0 00-9-9m9 9l-4 4m0 0l-2-2m2 2l4-4"></path>
-          </svg>
-          Profile
-        </span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1119.5 8.5m0 0a9.003 9.003 0 00-9-9m9 9l-4 4m0 0l-2-2m2 2l4-4"></path>
+        </svg>
+        Profile
       `;
-      this.elements.authStatus.className = 'px-3 py-1 rounded text-xs bg-green-900 text-green-300 hover:bg-green-800 transition-colors cursor-pointer';
+      this.elements.authStatus.className = 'px-3 py-1.5 rounded-lg text-xs bg-green-900 text-green-300 hover:bg-green-800 border border-green-800 transition-colors cursor-pointer inline-flex items-center gap-1.5';
       this.elements.authStatus.href = '/settings';
       this.elements.authStatus.title = 'View Profile & Settings';
+
+      if (this.elements.authGate) this.elements.authGate.classList.add('hidden');
+      if (this.elements.inputArea) this.elements.inputArea.classList.remove('hidden');
     } else {
       this.elements.authStatus.innerHTML = `
-        <span class="inline-flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"></path>
-          </svg>
-          Sign In
-        </span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"></path>
+        </svg>
+        Sign In
       `;
-      this.elements.authStatus.className = 'px-3 py-1 rounded text-xs bg-red-900 text-red-300 hover:bg-red-800 transition-colors cursor-pointer';
+      this.elements.authStatus.className = 'px-3 py-1.5 rounded-lg text-xs bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700 transition-colors cursor-pointer inline-flex items-center gap-1.5';
       this.elements.authStatus.href = '/auth';
       this.elements.authStatus.title = 'Click to sign in';
+
+      if (this.elements.authGate) this.elements.authGate.classList.remove('hidden');
+      if (this.elements.inputArea) this.elements.inputArea.classList.add('hidden');
     }
 
     this.validateInput();
@@ -1027,28 +1067,18 @@ class AIChatInterface {
     const bubble = document.createElement('div');
     bubble.className = this.getMessageStyles(type);
 
-    const header = document.createElement('div');
-    header.className = 'flex items-center justify-between mb-2 text-xs opacity-75';
-
-    const authorSpan = document.createElement('span');
-    authorSpan.className = 'font-medium';
-    authorSpan.textContent = author;
-
-    const timeSpan = document.createElement('span');
-    timeSpan.className = 'opacity-60';
-    timeSpan.textContent = new Date().toLocaleTimeString();
-
-    header.appendChild(authorSpan);
-    header.appendChild(timeSpan);
-
     const contentDiv = document.createElement('div');
     contentDiv.className = 'text-sm leading-relaxed';
+
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'text-xs opacity-40 mt-1 ' + (type === 'user' ? 'text-right' : '');
+    timeSpan.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
     // Always apply formatting (renamed to formatText since it handles more than just code)
     contentDiv.innerHTML = this.formatText(content);
 
-    bubble.appendChild(header);
     bubble.appendChild(contentDiv);
+    bubble.appendChild(timeSpan);
 
     messageContainer.appendChild(avatar);
     messageContainer.appendChild(bubble);
