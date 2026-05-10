@@ -31,7 +31,6 @@ func main() {
 	if database != nil {
 		db.InitializeDatabaseTables(database)
 		handlers.LoadMessagesFromDB(database)
-		services.StartSessionCleanup(database)
 	}
 
 	handlers.StartMessageCleanup()

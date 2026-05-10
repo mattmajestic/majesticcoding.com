@@ -1,0 +1,730 @@
+{
+  "/home/matt/github/majesticcoding.com/main.go": {
+    "mtime": 1778376467.4678798,
+    "hash": "e9026bd9b820ec991ffae806d4432c38"
+  },
+  "/home/matt/github/majesticcoding.com/main_test.go": {
+    "mtime": 1753300610.6611767,
+    "hash": "9b88c759393b0d067e4fe20ca0c055ad"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/chat.js": {
+    "mtime": 1758123040.3442245,
+    "hash": "05ee2707dab828b1a5645d61a56e4c53"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/chat-widget.js": {
+    "mtime": 1755446402.6936357,
+    "hash": "52b6c68998e2e6cc21688f2dbebf2b2e"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/gallery.js": {
+    "mtime": 1760115787.602573,
+    "hash": "873d98584cfcf7bf471cef58c8e21321"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/theme.js": {
+    "mtime": 1759111459.6856556,
+    "hash": "d6897c09dcf5bc4603f77603df55b96d"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/certifications.js": {
+    "mtime": 1755719049.3717086,
+    "hash": "eeaa8cc0302505ea9835c9733bc042da"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/stream-chat.js": {
+    "mtime": 1757895496.404911,
+    "hash": "a599cc20d69553701119d8a77ccbef88"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/spotify.js": {
+    "mtime": 1760887676.5777318,
+    "hash": "b910d435507720b7c8f93b5dd589f6d8"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/supabase.js": {
+    "mtime": 1757888931.9419982,
+    "hash": "45fd3c174af679e105db8d474c824165"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/ga.js": {
+    "mtime": 1754655999.7963657,
+    "hash": "47b2cd33512e58d19faf44c33466c286"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/typing.js": {
+    "mtime": 1757504162.6845381,
+    "hash": "97ac46c52da94a0c3122c55846095ad4"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/docs.js": {
+    "mtime": 1759083157.8648562,
+    "hash": "f8d69de99ccbad6a46ba6e1e4084ebba"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/chat-ai.js": {
+    "mtime": 1778369772.2126389,
+    "hash": "2fbe585e9a21347ea3fc21c88d6e58bd"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/booting.js": {
+    "mtime": 1755713617.8977363,
+    "hash": "dc5bb2407282f2dfd439d02c4195a8e6"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/globe.js": {
+    "mtime": 1760116797.6920545,
+    "hash": "cd6090a07989602920870b2e52e8b6df"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/auth-enhanced.js": {
+    "mtime": 1757523744.0181336,
+    "hash": "c57d5634bc6da9c8906899ebd6a913e4"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/dashboard.js": {
+    "mtime": 1757523199.428316,
+    "hash": "57a8fe827f7575c136eed9102e0a8b90"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/stream.js": {
+    "mtime": 1759008808.9491458,
+    "hash": "e5426bcf36174fc6c1109fa0dbd03906"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/clerk-auth.js": {
+    "mtime": 1778290892.1508832,
+    "hash": "90d895ffca97ea1ceaba1f68b77ac464"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/epl.js": {
+    "mtime": 1757640769.691274,
+    "hash": "75469e3c1ed77f6fc713c35ec1ce69a4"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/live.js": {
+    "mtime": 1755122410.1597366,
+    "hash": "d67ac0f4b243632c8590e3132140eaa8"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/auth.js": {
+    "mtime": 1755632060.7991195,
+    "hash": "5f7c00b3a13436340f017d07e6d3a908"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/tech.js": {
+    "mtime": 1754939599.5359216,
+    "hash": "43c301e4af0ff512e007c314d6caf9d2"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/laliga.js": {
+    "mtime": 1757641901.8830914,
+    "hash": "d01b8eaf7d6d5edae934f59ee30e183a"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/twitch.js": {
+    "mtime": 1756583669.6834333,
+    "hash": "38ce4c3293f1f8f21b640498d2f643e9"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/infrastructure.js": {
+    "mtime": 1757536622.1354206,
+    "hash": "55ca59422863a8f779ad91805013e204"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/about.js": {
+    "mtime": 1755714203.314262,
+    "hash": "cb6ce3ccb1f06399e3db1d526319f153"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/stats.js": {
+    "mtime": 1760193974.8417573,
+    "hash": "09bb271a9a5979d16a6bd6d3c09a6af0"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/ws.js": {
+    "mtime": 1778291212.1570752,
+    "hash": "482de1b394c7f12df0efcb649c48f7dc"
+  },
+  "/home/matt/github/majesticcoding.com/static/components/index-typing.js": {
+    "mtime": 1757513218.7791607,
+    "hash": "5b448d7388760d7b31b7b8a444dcabea"
+  },
+  "/home/matt/github/majesticcoding.com/migrations/00004_stats_history.sql": {
+    "mtime": 1757637411.50538,
+    "hash": "c550b2b43181cedfb8e5b9f52c4854a9"
+  },
+  "/home/matt/github/majesticcoding.com/migrations/00003_twitch_messages.sql": {
+    "mtime": 1757537132.145471,
+    "hash": "0e357dbf48063fb9c70a117f04329e59"
+  },
+  "/home/matt/github/majesticcoding.com/migrations/00001_checkins.sql": {
+    "mtime": 1757264403.2482786,
+    "hash": "3cea6d5eea86caad2a71fae85224fc64"
+  },
+  "/home/matt/github/majesticcoding.com/migrations/00002_messages.sql": {
+    "mtime": 1757265164.6773689,
+    "hash": "c01bd15db7658f0ea581d12419db1f3c"
+  },
+  "/home/matt/github/majesticcoding.com/api/middleware/logging.go": {
+    "mtime": 1758728153.6095402,
+    "hash": "c06078064de5b86010cfe0777f737609"
+  },
+  "/home/matt/github/majesticcoding.com/api/middleware/auth.go": {
+    "mtime": 1778376442.607538,
+    "hash": "a30c27d0db5a6997a069a51f0b8ee9dc"
+  },
+  "/home/matt/github/majesticcoding.com/api/middleware/cors.go": {
+    "mtime": 1754749970.2879007,
+    "hash": "1351f34a5bd8dc76a4eaaf1210ff3810"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/geo.go": {
+    "mtime": 1758549067.6397808,
+    "hash": "667806b2f01dd5454e735a8f828c14d5"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/embeddings.go": {
+    "mtime": 1778352816.6201649,
+    "hash": "df6d5a12a11f0432b3940392c618b8f7"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/graphql.go": {
+    "mtime": 1759009737.70269,
+    "hash": "4effadb3614d5aa257cfd16f15061143"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/speech.go": {
+    "mtime": 1768701349.8652387,
+    "hash": "996d0b8cbf042729a6f7b8e84224f927"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/laliga.go": {
+    "mtime": 1760116049.961177,
+    "hash": "e3837d601e0bbb318c6e5c045fa12d90"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/youtube.go": {
+    "mtime": 1755781146.9056475,
+    "hash": "1154d97d46a1c8e894d424110e7d1675"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/redis-rest.go": {
+    "mtime": 1758989755.9741948,
+    "hash": "53a1ceb7d9fcb1b77ec893b92fd78db3"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/twitch-eventsub.go": {
+    "mtime": 1758549067.6437807,
+    "hash": "8dca403394bc32667359753031997bfa"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/twitch.go": {
+    "mtime": 1778333004.0317698,
+    "hash": "18c7aa3126225b6a1dcb8df1dd59afda"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/twitch-user-lookup.go": {
+    "mtime": 1758549067.6437807,
+    "hash": "b4c4a9cb962612de6f2e5a25c4ff78cf"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/ai.go": {
+    "mtime": 1778369940.5794108,
+    "hash": "47c39a8d073e4ade6de062846d2ba138"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/twitch-auth.go": {
+    "mtime": 1758549067.6437807,
+    "hash": "2084688088043661322b408569b40601"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/leetcode.go": {
+    "mtime": 1760208772.4829233,
+    "hash": "ca51a145fa1e062fc5d89255227c7aaf"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/twitch-messages.go": {
+    "mtime": 1760209111.625835,
+    "hash": "0dd9c9086235a429ae15780a3bd2cc02"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/premier_league.go": {
+    "mtime": 1760116048.8331664,
+    "hash": "cf88570ac234e4d437b226e2bde2e5de"
+  },
+  "/home/matt/github/majesticcoding.com/api/services/github.go": {
+    "mtime": 1753310290.5555584,
+    "hash": "0543b6d8d985585b2624cdc6efbb07fb"
+  },
+  "/home/matt/github/majesticcoding.com/api/config/env.go": {
+    "mtime": 1778287411.120086,
+    "hash": "6c3b316f43e920e86935b704120cbc18"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/scenario.go": {
+    "mtime": 1753139260.917866,
+    "hash": "1b8885dc8d40afc4b0981d263ff1b1a1"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/twitch-lookup.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "a3bf8537330ee187fa50e4f6e86bade2"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/cache-clear.go": {
+    "mtime": 1758984607.0386877,
+    "hash": "d62b3d6e9f4487cf824049ae2599ca38"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/clerk-auth.go": {
+    "mtime": 1778291065.4362283,
+    "hash": "79f8bf8dcf01acf45570480122d3027b"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/spotify-auth.go": {
+    "mtime": 1758986062.3499823,
+    "hash": "44fb450a4f7c805fb692170d97f1ca59"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/geo.go": {
+    "mtime": 1760116265.2352154,
+    "hash": "79e1b2cef5b944cc80f9eba88be24f88"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/certification.go": {
+    "mtime": 1755717009.737611,
+    "hash": "0c45c95cb2ce2163718d9e2d83b9244e"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/globe.go": {
+    "mtime": 1758988301.264105,
+    "hash": "8f6969b130c156bf5b4695c9ae81180e"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/graphql.go": {
+    "mtime": 1758986358.816474,
+    "hash": "ce55d755263560bfdbaf2a16e4ed0746"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/metrics.go": {
+    "mtime": 1758985326.4396837,
+    "hash": "f7ab811e5db5df8d3cbf1a1e7f36992e"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/speech.go": {
+    "mtime": 1768700772.7987645,
+    "hash": "62bfe50e92d13c3ef9722a7235c45323"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/broadcast.go": {
+    "mtime": 1754065789.4098823,
+    "hash": "df9d800abdd4a8977b523247196f24f8"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/laliga.go": {
+    "mtime": 1760116078.8174546,
+    "hash": "905e86b2293b17691a792c2f6a881ab5"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/user.go": {
+    "mtime": 1753377241.9490104,
+    "hash": "eda7b5d209fb2143f70b045bd3c92153"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/git.go": {
+    "mtime": 1754669450.7691102,
+    "hash": "40744ff4b762a14f0f53cd9d39351219"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/render.go": {
+    "mtime": 1759077254.4204865,
+    "hash": "3f4cc8e6cdd507f5bc2c0fd3e81198b4"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/cost.go": {
+    "mtime": 1755783606.1614628,
+    "hash": "1f69405d7a8f04a9a2c91d9dd245f553"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/iac.go": {
+    "mtime": 1754504485.1440048,
+    "hash": "01a7fe7e3669be03cd5fdc23970471ff"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/context_seed.go": {
+    "mtime": 1778352024.420049,
+    "hash": "881da3877cf86d66108d94c4faf467be"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/stats.go": {
+    "mtime": 1768746473.2717545,
+    "hash": "372b41469dd6305bdeee37765d8c6e45"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/llm.go": {
+    "mtime": 1768703667.8471172,
+    "hash": "ee891eb7155185df73dca841e829286f"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/infracost.go": {
+    "mtime": 1755784019.6214852,
+    "hash": "0d62e86c7ea38484ff8e14ccdbb3daf5"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/load_scenario.go": {
+    "mtime": 1753140155.4975784,
+    "hash": "cc32746863d6209b673bbc4eaa646250"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/speech_ws.go": {
+    "mtime": 1778291053.079832,
+    "hash": "630b0fb389c71fc53d6c3962b7e498d7"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/store.go": {
+    "mtime": 1778290079.7623045,
+    "hash": "d98f58c70aacef4de05a7018108a0151"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/stream.go": {
+    "mtime": 1758985304.9713466,
+    "hash": "a9945248608c7af4345fe71c993009ec"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/checkins.go": {
+    "mtime": 1760116291.1274564,
+    "hash": "e52547f05242b96b9a75e650edc18e79"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/chat.go": {
+    "mtime": 1755442656.9556377,
+    "hash": "52d81f673228da88168963e1baef1e23"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/swagger.go": {
+    "mtime": 1760115491.8353736,
+    "hash": "f5f0412f646b7699f1ee90aa45c418ae"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/ws_auth.go": {
+    "mtime": 1778376437.091462,
+    "hash": "f6318f89f21fda99927a339dfb416e26"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/route.go": {
+    "mtime": 1778376454.4397008,
+    "hash": "46ddf690c084f90884a9e780a8cb1065"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/twitch-oauth.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "711aecb4a63de014d176185aacdee02f"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/spotify.go": {
+    "mtime": 1758986025.737153,
+    "hash": "dd3a50d1eb1e4d6fa2988691dd8fb02c"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/twitch-messages.go": {
+    "mtime": 1756300197.6137595,
+    "hash": "478476306d2757b208f88b1ef2f48b98"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/premier_league.go": {
+    "mtime": 1760116077.5654426,
+    "hash": "18db05a22f55ca8e77888ab4e4244a49"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/twitch-activities.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "65544fd211444230fe34338acdc40a66"
+  },
+  "/home/matt/github/majesticcoding.com/api/handlers/ws.go": {
+    "mtime": 1778291289.17171,
+    "hash": "b505fdd243f86138962088cd919a1eea"
+  },
+  "/home/matt/github/majesticcoding.com/api/docs/docs.go": {
+    "mtime": 1754512081.672342,
+    "hash": "1fa4e80f00dc279be1bfddadd1a1d7ea"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/scenario.go": {
+    "mtime": 1753139908.2825475,
+    "hash": "640144d4c145e1c023986b9294806f74"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/brands.go": {
+    "mtime": 1754937688.080866,
+    "hash": "c4d5f94342dd2b99be20109a83d3fa21"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/geo.go": {
+    "mtime": 1757029387.2003613,
+    "hash": "fa9b9eb2521c68903f3d4403efcea33b"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/globe.go": {
+    "mtime": 1757031303.532932,
+    "hash": "1766fe8258d3c9c75684599d58d6fdd6"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/graphql.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "5c916f1d0e16ae2e6a765b361a98f86b"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/metrics.go": {
+    "mtime": 1754655596.988342,
+    "hash": "db3b3faa817ea3c2201b431dcabb1149"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/docs.go": {
+    "mtime": 1759111246.0939362,
+    "hash": "5cc6d9929fc483c8221be2e17e968896"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/laliga.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "96344e82769f532dbd02659f09e8b898"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/youtube.go": {
+    "mtime": 1754264797.9152417,
+    "hash": "cfbb72f6aeca6138abf36d3bb83a7cb3"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/git.go": {
+    "mtime": 1754669199.8688319,
+    "hash": "eac993079e6741435323604d72be80f0"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/cost.go": {
+    "mtime": 1755783600.2934172,
+    "hash": "41e21a058a934c812915ce3a47a9464c"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/llm.go": {
+    "mtime": 1758121838.763546,
+    "hash": "b982a1d866339f6bd0425694ab1a203b"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/infracost.go": {
+    "mtime": 1755784059.5504608,
+    "hash": "f5e65469838e2950dbb4ab7a95890d81"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/stream.go": {
+    "mtime": 1754768105.068816,
+    "hash": "a876d2581d647aa9aece09432c86dfc0"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/checkins.go": {
+    "mtime": 1758984594.7384157,
+    "hash": "a3d93ed1cb9da135decc75bba8ba5f94"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/chat.go": {
+    "mtime": 1754582516.462454,
+    "hash": "8ae29eafb18ae5c2f3475a23eaee74ae"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/twitch.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "4fea5d04676fccd6c63831673437047e"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/about.go": {
+    "mtime": 1755715493.3764043,
+    "hash": "0cf86136e8ecd94037e2f6f8550bee70"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/spotify.go": {
+    "mtime": 1757079110.1011224,
+    "hash": "8d1803f18b76d36d3fe836c80d195d60"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/leetcode.go": {
+    "mtime": 1754570160.1945283,
+    "hash": "02d728a2c2637860f29d20ea0f7a243a"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/premier_league.go": {
+    "mtime": 1758549067.6277807,
+    "hash": "6292a0931a1dad461c660a6653ce4303"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/github.go": {
+    "mtime": 1753310250.3630896,
+    "hash": "9a647e63efd2f8b5a77abbd6310abb5c"
+  },
+  "/home/matt/github/majesticcoding.com/api/models/ws.go": {
+    "mtime": 1754064369.2306635,
+    "hash": "6e3b82e4abd1489dd8b25ab41f34d9b3"
+  },
+  "/home/matt/github/majesticcoding.com/cli/main.go": {
+    "mtime": 1752679038.0285733,
+    "hash": "e1ec329bb9a3e23de968db3dd60af6f6"
+  },
+  "/home/matt/github/majesticcoding.com/cli/cmd/root.go": {
+    "mtime": 1752674811.8232327,
+    "hash": "8d5dd2d67816168861d7071c4d418ac4"
+  },
+  "/home/matt/github/majesticcoding.com/cli/cmd/follow.go": {
+    "mtime": 1752764113.1492815,
+    "hash": "3394fbccbb3f9d212c546ae274d2bfa4"
+  },
+  "/home/matt/github/majesticcoding.com/cli/cmd/stats.go": {
+    "mtime": 1754355755.5733128,
+    "hash": "84f2042726494750d2d32a2f10004067"
+  },
+  "/home/matt/github/majesticcoding.com/db/create_vector_tables.go": {
+    "mtime": 1758549067.6437807,
+    "hash": "6540962b571ad4c2d1840c7187f72713"
+  },
+  "/home/matt/github/majesticcoding.com/db/connect_db.go": {
+    "mtime": 1757896870.5256345,
+    "hash": "4ac655f8a85c9173d8aa23cacf6543e4"
+  },
+  "/home/matt/github/majesticcoding.com/db/create_db_tables.go": {
+    "mtime": 1758549067.6597807,
+    "hash": "8009be7fab73bf6cd8d11efa84e7dad7"
+  },
+  "/home/matt/github/majesticcoding.com/db/initialize.go": {
+    "mtime": 1758549144.7964568,
+    "hash": "92c1287e677c9bdca463beb670dfdd11"
+  },
+  "/home/matt/github/majesticcoding.com/db/queries.go": {
+    "mtime": 1778290338.0708637,
+    "hash": "3c3ccd5a67fcd96bb3445c273c196e68"
+  },
+  "/home/matt/github/majesticcoding.com/db/auth-sessions.go": {
+    "mtime": 1758549102.2360854,
+    "hash": "d695f0f0e38648e270573a2ce8063f05"
+  },
+  "/home/matt/github/majesticcoding.com/k8s-go.yaml": {
+    "mtime": 1752081084.0873046,
+    "hash": "6815f57bc3fc349e357018d13cd433cb"
+  },
+  "/home/matt/github/majesticcoding.com/CHANGELOG.md": {
+    "mtime": 1757468970.401012,
+    "hash": "734806626c6ae82a1247413438e2f486"
+  },
+  "/home/matt/github/majesticcoding.com/README.md": {
+    "mtime": 1768692239.876673,
+    "hash": "8904975df758a187fac9ed9373e90ff1"
+  },
+  "/home/matt/github/majesticcoding.com/CLAUDE.md": {
+    "mtime": 1778375827.323404,
+    "hash": "e19bb95d0b05502f3c71acb33b01ea32"
+  },
+  "/home/matt/github/majesticcoding.com/docker-compose.yml": {
+    "mtime": 1757898974.6699898,
+    "hash": "6306f9d69bf7d6c32d4e314d4eca3951"
+  },
+  "/home/matt/github/majesticcoding.com/static/robots.txt": {
+    "mtime": 1755008436.6567597,
+    "hash": "9a5f8345e6fe2ed356b32ae225b1283e"
+  },
+  "/home/matt/github/majesticcoding.com/api/docs/swagger.yaml": {
+    "mtime": 1754512081.672342,
+    "hash": "8e21318c0690d08b6f7d6d667654be79"
+  },
+  "/home/matt/github/majesticcoding.com/helm/majesticcoding/values.yaml": {
+    "mtime": 1758844619.237062,
+    "hash": "bf9d1e3a0083cbb9d03550451ed67b72"
+  },
+  "/home/matt/github/majesticcoding.com/helm/majesticcoding/Chart.yaml": {
+    "mtime": 1755823459.3101594,
+    "hash": "7586432b4b00419398e286a7b713ac5c"
+  },
+  "/home/matt/github/majesticcoding.com/helm/majesticcoding/templates/service.yaml": {
+    "mtime": 1755823339.3406994,
+    "hash": "c2e66ed7bf8ce5a43830bf0872f4a7af"
+  },
+  "/home/matt/github/majesticcoding.com/helm/majesticcoding/templates/ingress.yaml": {
+    "mtime": 1755823352.404861,
+    "hash": "7158d772aa80f708fa4c2bc3d6c8a2d7"
+  },
+  "/home/matt/github/majesticcoding.com/helm/majesticcoding/templates/deployment.yaml": {
+    "mtime": 1755823317.4124262,
+    "hash": "b69e122379191cc96da64804c9e9fcda"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/duke-mlops.png": {
+    "mtime": 1755714862.874082,
+    "hash": "7f10c7220f5270fe2d60bf4fc8279db3"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/duke-defi.png": {
+    "mtime": 1755714862.8580816,
+    "hash": "3aa0b8f29cd364d16aa21e47f866a8ae"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/ovintiv.png": {
+    "mtime": 1754687160.5120175,
+    "hash": "a88a36786ee8d41cfe1328efad6a0167"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/pwc-data-decisions.png": {
+    "mtime": 1755714863.1260903,
+    "hash": "ed9b4cf8a8ddb7a717faa096ab72817f"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/meta-react-native.png": {
+    "mtime": 1755714863.0340874,
+    "hash": "1b67975608115e2ede82a2a02f5ec839"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/emory-consulting.png": {
+    "mtime": 1755714862.8940828,
+    "hash": "4f3b7d6e7b02ca03ddc69ca090cfad35"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/databricks-fundations.png": {
+    "mtime": 1755714862.842081,
+    "hash": "8d375c6c96d24bb4b01b3a51bb55c2d9"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/tsys.png": {
+    "mtime": 1754686981.9822347,
+    "hash": "bc49857a22010d19d30da445f18984d9"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/arsenal-2.gif": {
+    "mtime": 1756434133.6695955,
+    "hash": "879222af89bcda50ea033de6cdc1f944"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-prod-ml.png": {
+    "mtime": 1755714862.9500847,
+    "hash": "a88f7cb564764a96e10691dd7042d43c"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/cnn.png": {
+    "mtime": 1754686415.0165937,
+    "hash": "e84c805596f9a26bc3fb8fb37fb8d547"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-pm.png": {
+    "mtime": 1755714862.9340842,
+    "hash": "553ca80200dfe94ca0a3ef59eef14f9e"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/spurs.gif": {
+    "mtime": 1756434218.5065417,
+    "hash": "c02b6d833ec3b9574a6ebf7fb74c7125"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/penn-analytics.png": {
+    "mtime": 1755714863.086089,
+    "hash": "2dece0bc20cb89028261a4324b16c742"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/nyu-ml-finance.png": {
+    "mtime": 1755714863.0660884,
+    "hash": "d9eb235e47b5c6108094a37e2ebc6937"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-cloud-infrx.png": {
+    "mtime": 1755714862.9020832,
+    "hash": "950ec89264280122758da1e81fbce496"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/msft-serverless.png": {
+    "mtime": 1755714863.058088,
+    "hash": "c23b7226b0b0a70101e3df38adbab308"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/arsenal.gif": {
+    "mtime": 1756433962.10766,
+    "hash": "4f69e6d038de19ed85c5b8c2e9d80e4e"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/bitcoin.gif": {
+    "mtime": 1756433812.973947,
+    "hash": "1a38c64ef89407dd0bd6475ad0f51a5d"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/clemson.png": {
+    "mtime": 1755455543.24374,
+    "hash": "ae852e80297fae3576e0cf406a36d524"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/duke-web-dev.png": {
+    "mtime": 1755714862.8780823,
+    "hash": "6a0a7471e836627a8967c8026cfb8d16"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-tensorflow.png": {
+    "mtime": 1755714862.986086,
+    "hash": "4445d2b31181370ee2f597dfd4773498"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/stanford-machine-learning.png": {
+    "mtime": 1755714863.1700916,
+    "hash": "ba19c5d4acd453ee2afd51b883f9ce4a"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/manu.gif": {
+    "mtime": 1756434164.6419415,
+    "hash": "bac58e11ee97ce945067a284179a872d"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/penn-quant-modeling.png": {
+    "mtime": 1755714863.1060896,
+    "hash": "cec125956256e11956118dc4cbf4f3b0"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/psu.png": {
+    "mtime": 1754687234.500757,
+    "hash": "39b0bf7118ca3e80a1b61f85fd7707a7"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/ms-adf.png": {
+    "mtime": 1755714863.0380874,
+    "hash": "a6f34d8173c3c3aefaff700fc3628bda"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/gh.png": {
+    "mtime": 1754686379.0362375,
+    "hash": "67cfab875b9158058b4a19ffc0dd60b9"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-python.png": {
+    "mtime": 1755714862.9540846,
+    "hash": "07ce7ee0083e8796b44cdf70963ea65e"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/aws-cloud.png": {
+    "mtime": 1755714862.8220806,
+    "hash": "09e4b450a862cac8a5a8e101eac6e168"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-r-data-analysis.png": {
+    "mtime": 1755714862.9700854,
+    "hash": "8654dd27f68f8fbd23f138640a4af62d"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/meta-full-stack.png": {
+    "mtime": 1755714863.018087,
+    "hash": "37613d6012fcbcbbd32544294527ac54"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/berry.png": {
+    "mtime": 1755455497.5432267,
+    "hash": "d553d0e7827e78b9ec932651762d5968"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/deeplearning-tensorflow.png": {
+    "mtime": 1755714862.8460813,
+    "hash": "24614551b2d86d037a9e7c5a38684f18"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/mc-dark.png": {
+    "mtime": 1759085572.4980626,
+    "hash": "f47c177d1b1c2914e385bb9b561290a9"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/buffalo-blockchain.png": {
+    "mtime": 1755714862.8300807,
+    "hash": "a4d66bc9a2d431dcae265547ec8025ce"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/mc-logo.png": {
+    "mtime": 1760887328.2068362,
+    "hash": "921f9a65f954fec6a1baeaa663ac3fd5"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/msft-cloud.png": {
+    "mtime": 1755714863.050088,
+    "hash": "9d27b352f5255bd04786a1ccd8dbe6fb"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/aws-intro.png": {
+    "mtime": 1755714862.8260806,
+    "hash": "882824f89d9e595d82992d0a32aacdec"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/cc-fl.png": {
+    "mtime": 1754686332.7077794,
+    "hash": "56abfb6d17378f8ce4976299cc8b7925"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/apd.png": {
+    "mtime": 1778291439.580997,
+    "hash": "06d03c94b1f5e387dc846f6b9a360739"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/ibm-cloud.png": {
+    "mtime": 1755714863.0020864,
+    "hash": "7cef94ae6ca446734813f4ee537875f3"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-data-everywhere.png": {
+    "mtime": 1755714862.9140835,
+    "hash": "16a239f7ab19660b7ff71f5b7cb3a2dc"
+  },
+  "/home/matt/github/majesticcoding.com/static/img/google-ml-finance.png": {
+    "mtime": 1755714862.9220836,
+    "hash": "ef7b41142b956746e23e01d43e997b7f"
+  }
+}

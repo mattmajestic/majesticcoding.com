@@ -121,7 +121,6 @@
     <nav class="flex flex-wrap justify-center gap-2 border-b border-gray-700 pb-2">
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="API Documentation" data-tab="api">📖 API</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="UI of Partials/Components" data-tab="partials">🧩 UI</button>
-      <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title=" Streaming via AWS IVS" data-tab="stream-docs">🎥 Stream </button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="WebSocket Chat" data-tab="chat">💬 Chat</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="Postgres for Data Storage" data-tab="database">🛢️ Database</button>
       <button class="tab-btn px-4 py-2 text-md rounded-md text-white bg-gray-800 hover:bg-gray-700 transition" title="IAC on Multi Cloud" data-tab="hosting">☁️ Hosting</button>
@@ -138,8 +137,7 @@
         {{ template "chat-docs" . }}
       {{ else if eq .ActiveSection "database" }}
         {{ template "db" . }}
-      {{ else if eq .ActiveSection "stream-docs" }}
-        {{ template "rtmp" . }}
+
       {{ else if eq .ActiveSection "hosting" }}
         {{ template "hosting" . }}
       {{ else if eq .ActiveSection "ai" }}

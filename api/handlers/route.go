@@ -38,7 +38,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/", RenderTemplate("index.tmpl"))
 	router.GET("/auth", RenderClerkAuth)
 	router.GET("/auth/callback", RenderClerkAuth)
-	router.GET("/settings", SettingsPageHandler)
+	router.GET("/settings", RenderTemplate("settings.tmpl"))
 	router.GET("/docs", RenderTemplate("docs.tmpl"))
 	router.GET("/about", RenderTemplate("about.tmpl"))
 	router.GET("/dashboard", RenderTemplate("dashboard.tmpl"))
@@ -67,15 +67,8 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/api/scenarios", LoadScenarios)
 
 	/// Session Info
-	router.GET("/api/user/status", AuthStatus)
 	router.GET("/user/status", AuthStatusHandler)
 	router.GET("/api/config/clerk", ClerkConfigHandler)
-	router.GET("/user-info", UserInfoHandler)
-	router.GET("/api/user-info", UserInfoAPIHandler)
-	router.GET("/simple-test", SimpleTestHandler)
-	router.GET("/show-user", ShowUserHandler)
-	router.POST("/api/user/sync", SyncUserHandler)
-	router.GET("/api/user/info", GetUserHandler)
 
 	/// 3rd Party APIs (YouTube, Github, Twitch, Leetcode)
 	router.GET("/api/stats/:provider", StatsRouter)

@@ -22,7 +22,7 @@ func getTokenFromRequest(r *http.Request) string {
 	}
 
 	// known protocol names (not tokens) — skip them
-	knownProtocols := map[string]bool{"clerk-auth": true, "supabase-auth": true}
+	knownProtocols := map[string]bool{"clerk-auth": true}
 
 	parts := strings.Split(protocolHeader, ",")
 	var token string

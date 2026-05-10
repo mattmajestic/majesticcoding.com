@@ -1,13 +1,31 @@
+# Secrets
 .env
 .env.local
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+*.egg
+
+# Graphify
+graphify-out/cache/
+
+# Terraform
 terraform.tfstate
 terraform.tfstate.backup
 .terraform/
 .terraform.lock.hcl
-tmp/
-.vscode/
-llm/
+
+# Claude Code
 CLAUDE.md
 .mcp.json
 .claude/settings.json
 .claude/commands/
+
+# Misc
+tmp/
+llm/
+.vscode/
